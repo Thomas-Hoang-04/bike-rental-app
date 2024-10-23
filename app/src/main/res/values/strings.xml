@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Bike Rental App</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="term_of_use">Điều khoản sử dụng</string>
+    <string name="policy">Quy định chính sách</string>
+    <string name="terms_and_condition">Bằng cách tiếp tục, bạn đã đọc và đồng ý với Điều khoản sử dụng và Quy định chính sách của chúng tôi</string>
+    <string name="already_have_account">Bạn đã có tài khoản?</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+</resources>
