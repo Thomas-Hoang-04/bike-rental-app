@@ -1,0 +1,58 @@
+com.example.bikerentalapp-ui-tooling-release-0 C:\Users\Admin\.gradle\caches\transforms-4\07652939cf1ecd1a2b22abdbb839457b\transformed\ui-tooling-release\res
+com.example.bikerentalapp-lifecycle-livedata-core-ktx-2.8.6-1 C:\Users\Admin\.gradle\caches\transforms-4\080e8b44683f21a4baeef7a98c26daf8\transformed\lifecycle-livedata-core-ktx-2.8.6\res
+com.example.bikerentalapp-navigation-runtime-2.8.3-2 C:\Users\Admin\.gradle\caches\transforms-4\0d1fcb7dc7ac07d12895f147f41287e5\transformed\navigation-runtime-2.8.3\res
+com.example.bikerentalapp-lifecycle-viewmodel-savedstate-2.8.6-3 C:\Users\Admin\.gradle\caches\transforms-4\10f90497ec382780a79f83e286e75f66\transformed\lifecycle-viewmodel-savedstate-2.8.6\res
+com.example.bikerentalapp-core-ktx-1.13.1-4 C:\Users\Admin\.gradle\caches\transforms-4\1c568e58bf1cd8b01d38e20c1900bd64\transformed\core-ktx-1.13.1\res
+com.example.bikerentalapp-navigation-common-ktx-2.8.3-5 C:\Users\Admin\.gradle\caches\transforms-4\1cb083677f3d4acfce7d28519945d9ca\transformed\navigation-common-ktx-2.8.3\res
+com.example.bikerentalapp-material-icons-extended-release-6 C:\Users\Admin\.gradle\caches\transforms-4\1ec1faccc2185ad7bd65147a6f0bf035\transformed\material-icons-extended-release\res
+com.example.bikerentalapp-ui-tooling-data-release-7 C:\Users\Admin\.gradle\caches\transforms-4\24844f3830be31bb6221056f2b92f41b\transformed\ui-tooling-data-release\res
+com.example.bikerentalapp-navigation-runtime-ktx-2.8.3-8 C:\Users\Admin\.gradle\caches\transforms-4\28a0e38a20543080d467ef79b7221571\transformed\navigation-runtime-ktx-2.8.3\res
+com.example.bikerentalapp-material-release-9 C:\Users\Admin\.gradle\caches\transforms-4\2d9796c369443a02b3272857e425a1cc\transformed\material-release\res
+com.example.bikerentalapp-ui-util-release-10 C:\Users\Admin\.gradle\caches\transforms-4\2eb2c002b6180e28a2385fe1f1e23d5f\transformed\ui-util-release\res
+com.example.bikerentalapp-emoji2-1.3.0-11 C:\Users\Admin\.gradle\caches\transforms-4\32fd45088bd7d18f80594d7ba777b72a\transformed\emoji2-1.3.0\res
+com.example.bikerentalapp-lifecycle-livedata-core-2.8.6-12 C:\Users\Admin\.gradle\caches\transforms-4\33913c15e014985791e9c2f945f9cdd7\transformed\lifecycle-livedata-core-2.8.6\res
+com.example.bikerentalapp-animation-core-release-13 C:\Users\Admin\.gradle\caches\transforms-4\37b80ef643c5424de823b4176b5c156f\transformed\animation-core-release\res
+com.example.bikerentalapp-runtime-saveable-release-14 C:\Users\Admin\.gradle\caches\transforms-4\3a2809426ce03c333ae3d758da7b1ec7\transformed\runtime-saveable-release\res
+com.example.bikerentalapp-animation-release-15 C:\Users\Admin\.gradle\caches\transforms-4\3b5dbb7557091bd9dca50dfc4c011032\transformed\animation-release\res
+com.example.bikerentalapp-core-runtime-2.2.0-16 C:\Users\Admin\.gradle\caches\transforms-4\3f5ecae18e5b9c1c5c4a3ee1f9ccc0ed\transformed\core-runtime-2.2.0\res
+com.example.bikerentalapp-graphics-path-1.0.1-17 C:\Users\Admin\.gradle\caches\transforms-4\42998920cb3d105d96ac5ad039fc4136\transformed\graphics-path-1.0.1\res
+com.example.bikerentalapp-runtime-release-18 C:\Users\Admin\.gradle\caches\transforms-4\552932685c0f1f1d71b1db59b18f6d6e\transformed\runtime-release\res
+com.example.bikerentalapp-material-ripple-release-19 C:\Users\Admin\.gradle\caches\transforms-4\5a8f9495d7f5ed75bca769ab36a8d541\transformed\material-ripple-release\res
+com.example.bikerentalapp-lifecycle-livedata-2.8.6-20 C:\Users\Admin\.gradle\caches\transforms-4\6483cbc46c66be400bd4852d06db50bd\transformed\lifecycle-livedata-2.8.6\res
+com.example.bikerentalapp-profileinstaller-1.3.1-21 C:\Users\Admin\.gradle\caches\transforms-4\64e4ef203e95090d67d2c9b3bc5f9fb3\transformed\profileinstaller-1.3.1\res
+com.example.bikerentalapp-annotation-experimental-1.4.1-22 C:\Users\Admin\.gradle\caches\transforms-4\705a5ef55743068ba5581ae32a579cba\transformed\annotation-experimental-1.4.1\res
+com.example.bikerentalapp-activity-compose-1.9.3-23 C:\Users\Admin\.gradle\caches\transforms-4\710931a66b4e016a032bd4d6697a45df\transformed\activity-compose-1.9.3\res
+com.example.bikerentalapp-core-1.13.1-24 C:\Users\Admin\.gradle\caches\transforms-4\771b405ff27a47bb268c86fe4320362c\transformed\core-1.13.1\res
+com.example.bikerentalapp-startup-runtime-1.1.1-25 C:\Users\Admin\.gradle\caches\transforms-4\8094b2df7c10bc3f5e2e2bcf4e0bed22\transformed\startup-runtime-1.1.1\res
+com.example.bikerentalapp-lifecycle-viewmodel-release-26 C:\Users\Admin\.gradle\caches\transforms-4\815f1c218122ac8d29f7b1a9a703c5ac\transformed\lifecycle-viewmodel-release\res
+com.example.bikerentalapp-ui-tooling-preview-release-27 C:\Users\Admin\.gradle\caches\transforms-4\818e7ea7f0060f2201b029f49e48775e\transformed\ui-tooling-preview-release\res
+com.example.bikerentalapp-navigation-common-2.8.3-28 C:\Users\Admin\.gradle\caches\transforms-4\8521c559465cdcf6d6595dfc6c8e2ae6\transformed\navigation-common-2.8.3\res
+com.example.bikerentalapp-lifecycle-viewmodel-ktx-2.8.6-29 C:\Users\Admin\.gradle\caches\transforms-4\8ee2e4f0bb746f8bccb3bc107035217e\transformed\lifecycle-viewmodel-ktx-2.8.6\res
+com.example.bikerentalapp-ui-release-30 C:\Users\Admin\.gradle\caches\transforms-4\a934948d6b5f222badd1c067e14362b4\transformed\ui-release\res
+com.example.bikerentalapp-savedstate-1.2.1-31 C:\Users\Admin\.gradle\caches\transforms-4\a9694b898e55370c688700b4e5f43159\transformed\savedstate-1.2.1\res
+com.example.bikerentalapp-activity-1.9.3-32 C:\Users\Admin\.gradle\caches\transforms-4\aa733aab3bd049d31dd2b48966f0ea6d\transformed\activity-1.9.3\res
+com.example.bikerentalapp-ui-unit-release-33 C:\Users\Admin\.gradle\caches\transforms-4\ac06cc5767fd979d6499b0c911294c8c\transformed\ui-unit-release\res
+com.example.bikerentalapp-lifecycle-runtime-ktx-release-34 C:\Users\Admin\.gradle\caches\transforms-4\acee3cdea27b3a1deee199800e9360c8\transformed\lifecycle-runtime-ktx-release\res
+com.example.bikerentalapp-customview-poolingcontainer-1.0.0-35 C:\Users\Admin\.gradle\caches\transforms-4\b7c23c69f14fa35205a2cbb0b31dac3c\transformed\customview-poolingcontainer-1.0.0\res
+com.example.bikerentalapp-ui-graphics-release-36 C:\Users\Admin\.gradle\caches\transforms-4\b96f8beb56ca842edc70a219cf1ef48d\transformed\ui-graphics-release\res
+com.example.bikerentalapp-lifecycle-runtime-release-37 C:\Users\Admin\.gradle\caches\transforms-4\c21b524533b154e57a9ecda7f479f8ac\transformed\lifecycle-runtime-release\res
+com.example.bikerentalapp-lifecycle-runtime-compose-release-38 C:\Users\Admin\.gradle\caches\transforms-4\cd01b746d91f9d596f9e7218313279ce\transformed\lifecycle-runtime-compose-release\res
+com.example.bikerentalapp-material3-release-39 C:\Users\Admin\.gradle\caches\transforms-4\cf37a3a7244ed97186e3c3ee6bffbb57\transformed\material3-release\res
+com.example.bikerentalapp-foundation-release-40 C:\Users\Admin\.gradle\caches\transforms-4\d07187700cd009ea2b2d1af5be1326a2\transformed\foundation-release\res
+com.example.bikerentalapp-ui-test-manifest-1.7.4-41 C:\Users\Admin\.gradle\caches\transforms-4\d122319ee3d2b23f17cf98097c352225\transformed\ui-test-manifest-1.7.4\res
+com.example.bikerentalapp-lifecycle-process-2.8.6-42 C:\Users\Admin\.gradle\caches\transforms-4\d19563a25f63f921c0d3afc1b9cb3010\transformed\lifecycle-process-2.8.6\res
+com.example.bikerentalapp-appcompat-1.2.0-43 C:\Users\Admin\.gradle\caches\transforms-4\d1e06881a2c0cfa2a58dc554f464cd10\transformed\appcompat-1.2.0\res
+com.example.bikerentalapp-material-icons-core-release-44 C:\Users\Admin\.gradle\caches\transforms-4\ddedca57f884b913e3e061612b3eeb6b\transformed\material-icons-core-release\res
+com.example.bikerentalapp-ui-geometry-release-45 C:\Users\Admin\.gradle\caches\transforms-4\e26bd468af7748b915caae762d56e22d\transformed\ui-geometry-release\res
+com.example.bikerentalapp-foundation-layout-release-46 C:\Users\Admin\.gradle\caches\transforms-4\e2a1dae60558780aed05bf02fdcbc595\transformed\foundation-layout-release\res
+com.example.bikerentalapp-savedstate-ktx-1.2.1-47 C:\Users\Admin\.gradle\caches\transforms-4\e72ff17e1535e3feda1a8e0a1f8edf5c\transformed\savedstate-ktx-1.2.1\res
+com.example.bikerentalapp-constraintlayout-2.1.4-48 C:\Users\Admin\.gradle\caches\transforms-4\eb4db78f666da7ea710d6d1f80ae2827\transformed\constraintlayout-2.1.4\res
+com.example.bikerentalapp-appcompat-resources-1.2.0-49 C:\Users\Admin\.gradle\caches\transforms-4\f0d6a87a3fb3250ec3b498b6b5e34c17\transformed\appcompat-resources-1.2.0\res
+com.example.bikerentalapp-activity-ktx-1.9.3-50 C:\Users\Admin\.gradle\caches\transforms-4\f384ecd2becdc673695a5cfefc42b8ba\transformed\activity-ktx-1.9.3\res
+com.example.bikerentalapp-ui-text-release-51 C:\Users\Admin\.gradle\caches\transforms-4\f80e9082f34fcdc74cbf51a461c90f3d\transformed\ui-text-release\res
+com.example.bikerentalapp-resValues-52 E:\Android Studio\BikeRentalApp\app\build\generated\res\resValues\debug
+com.example.bikerentalapp-packageDebugResources-53 E:\Android Studio\BikeRentalApp\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.bikerentalapp-packageDebugResources-54 E:\Android Studio\BikeRentalApp\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.bikerentalapp-debug-55 E:\Android Studio\BikeRentalApp\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.bikerentalapp-debug-56 E:\Android Studio\BikeRentalApp\app\src\debug\res
+com.example.bikerentalapp-main-57 E:\Android Studio\BikeRentalApp\app\src\main\res
