@@ -23,7 +23,7 @@ import com.example.bikerentalapp.navigation.Screen
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(onClick: () -> Unit) {
     Surface (
         color = Color.White,
         modifier = Modifier
@@ -88,7 +88,7 @@ fun SignInScreen() {
                 ClickableTextLoginComponent(
                     tryingToLogin = false,
                     onTextSelected = {
-                        PostOfficeAppRouter.navigateTo(Screen.SignUpScreen)
+                        onClick()
                     },
                 )
             }
@@ -101,5 +101,5 @@ fun SignInScreen() {
 @Preview
 @Composable
 fun SignInPreview() {
-    SignInScreen()
+    SignInScreen({})
 }

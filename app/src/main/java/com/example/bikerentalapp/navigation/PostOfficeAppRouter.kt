@@ -3,7 +3,7 @@ package com.example.bikerentalapp.navigation
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
-sealed class Screen() {
+sealed class Screen {
     data object SignUpScreen: Screen()
     data object TermOfUse: Screen()
     data object PrivacyPolicy: Screen()

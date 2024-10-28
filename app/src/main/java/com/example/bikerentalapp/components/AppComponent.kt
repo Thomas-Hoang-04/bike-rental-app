@@ -1,6 +1,7 @@
 package com.example.bikerentalapp.components
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
@@ -245,7 +246,7 @@ fun ButtonComponent(value: String) {
 }
 
 @Composable
-fun ClickableTextComponent(value: String,  onTextSelected: (String) -> Unit) {
+fun ClickableTextComponent(value: String, onTextSelected: (String) -> Unit) {
     val initialText = "Bằng cách tiếp tục, bạn đã đọc và đồng ý với "
     val andText = " và "
     val endText = " của chúng tôi."
@@ -254,54 +255,61 @@ fun ClickableTextComponent(value: String,  onTextSelected: (String) -> Unit) {
 
     val annotatedString = buildAnnotatedString {
         append(initialText)
-        withStyle(style = SpanStyle(color = PrimaryColor)) {
-            pushStringAnnotation(tag = "term_of_use", annotation = termOfUseText)
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = termOfUseText,
+                styles = TextLinkStyles(SpanStyle(color = PrimaryColor, fontWeight = FontWeight.SemiBold))
+            ) {
+                onTextSelected(termOfUseText)
+            }
+        ) {
             append(termOfUseText)
         }
 
         append(andText)
-        withStyle(style = SpanStyle(color = PrimaryColor)) {
-            pushStringAnnotation(tag = "policy", annotation = policyText)
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = policyText,
+                styles = TextLinkStyles(SpanStyle(color = PrimaryColor, fontWeight = FontWeight.SemiBold))
+            ) {
+                onTextSelected(policyText)
+            }
+        ) {
             append(policyText)
         }
         append(endText)
     }
 
-    ClickableText(
+    Text(
         text = annotatedString,
         style = TextStyle(
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
             fontSize = 12.sp
-        ),
-        onClick = { offset ->
-            annotatedString.getStringAnnotations(tag = "term_of_use", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onTextSelected(termOfUseText)
-                }
-
-            annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onTextSelected(policyText)
-                }
-        }
+        )
     )
 }
 
 @Composable
-fun ClickableTextLoginComponent(tryingToLogin: Boolean = false, onTextSelected: (String) -> Unit) {
+fun ClickableTextLoginComponent(tryingToLogin: Boolean = false, onTextSelected: () -> Unit) {
     val initialText = if (tryingToLogin) "Bạn đã có tài khoản? " else "Bạn chưa có tài khoản? "
     val loginText = if (tryingToLogin) stringResource(id = R.string.sign_in) else stringResource(id = R.string.sign_up)
 
     val annotatedString = buildAnnotatedString {
         append(initialText)
-        withStyle(style = SpanStyle(color = PrimaryColor, fontWeight = FontWeight.Bold)) {
-            pushStringAnnotation(tag = loginText, annotation = loginText)
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = loginText,
+                styles = TextLinkStyles(SpanStyle(color = PrimaryColor, fontWeight = FontWeight.Bold))
+            ) {
+                onTextSelected()
+            }
+        ) {
             append(loginText)
         }
     }
 
-    ClickableText(
+    Text(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(28.dp),
@@ -312,14 +320,6 @@ fun ClickableTextLoginComponent(tryingToLogin: Boolean = false, onTextSelected: 
             textAlign = TextAlign.Center
         ),
         text = annotatedString,
-        onClick =  { offset ->
-        annotatedString.getStringAnnotations(offset, offset)
-            .firstOrNull()?.also { span ->
-                if (span.item == loginText) {
-                    onTextSelected(span.item)
-                }
-            }
-        }
     )
 }
 
