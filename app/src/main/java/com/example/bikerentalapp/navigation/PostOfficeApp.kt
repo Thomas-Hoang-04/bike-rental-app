@@ -21,6 +21,7 @@ const val ForgotPassword = "forgotPassword"
 const val MainScreen = "mainScreen"
 const val TermsOfUse = "termsOfUse"
 const val PrivacyPolicy = "privacyPolicy"
+const val OTPConfirm = "OTPConfirm"
 
 @Composable
 fun PostOfficeApp() {
@@ -122,7 +123,16 @@ fun PostOfficeApp() {
             }
         ) {
             ForgotPassword(
-                onBackClick = { navController.navigateUp() }
+                onClick = { click ->
+                    when (click) {
+                        ForgotPasswordClicks.BackToSignIn -> {
+                            navController.navigateUp()
+                        }
+                        ForgotPasswordClicks.OTPConfirm -> {
+                            navController.navigate(OTPConfirm)
+                        }
+                    }
+                }
             )
         }
 
@@ -189,6 +199,49 @@ fun PostOfficeApp() {
                 onBackClick = { navController.navigateUp() }
             )
         }
+
+        composable(
+            route = OTPConfirm,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(400)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(400)
+                )
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(400)
+                )
+            }
+        ) {
+            OTPScreen(
+                onClick = { click ->
+                    when (click) {
+                        OTPClicks.BackToSignIn -> {
+                            navController.navigate(Login)
+                        }
+
+                        OTPClicks.OTPConfirm -> {
+                            navController.navigate(MainScreen)
+                        }
+                    }
+                }
+            )
+        }
+
 
         composable(MainScreen) {
             MainScreen()
