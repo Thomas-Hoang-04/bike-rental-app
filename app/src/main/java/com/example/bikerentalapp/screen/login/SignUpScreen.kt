@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,21 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.*
-import com.example.bikerentalapp.navigation.PostOfficeAppRouter
-import com.example.bikerentalapp.navigation.Screen
-import com.example.bikerentalapp.screen.policy.TermsOfUse
 
 
 @Composable
-fun SignUpScreen(onClick: () -> Unit) {
+fun SignUpScreen(onClick: (SignUpClicks) -> Unit) {
     var isTermAccepted by remember { mutableStateOf(false) }
     val termOfUse = stringResource(id = R.string.term_of_use)
     val policy = stringResource(id = R.string.policy)
@@ -119,34 +111,38 @@ fun SignUpScreen(onClick: () -> Unit) {
                 onCheckedChange = { isTermAccepted = it },
                 onTextSelected = { selectedText ->
                     when (selectedText) {
-                        termOfUse -> {
-                            Log.d("SignUpScreen", "Navigating to Terms of Use")
-                            PostOfficeAppRouter.navigateTo(Screen.TermOfUse)
-                        }
-                        policy -> {
-                            Log.d("SignUpScreen", "Navigating to Privacy Policy")
-                            PostOfficeAppRouter.navigateTo(Screen.PrivacyPolicy)
-                        }
+                        termOfUse -> { onClick(SignUpClicks.TermsOfUse)}
+                        policy -> { onClick(SignUpClicks.PrivacyPolicy) }
                     }
                 }
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            ButtonComponent(value = stringResource(id = R.string.sign_up))
+            ButtonComponent(
+                value = stringResource(id = R.string.sign_up),
+                onClick = { onClick(SignUpClicks.SignUpSuccess) }
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            ClickableTextLoginComponent (tryingToLogin = true, onTextSelected = {
-                onClick()
-            })
-
+            ClickableTextLoginComponent (
+                tryingToLogin = true,
+                onTextSelected = { onClick(SignUpClicks.SignIn) }
+            )
         }
     }
+}
+
+sealed class SignUpClicks {
+    data object SignIn: SignUpClicks()
+    data object SignUpSuccess: SignUpClicks()
+    data object TermsOfUse: SignUpClicks()
+    data object PrivacyPolicy: SignUpClicks()
 }
 
 @Preview
 @Composable
 fun SignUpPreview() {
-    SignUpScreen({})
+    SignUpScreen ({})
 }

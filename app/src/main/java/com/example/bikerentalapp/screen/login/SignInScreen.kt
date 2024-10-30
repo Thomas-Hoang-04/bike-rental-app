@@ -2,10 +2,14 @@ package com.example.bikerentalapp.screen.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -18,12 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.*
-import com.example.bikerentalapp.navigation.PostOfficeAppRouter
-import com.example.bikerentalapp.navigation.Screen
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @Composable
-fun SignInScreen(onClick: () -> Unit) {
+fun SignInScreen(onClick: (SignInClicks) -> Unit) {
     Surface (
         color = Color.White,
         modifier = Modifier
@@ -70,7 +72,10 @@ fun SignInScreen(onClick: () -> Unit) {
                         inputType = InputType.Password,
                     )
 
-                    ButtonComponent(value = stringResource(id = R.string.sign_in))
+                    ButtonComponent(
+                        value = stringResource(id = R.string.sign_in),
+                        onClick = { onClick(SignInClicks.SignInSuccess) }
+                    )
 
                     Text(
                         text = stringResource(id = R.string.forgot_password),
@@ -79,7 +84,12 @@ fun SignInScreen(onClick: () -> Unit) {
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Medium
                         ),
-                        color = PrimaryColor
+                        color = PrimaryColor,
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onClick(SignInClicks.ForgotPassword) }
                     )
                 }
 
@@ -88,14 +98,18 @@ fun SignInScreen(onClick: () -> Unit) {
                 ClickableTextLoginComponent(
                     tryingToLogin = false,
                     onTextSelected = {
-                        onClick()
+                        onClick(SignInClicks.SignUp)
                     },
                 )
             }
         }
-
-
     }
+}
+
+sealed class SignInClicks {
+    data object SignUp: SignInClicks()
+    data object ForgotPassword: SignInClicks()
+    data object SignInSuccess: SignInClicks()
 }
 
 @Preview
