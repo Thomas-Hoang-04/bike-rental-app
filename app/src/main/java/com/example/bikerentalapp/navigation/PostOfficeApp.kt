@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +13,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bikerentalapp.screen.login.SignInScreen
 import com.example.bikerentalapp.screen.login.SignUpScreen
-import com.example.bikerentalapp.screen.policy.PrivacyPolicy
-import com.example.bikerentalapp.screen.policy.TermsOfUse
 import kotlinx.serialization.Serializable
 
 
-
+@SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun PostOfficeApp() {
     val navController = rememberNavController()

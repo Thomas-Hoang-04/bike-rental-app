@@ -4,7 +4,7 @@
             "outputFile": "com.example.bikerentalapp-mergeDebugResources-56:/values-lt/values-lt.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\1e2ce6f5167128a8c165c93869a577cc\\transformed\\core-1.13.1\\res\\values-lt\\values-lt.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\9540623840d55b0caffc07ab2d4fc36d\\transformed\\core-1.13.1\\res\\values-lt\\values-lt.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\b7306df91ef5ed843fe5078512c00961\\transformed\\ui-release\\res\\values-lt\\values-lt.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\24db16e533113ce0e86764ee461eb18f\\transformed\\ui-release\\res\\values-lt\\values-lt.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\36087db1f7f32bf86b875b9fce973a4b\\transformed\\material3-release\\res\\values-lt\\values-lt.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\6dee3f44c1c4ed8aa4835d40a8887505\\transformed\\material3-release\\res\\values-lt\\values-lt.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\a19c156d69f5c04be02be481d782192a\\transformed\\foundation-release\\res\\values-lt\\values-lt.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\1eb2f8a055f667ff8d013d0ba0264b37\\transformed\\foundation-release\\res\\values-lt\\values-lt.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -72,7 +72,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\8b512d0e2f1c2e4a782fc79ae890967c\\transformed\\appcompat-1.2.0\\res\\values-lt\\values-lt.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\377f2c7f3b42efe72c0a476f94590835\\transformed\\appcompat-1.2.0\\res\\values-lt\\values-lt.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

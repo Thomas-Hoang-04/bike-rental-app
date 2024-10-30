@@ -4,7 +4,24 @@
             "outputFile": "com.example.bikerentalapp-mergeDebugResources-56:/values-cs/values-cs.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\36087db1f7f32bf86b875b9fce973a4b\\transformed\\material3-release\\res\\values-cs\\values-cs.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\24db16e533113ce0e86764ee461eb18f\\transformed\\ui-release\\res\\values-cs\\values-cs.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,198,281,375,477,569,647,739,830,911,993,1079,1151,1229,1305,1380,1459,1527",
+                        "endColumns": "92,82,93,101,91,77,91,90,80,81,85,71,77,75,74,78,67,119",
+                        "endOffsets": "193,276,370,472,564,642,734,825,906,988,1074,1146,1224,1300,1375,1454,1522,1642"
+                    },
+                    "to": {
+                        "startLines": "36,37,38,39,40,41,42,100,101,102,103,105,106,107,108,110,111,112",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "3529,3622,3705,3799,3901,3993,4071,10360,10451,10532,10614,10783,10855,10933,11009,11185,11264,11332",
+                        "endColumns": "92,82,93,101,91,77,91,90,80,81,85,71,77,75,74,78,67,119",
+                        "endOffsets": "3617,3700,3794,3896,3988,4066,4158,10446,10527,10609,10695,10850,10928,11004,11079,11259,11327,11447"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\6dee3f44c1c4ed8aa4835d40a8887505\\transformed\\material3-release\\res\\values-cs\\values-cs.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\a19c156d69f5c04be02be481d782192a\\transformed\\foundation-release\\res\\values-cs\\values-cs.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\1eb2f8a055f667ff8d013d0ba0264b37\\transformed\\foundation-release\\res\\values-cs\\values-cs.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -38,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\8b512d0e2f1c2e4a782fc79ae890967c\\transformed\\appcompat-1.2.0\\res\\values-cs\\values-cs.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\377f2c7f3b42efe72c0a476f94590835\\transformed\\appcompat-1.2.0\\res\\values-cs\\values-cs.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,7 +72,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\1e2ce6f5167128a8c165c93869a577cc\\transformed\\core-1.13.1\\res\\values-cs\\values-cs.xml",
+                    "source": "C:\\Users\\Admin\\.gradle\\caches\\8.8\\transforms\\9540623840d55b0caffc07ab2d4fc36d\\transformed\\core-1.13.1\\res\\values-cs\\values-cs.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -69,23 +86,6 @@
                         "startOffsets": "2798,2896,2998,3099,3198,3303,3410,11084",
                         "endColumns": "97,101,100,98,104,106,118,100",
                         "endOffsets": "2891,2993,3094,3193,3298,3405,3524,11180"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\b7306df91ef5ed843fe5078512c00961\\transformed\\ui-release\\res\\values-cs\\values-cs.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,198,281,375,477,569,647,739,830,911,993,1079,1151,1229,1305,1380,1459,1527",
-                        "endColumns": "92,82,93,101,91,77,91,90,80,81,85,71,77,75,74,78,67,119",
-                        "endOffsets": "193,276,370,472,564,642,734,825,906,988,1074,1146,1224,1300,1375,1454,1522,1642"
-                    },
-                    "to": {
-                        "startLines": "36,37,38,39,40,41,42,100,101,102,103,105,106,107,108,110,111,112",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "3529,3622,3705,3799,3901,3993,4071,10360,10451,10532,10614,10783,10855,10933,11009,11185,11264,11332",
-                        "endColumns": "92,82,93,101,91,77,91,90,80,81,85,71,77,75,74,78,67,119",
-                        "endOffsets": "3617,3700,3794,3896,3988,4066,4158,10446,10527,10609,10695,10850,10928,11004,11079,11259,11327,11447"
                     }
                 }
             ]
