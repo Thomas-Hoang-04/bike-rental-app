@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,10 +42,11 @@ import com.example.bikerentalapp.ui.theme.TextColor
 
 @Composable
 fun ForgotPassword(
-    onBackClick: () -> Unit
+    onClick: (ForgotPasswordClicks) -> Unit
 ) {
     val phoneNumber = remember { mutableStateOf("") }
     val isPhoneNumberValid = phoneNumber.value.matches(Regex("^[0-9]{10,15}$"))
+
     Surface(
         color = Color.White,
         modifier = Modifier
@@ -58,7 +60,7 @@ fun ForgotPassword(
                 .padding(top = 20.dp)
         ) {
             IconButton(
-                onClick = onBackClick,
+                onClick = { onClick(ForgotPasswordClicks.BackToSignIn) },
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Icon(
@@ -103,6 +105,10 @@ fun ForgotPassword(
                     label = null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryColor,
+                        cursorColor = PrimaryColor
+                    )
                 )
 
                 if (phoneNumber.value.isEmpty()) {
@@ -119,11 +125,11 @@ fun ForgotPassword(
             Spacer(modifier = Modifier.padding(6.dp))
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { onClick(ForgotPasswordClicks.OTPConfirm) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
-                    .height(44.dp),
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isPhoneNumberValid) PrimaryColor else Color.LightGray,
                     contentColor = if (isPhoneNumberValid) Color.White else Color.Gray
@@ -142,6 +148,11 @@ fun ForgotPassword(
         }
 
     }
+}
+
+sealed class ForgotPasswordClicks {
+    data object BackToSignIn: ForgotPasswordClicks()
+    data object OTPConfirm: ForgotPasswordClicks()
 }
 
 @Preview
