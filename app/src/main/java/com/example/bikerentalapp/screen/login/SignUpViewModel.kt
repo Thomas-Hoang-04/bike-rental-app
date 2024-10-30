@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bikerentalapp.components.FocusField
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class SignUpViewModel : ViewModel() {
     var phoneNumber by mutableStateOf("")
@@ -25,7 +27,6 @@ class SignUpViewModel : ViewModel() {
     var isTermAccepted by mutableStateOf(false)
         private set
 
-
     var phoneNumberError by mutableStateOf<String?>(null)
         private set
     var nameError by mutableStateOf<String?>(null)
@@ -37,14 +38,32 @@ class SignUpViewModel : ViewModel() {
     var confirmPasswordError by mutableStateOf<String?>(null)
         private set
 
+    private var focusedField by mutableStateOf<FocusField?>(null)
+
+    fun updateFocusField(field: FocusField) {
+        focusedField = field
+        when (field) {
+            FocusField.PHONE_NUMBER -> validatePhoneNumber(true)
+            FocusField.NAME -> validateName(true)
+            FocusField.DATE_OF_BIRTH -> validateDateOfBirth(true)
+            FocusField.PASSWORD -> validatePassword(true)
+            FocusField.CONFIRM_PASSWORD -> validateConfirmPassword(true)
+            else -> {}
+        }
+    }
+
     fun updatePhoneNumber(value: String) {
         phoneNumber = value
-        validatePhoneNumber()
+        if (focusedField == FocusField.PHONE_NUMBER) {
+            validatePhoneNumber(true)
+        }
     }
 
     fun updateName(value: String) {
         name = value
-        validateName()
+        if (focusedField == FocusField.NAME) {
+            validateName(true)
+        }
     }
 
     fun updateEmail(value: String) {
@@ -53,17 +72,26 @@ class SignUpViewModel : ViewModel() {
 
     fun updateDateOfBirth(value: String) {
         dateOfBirth = value
-        validateDateOfBirth()
+        if (focusedField == FocusField.DATE_OF_BIRTH) {
+            validateDateOfBirth(true)
+        }
     }
 
     fun updatePassword(value: String) {
         password = value
-        validatePassword()
+        if (focusedField == FocusField.PASSWORD) {
+            validatePassword(true)
+        }
+        if (focusedField == FocusField.CONFIRM_PASSWORD && confirmPassword.isNotEmpty()) {
+            validateConfirmPassword(true)
+        }
     }
 
     fun updateConfirmPassword(value: String) {
         confirmPassword = value
-        validateConfirmPassword()
+        if (focusedField == FocusField.CONFIRM_PASSWORD) {
+            validateConfirmPassword(true)
+        }
     }
 
     fun updateReferralCode(value: String) {
@@ -74,64 +102,115 @@ class SignUpViewModel : ViewModel() {
         isTermAccepted = value
     }
 
-    private fun validatePhoneNumber() {
-        phoneNumberError = when {
+    private fun validatePhoneNumber(showError: Boolean = false): Boolean {
+        val error = when {
             phoneNumber.isEmpty() -> "Số điện thoại không được để trống"
             !phoneNumber.matches(Regex("^[0-9]{10}$")) -> "Số điện thoại không hợp lệ"
             else -> null
         }
+
+        if (showError) {
+            phoneNumberError = error
+        }
+        return error == null
     }
 
-    private fun validateName() {
-        nameError = when {
+
+    private fun validateName(showError: Boolean = false): Boolean {
+        val error = when {
             name.isEmpty() -> "Tên không được để trống"
             name.length < 2 -> "Tên phải có ít nhất 2 ký tự"
             else -> null
         }
+
+        if (showError) {
+            nameError = error
+        }
+        return error == null
     }
 
-    private fun validateDateOfBirth() {
-        dateOfBirthError = when {
+
+    private fun validateDateOfBirth(showError: Boolean = false): Boolean {
+        val error = when {
             dateOfBirth.isEmpty() -> "Ngày sinh không được để trống"
-            !dateOfBirth.matches(Regex("^\\d{2}/\\d{2}/\\d{4}$")) -> "Ngày sinh không hợp lệ"
+            !isValidDate(dateOfBirth) -> "Ngày sinh không hợp lệ"
             else -> null
+        }
+
+        if (showError) {
+            dateOfBirthError = error
+        }
+        return error == null
+    }
+
+    private fun isValidDate(date: String): Boolean {
+        return try {
+            val parts = date.split("/")
+            if (parts.size != 3) return false
+            val day = parts[0].toInt()
+            val month = parts[1].toInt()
+            val year = parts[2].toInt()
+
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month - 1)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
-    private fun validatePassword() {
-        passwordError = when {
+    private fun validatePassword(showError: Boolean = false): Boolean {
+        val error = when {
             password.isEmpty() -> "Mật khẩu không được để trống"
             password.length < 6 -> "Mật khẩu phải có ít nhất 6 ký tự"
             else -> null
         }
-        validateConfirmPassword()
+
+        if (showError) {
+            passwordError = error
+        }
+        return error == null
     }
 
-    private fun validateConfirmPassword() {
-        confirmPasswordError = when {
+    private fun validateConfirmPassword(showError: Boolean = false): Boolean {
+        val error = when {
             confirmPassword.isEmpty() -> "Vui lòng nhập lại mật khẩu"
             confirmPassword != password -> "Mật khẩu không khớp"
             else -> null
         }
+
+        if (showError) {
+            confirmPasswordError = error
+        }
+        return error == null
     }
 
-    private fun validateAll(): Boolean {
-        validatePhoneNumber()
-        validateName()
-        validateDateOfBirth()
-        validatePassword()
-        validateConfirmPassword()
+    fun validateAll(): Boolean {
+        val isPhoneValid = validatePhoneNumber(false)
+        val isNameValid = validateName(false)
+        val isDateValid = validateDateOfBirth(false)
+        val isPasswordValid = validatePassword(false)
+        val isConfirmPasswordValid = validateConfirmPassword(false)
 
-        return phoneNumberError == null &&
-                nameError == null &&
-                dateOfBirthError == null &&
-                passwordError == null &&
-                confirmPasswordError == null &&
+        return isPhoneValid &&
+                isNameValid &&
+                isDateValid &&
+                isPasswordValid &&
+                isConfirmPasswordValid &&
                 isTermAccepted
     }
 
     fun signUp(onSuccess: () -> Unit) {
         viewModelScope.launch {
+            validatePhoneNumber(true)
+            validateName(true)
+            validateDateOfBirth(true)
+            validatePassword(true)
+            validateConfirmPassword(true)
+
             if (validateAll()) {
                 onSuccess()
             }
