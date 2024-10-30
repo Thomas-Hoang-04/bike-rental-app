@@ -1,10 +1,20 @@
 package com.example.bikerentalapp.screen.policy
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.ui.theme.TextColor
 
 @Composable
-fun PrivacyPolicy(
+fun TermsOfUse(
     onBackClick: () -> Unit
 ) {
     Surface(
@@ -30,7 +40,7 @@ fun PrivacyPolicy(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 36.dp)
+                .padding(top = 30.dp)
         ) {
             Surface(
                 modifier = Modifier
@@ -56,7 +66,7 @@ fun PrivacyPolicy(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Text(
-                        text = "QUY ĐỊNH VÀ CHÍNH SÁCH",
+                        text = "ĐIỀU KHOẢN SỬ DỤNG",
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
@@ -76,21 +86,7 @@ fun PrivacyPolicy(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "QUY ĐỊNH VÀ CHÍNH SÁCH",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Normal
-                    ),
-                    color = TextColor,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.padding(4.dp))
-
-                Text(
-                    text = "ỨNG DỤNG THƯƠNG MẠI ĐIỆN TỬ",
+                    text = "ĐIỀU KHOẢN SỬ DỤNG DỊCH VỤ XE ĐẠP CÔNG CỘNG",
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -107,6 +103,6 @@ fun PrivacyPolicy(
 
 @Preview
 @Composable
-fun PrivacyPreview() {
-    PrivacyPolicy(onBackClick = {})
+fun TermsPreview() {
+    TermsOfUse {}
 }
