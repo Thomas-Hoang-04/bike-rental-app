@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.bikerentalapp-mergeDebugResources-54:/values-v30/values-v30.xml",
+            "outputFile": "com.example.bikerentalapp-mergeDebugResources-56:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Admin\\.gradle\\caches\\transforms-4\\cf37a3a7244ed97186e3c3ee6bffbb57\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "source": "C:\\Users\\minhh\\.gradle\\caches\\transforms-4\\36087db1f7f32bf86b875b9fce973a4b\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

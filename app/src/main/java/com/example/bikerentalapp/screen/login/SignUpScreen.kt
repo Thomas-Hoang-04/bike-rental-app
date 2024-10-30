@@ -28,7 +28,7 @@ import com.example.bikerentalapp.screen.policy.TermsOfUse
 
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(onClick: () -> Unit) {
     var isTermAccepted by remember { mutableStateOf(false) }
     val termOfUse = stringResource(id = R.string.term_of_use)
     val policy = stringResource(id = R.string.policy)
@@ -138,7 +138,7 @@ fun SignUpScreen() {
             Spacer(modifier = Modifier.weight(1f))
 
             ClickableTextLoginComponent (tryingToLogin = true, onTextSelected = {
-                PostOfficeAppRouter.navigateTo(Screen.SignInScreen)
+                onClick()
             })
 
         }
@@ -148,5 +148,5 @@ fun SignUpScreen() {
 @Preview
 @Composable
 fun SignUpPreview() {
-    SignUpScreen()
+    SignUpScreen({})
 }
