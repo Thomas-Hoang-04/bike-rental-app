@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
@@ -20,27 +20,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 import com.example.bikerentalapp.R
-import com.example.bikerentalapp.navigation.PostOfficeAppRouter
-import com.example.bikerentalapp.navigation.Screen
 import com.example.bikerentalapp.ui.theme.*
-
-
-@Composable
-fun NormalTextComponent(value: String) {
-    Text(
-        text = value,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 40.dp),
-        style = TextStyle(
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Normal,
-            fontStyle = FontStyle.Normal
-        ),
-        color = TextColor,
-        textAlign = TextAlign.Center
-    )
-}
 
 @Composable
 fun HeadingTextComponent(value: String) {
@@ -64,17 +44,22 @@ fun TextInput(
     label: String,
     placeholder: String,
     inputType: InputType = InputType.Text,
-    required: Boolean = false
+    required: Boolean = false,
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
+    error: String? = null,
+    onFocusChange: (Boolean) -> Unit = {},
+    readOnly: Boolean = false
 ) {
-    val textValue = remember { mutableStateOf("") }
     val isPasswordVisible = remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = Color.Gray,
+                color = if (error != null) Color.Red else Color.Gray,
                 shape = RoundedCornerShape(6.dp)
             )
             .background(
@@ -82,6 +67,12 @@ fun TextInput(
                 shape = RoundedCornerShape(6.dp)
             )
             .padding(10.dp)
+            .then(if (readOnly) {
+                Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { onFocusChange(true) }
+            } else Modifier)
     ) {
         Row {
             Text(
@@ -113,18 +104,15 @@ fun TextInput(
                 modifier = Modifier.weight(1f)
             ) {
                 BasicTextField(
-                    value = textValue.value,
-                    onValueChange = { newValue ->
-                        when (inputType) {
-                            is InputType.Phone -> {
-                                if (newValue.all { it.isDigit() }) {
-                                    textValue.value = newValue
-                                }
-                            }
-                            else -> textValue.value = newValue
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            isFocused = focusState.isFocused
+                            onFocusChange(isFocused)
+                        },
+                    enabled = !readOnly,
                     keyboardOptions = when (inputType) {
                         is InputType.Phone -> KeyboardOptions(
                             keyboardType = KeyboardType.Phone,
@@ -154,7 +142,7 @@ fun TextInput(
                     ),
                     decorationBox = { innerText ->
                         Box {
-                            if (textValue.value.isEmpty()) {
+                            if (value.isEmpty()) {
                                 Text(
                                     text = placeholder,
                                     color = Color.Gray,
@@ -171,8 +159,7 @@ fun TextInput(
             if (inputType is InputType.Password) {
                 IconButton(
                     onClick = { isPasswordVisible.value = !isPasswordVisible.value },
-                    modifier = Modifier
-                        .size(18.dp)
+                    modifier = Modifier.size(18.dp)
                 ) {
                     Icon(
                         imageVector = if (isPasswordVisible.value)
@@ -184,55 +171,35 @@ fun TextInput(
                         else
                             "Show password",
                         tint = Color.Gray
-
                     )
                 }
             }
+        }
+
+        if (error != null) {
+            Text(
+                text = error,
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }
 
 @Composable
-fun CheckboxComponent(
+fun ButtonComponent(
     value: String,
-    isChecked: Boolean = false,
-    onCheckedChange: (Boolean) -> Unit = {},
-    onTextSelected: (String) -> Unit
+    onClick: () -> Unit,
+    color: ButtonColors
 ) {
-    Row(
+    Button(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange
-        )
-
-        ClickableTextComponent(
-            value = value,
-            onTextSelected = onTextSelected
-        )
-    }
-}
-
-@Composable
-fun ButtonComponent(value: String) {
-    Button(onClick = { /*TODO*/ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp)
-            .background(
-                color = PrimaryColor,
-                shape = RoundedCornerShape(6.dp)
-            ),
-        colors = ButtonColors(
-            contentColor = Color.White,
-            containerColor = PrimaryColor,
-            disabledContentColor = Color.Gray,
-            disabledContainerColor = disablePrimaryColor
-        )
+            .heightIn(48.dp),
+        colors = color,
+        shape = RoundedCornerShape(6.dp)
     ) {
         Text(
             text = value,
@@ -246,47 +213,35 @@ fun ButtonComponent(value: String) {
 }
 
 @Composable
-fun ClickableTextComponent(value: String, onTextSelected: (String) -> Unit) {
-    val initialText = "Bằng cách tiếp tục, bạn đã đọc và đồng ý với "
-    val andText = " và "
-    val endText = " của chúng tôi."
-    val termOfUseText = stringResource(id = R.string.term_of_use)
-    val policyText = stringResource(id = R.string.policy)
-
+fun ClickableTextComponent(
+    texts: List<AnnotatedText>,
+    style: TextStyle = TextStyle (
+        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Normal,
+        fontSize = 12.sp
+    )
+) {
     val annotatedString = buildAnnotatedString {
-        append(initialText)
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = termOfUseText,
-                styles = TextLinkStyles(SpanStyle(color = PrimaryColor, fontWeight = FontWeight.SemiBold))
-            ) {
-                onTextSelected(termOfUseText)
+        texts.forEach { text ->
+            when (text) {
+                is AnnotatedText.Plain -> append(text = text.text)
+                is AnnotatedText.Clickable -> withLink(
+                    LinkAnnotation.Clickable(
+                        tag = text.text,
+                        styles = TextLinkStyles(text.style)
+                    ) {
+                        text.onClick(text.text)
+                    }
+                ) {
+                    append(text.text)
+                }
             }
-        ) {
-            append(termOfUseText)
         }
-
-        append(andText)
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = policyText,
-                styles = TextLinkStyles(SpanStyle(color = PrimaryColor, fontWeight = FontWeight.SemiBold))
-            ) {
-                onTextSelected(policyText)
-            }
-        ) {
-            append(policyText)
-        }
-        append(endText)
     }
 
     Text(
         text = annotatedString,
-        style = TextStyle(
-            fontWeight = FontWeight.Normal,
-            fontStyle = FontStyle.Normal,
-            fontSize = 12.sp
-        )
+        style = style
     )
 }
 
