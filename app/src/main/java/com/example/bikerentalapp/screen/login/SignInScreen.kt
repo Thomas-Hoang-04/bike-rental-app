@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,21 +20,25 @@ import androidx.compose.ui.text.font.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.*
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import com.example.bikerentalapp.ui.theme.disablePrimaryColor
 
 @Composable
-fun SignInScreen(onClick: (SignInClicks) -> Unit) {
-    Surface (
+fun SignInScreen(
+    onClick: (SignInClicks) -> Unit,
+    viewModel: SignInViewModel = viewModel()
+) {
+    Surface(
         color = Color.White,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Column (
-            modifier = Modifier
-                .fillMaxSize(),
+        Column(
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top
         ) {
             Image(
@@ -45,7 +50,7 @@ fun SignInScreen(onClick: (SignInClicks) -> Unit) {
                 contentScale = ContentScale.Crop
             )
 
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 24.dp),
@@ -63,17 +68,33 @@ fun SignInScreen(onClick: (SignInClicks) -> Unit) {
                         label = "Số điện thoại",
                         placeholder = "Nhập số điện thoại",
                         inputType = InputType.Phone,
+                        value = viewModel.phoneNumber,
+                        onValueChange = viewModel::updatePhoneNumber,
+                        error = viewModel.phoneNumberError
                     )
 
                     TextInput(
                         label = "Mật khẩu",
                         placeholder = "Nhập mật khẩu",
                         inputType = InputType.Password,
+                        value = viewModel.password,
+                        onValueChange = viewModel::updatePassword,
+                        error = viewModel.passwordError
                     )
 
                     ButtonComponent(
                         value = stringResource(id = R.string.sign_in),
-                        onClick = { onClick(SignInClicks.SignInSuccess) }
+                        onClick = {
+                            viewModel.signIn {
+                                onClick(SignInClicks.SignInSuccess)
+                            }
+                        },
+                        color = ButtonColors(
+                            contentColor = Color.White,
+                            containerColor = PrimaryColor,
+                            disabledContentColor = Color.Gray,
+                            disabledContainerColor = disablePrimaryColor
+                        )
                     )
 
                     Text(
@@ -88,7 +109,10 @@ fun SignInScreen(onClick: (SignInClicks) -> Unit) {
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { onClick(SignInClicks.ForgotPassword) }
+                            ) {
+                                onClick(SignInClicks.ForgotPassword)
+                            }
+                            .fillMaxWidth(),
                     )
                 }
 
@@ -98,7 +122,7 @@ fun SignInScreen(onClick: (SignInClicks) -> Unit) {
                     tryingToLogin = false,
                     onTextSelected = {
                         onClick(SignInClicks.SignUp)
-                    },
+                    }
                 )
             }
         }
@@ -114,5 +138,5 @@ sealed class SignInClicks {
 @Preview
 @Composable
 fun SignInPreview() {
-    SignInScreen {}
+    SignInScreen({})
 }
