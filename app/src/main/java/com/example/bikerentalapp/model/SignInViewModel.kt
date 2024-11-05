@@ -1,4 +1,4 @@
-package com.example.bikerentalapp.screen.login
+package com.example.bikerentalapp.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

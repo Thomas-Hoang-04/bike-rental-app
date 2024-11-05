@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.*
+import com.example.bikerentalapp.model.SignInViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
 

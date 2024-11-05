@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.*
+import com.example.bikerentalapp.model.SignUpViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @Composable
