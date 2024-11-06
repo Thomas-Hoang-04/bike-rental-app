@@ -1,11 +1,13 @@
 package com.example.bikerentalapp.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -13,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.ui.theme.*
+import java.util.Calendar
 
 @Composable
 fun HeadingTextComponent(value: String) {
@@ -246,7 +251,10 @@ fun ClickableTextComponent(
 }
 
 @Composable
-fun ClickableTextLoginComponent(tryingToLogin: Boolean = false, onTextSelected: () -> Unit) {
+fun ClickableTextLoginComponent(
+    tryingToLogin: Boolean = false,
+    onTextSelected: () -> Unit
+) {
     val initialText = if (tryingToLogin) "Bạn đã có tài khoản? " else "Bạn chưa có tài khoản? "
     val loginText = if (tryingToLogin) stringResource(id = R.string.sign_in) else stringResource(id = R.string.sign_up)
 
@@ -278,3 +286,145 @@ fun ClickableTextLoginComponent(tryingToLogin: Boolean = false, onTextSelected: 
     )
 }
 
+@SuppressLint("DefaultLocale")
+@Composable
+fun DatePickerDialog(
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val calendar = Calendar.getInstance()
+    val context = LocalContext.current
+
+    val maxCalendar = Calendar.getInstance()
+    maxCalendar.add(Calendar.YEAR, -18)
+
+    val minCalendar = Calendar.getInstance()
+    minCalendar.add(Calendar.YEAR, -100)
+
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            onDateSelected(
+                String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+            )
+        },
+        maxCalendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    datePickerDialog.datePicker.apply {
+        maxDate = maxCalendar.timeInMillis
+        minDate = minCalendar.timeInMillis
+    }
+
+    datePickerDialog.setOnDismissListener {
+        onDismiss()
+    }
+
+    datePickerDialog.show()
+}
+
+@Composable
+fun FeatureCard(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Card (
+            modifier = Modifier
+                .size(84.dp)
+                .clickable(onClick = onClick),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 9.dp
+            ),
+            shape = RoundedCornerShape(10.dp),
+
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = PrimaryColor,
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+            }
+
+        }
+
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            ),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@Composable
+fun SearchBar(
+    hint: String,
+    searchText: String,
+    onSearchChange: (String) -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = onSearchChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        placeholder = {
+            Text(
+                text = hint,
+                color = Color.White.copy(alpha = 0.7f),
+                style = TextStyle(
+                    fontSize = 15.sp
+                )
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = Color.White
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.White,
+            unfocusedBorderColor = Color.White,
+            cursorColor = Color.White,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White
+        ),
+        textStyle = TextStyle(
+            fontSize = 15.sp
+        ),
+        shape = RoundedCornerShape(8.dp),
+        singleLine = true,
+        visualTransformation = VisualTransformation.None,
+        interactionSource = interactionSource,
+    )
+}
