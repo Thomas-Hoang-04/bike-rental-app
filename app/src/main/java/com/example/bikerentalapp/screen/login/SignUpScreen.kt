@@ -215,7 +215,7 @@ fun SignUpScreen(
 
             ClickableTextLoginComponent(
                 tryingToLogin = true,
-                onTextSelected = { onClick(SignUpClicks.SignIn) }
+                onTextSelected = { onClick(SignUpClicks.SignIn) },
             )
         }
     }
