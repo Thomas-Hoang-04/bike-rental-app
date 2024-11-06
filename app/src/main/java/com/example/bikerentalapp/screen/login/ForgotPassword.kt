@@ -28,10 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -85,12 +87,19 @@ fun ForgotPassword(
                     .heightIn(min = 40.dp),
                 style = TextStyle(
                     fontSize = 15.sp,
-                    fontStyle = FontStyle.Normal
+                    fontStyle = FontStyle.Normal,
+                    lineHeight = 20.sp
                 ),
                 color = TextColor,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = TextStyle(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both
+                    )
+                ).fontSize
             )
-
 
             Box(
                 modifier = Modifier

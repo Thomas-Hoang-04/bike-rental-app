@@ -42,6 +42,8 @@ import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 
 @Composable
 fun OTPScreen(
@@ -126,10 +128,18 @@ fun OTPScreen(
                     .heightIn(min = 40.dp),
                 style = TextStyle(
                     fontSize = 15.sp,
-                    fontStyle = FontStyle.Normal
+                    fontStyle = FontStyle.Normal,
+                    lineHeight = 20.sp
                 ),
                 color = TextColor,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = TextStyle(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both
+                    )
+                ).fontSize
             )
 
             Spacer(modifier = Modifier.padding(6.dp))
@@ -189,7 +199,7 @@ fun OTPScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
@@ -199,7 +209,8 @@ fun OTPScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(48.dp)
+                    .padding(start = 6.dp, end = 6.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isOTPComplete) PrimaryColor else Color.Gray,
                     contentColor = Color.White,
