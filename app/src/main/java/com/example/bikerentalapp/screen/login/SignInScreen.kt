@@ -10,9 +10,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +34,9 @@ fun SignInScreen(
     onClick: (SignInClicks) -> Unit,
     viewModel: SignInViewModel = viewModel()
 ) {
+    val config = LocalConfiguration.current
+    val screenHeight = config.screenHeightDp.dp
+
     Surface(
         color = Color.White,
         modifier = Modifier
@@ -47,7 +52,7 @@ fun SignInScreen(
                 contentDescription = "Login Image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp),
+                    .aspectRatio((screenHeight/2.1F) / config.screenWidthDp.dp),
                 contentScale = ContentScale.Crop
             )
 
@@ -55,16 +60,19 @@ fun SignInScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HeadingTextComponent(value = stringResource(id = R.string.sign_in))
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp),
+                        .padding(top = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    HeadingTextComponent(value = stringResource(id = R.string.sign_in))
+
+                    Spacer(modifier = Modifier.padding(2.dp))
+
                     TextInput(
                         label = "Số điện thoại",
                         placeholder = "Nhập số điện thoại",
@@ -115,16 +123,16 @@ fun SignInScreen(
                             }
                             .fillMaxWidth(),
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    ClickableTextLoginComponent(
+                        tryingToLogin = false,
+                        onTextSelected = {
+                            onClick(SignInClicks.SignUp)
+                        }
+                    )
                 }
-
-                Spacer(modifier = Modifier.padding(32.dp))
-
-                ClickableTextLoginComponent(
-                    tryingToLogin = false,
-                    onTextSelected = {
-                        onClick(SignInClicks.SignUp)
-                    }
-                )
             }
         }
     }
