@@ -13,12 +13,12 @@ import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
 import com.example.bikerentalapp.screen.login.SignUpClicks
-import com.example.bikerentalapp.screen.main.MainScreen
+import com.example.bikerentalapp.screen.main.HomeScreen
 
 const val Login = "login"
 const val SignUp = "signup"
 const val ForgotPassword = "forgotPassword"
-const val MainScreen = "mainScreen"
+const val HomeScreen = "homeScreen"
 const val TermsOfUse = "termsOfUse"
 const val PrivacyPolicy = "privacyPolicy"
 const val OTPConfirm = "OTPConfirm"
@@ -37,7 +37,7 @@ fun PostOfficeApp() {
                         SignInClicks.SignUp -> { navController.navigate(SignUp) }
                         SignInClicks.ForgotPassword -> { navController.navigate(ForgotPassword) }
                         SignInClicks.SignInSuccess -> {
-                            navController.navigate(MainScreen) {
+                            navController.navigate(HomeScreen) {
                                 popUpTo(Login) { inclusive = true }
                             }
                         }
@@ -77,7 +77,7 @@ fun PostOfficeApp() {
                 onClick = { click ->
                     when (click) {
                         SignUpClicks.SignUpSuccess -> {
-                            navController.navigate(MainScreen) {
+                            navController.navigate(HomeScreen) {
                                 popUpTo(SignUp) { inclusive = true }
                             }
                         }
@@ -235,7 +235,7 @@ fun PostOfficeApp() {
                         }
 
                         OTPClicks.OTPConfirm -> {
-                            navController.navigate(MainScreen)
+                            navController.navigate(HomeScreen)
                         }
                     }
                 }
@@ -243,8 +243,8 @@ fun PostOfficeApp() {
         }
 
 
-        composable(MainScreen) {
-            MainScreen()
+        composable(HomeScreen) {
+            HomeScreen {}
         }
     }
 }
