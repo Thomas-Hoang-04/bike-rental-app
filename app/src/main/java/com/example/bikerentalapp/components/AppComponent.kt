@@ -340,13 +340,10 @@ fun FeatureCard(
     ) {
         Card (
             modifier = Modifier
-                .size(84.dp)
+                .size(72.dp)
                 .clickable(onClick = onClick),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 9.dp
             ),
             shape = RoundedCornerShape(10.dp),
 
@@ -361,7 +358,7 @@ fun FeatureCard(
                     contentDescription = title,
                     tint = PrimaryColor,
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(56.dp)
                 )
             }
 
@@ -373,14 +370,13 @@ fun FeatureCard(
         Text(
             text = title,
             style = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
             ),
             textAlign = TextAlign.Center
         )
     }
 }
-
 
 @Composable
 fun SearchBar(
@@ -395,13 +391,13 @@ fun SearchBar(
         onValueChange = onSearchChange,
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(45.dp),
         placeholder = {
             Text(
                 text = hint,
                 color = Color.White.copy(alpha = 0.7f),
                 style = TextStyle(
-                    fontSize = 15.sp
+                    fontSize = 12.sp
                 )
             )
         },
@@ -420,11 +416,53 @@ fun SearchBar(
             unfocusedTextColor = Color.White
         ),
         textStyle = TextStyle(
-            fontSize = 15.sp
+            fontSize = 12.sp
         ),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(14.dp),
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         interactionSource = interactionSource,
+
     )
 }
+
+@Composable
+fun GridLayout(
+    items: List<FeatureItem>,
+    column: Int,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        val rows = (items.size + column - 1) / column
+
+        for (rowIndex in 0 until rows) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                for (columnIndex in 0 until column) {
+                    val itemIndex = rowIndex * column + columnIndex
+                    if (itemIndex < items.size) {
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            FeatureCard(
+                                icon = items[itemIndex].icon,
+                                title = items[itemIndex].title,
+                                onClick = items[itemIndex].onClick
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
