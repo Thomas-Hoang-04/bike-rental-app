@@ -24,6 +24,12 @@ val navigationItems = listOf(
         icon = Icons.Default.LocationOn,
         route = "station"
     ),
+    //This item is hidden from the navigation bar and is only used for adding more space between items 2 and 3
+    NavigationItem(
+        label = "Example",
+        icon = Icons.Default.Notifications,
+        route = "Example"
+    ),
     NavigationItem(
         label = "Thông báo",
         icon = Icons.Default.Notifications,
