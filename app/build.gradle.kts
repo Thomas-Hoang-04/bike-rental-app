@@ -82,4 +82,9 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
+    implementation(libs.maps.compose)
+    // Google Maps Compose utility library
+    implementation(libs.maps.compose.utils)
+    // Google Maps Compose widgets library
+    implementation(libs.maps.compose.widgets)
 }
