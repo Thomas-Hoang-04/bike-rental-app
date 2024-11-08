@@ -13,32 +13,34 @@ import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
 import com.example.bikerentalapp.screen.login.SignUpClicks
-import com.example.bikerentalapp.screen.main.HomeScreen
+import com.example.bikerentalapp.screen.main.MainNavigationScreen
 
-const val Login = "login"
-const val SignUp = "signup"
-const val ForgotPassword = "forgotPassword"
-const val HomeScreen = "homeScreen"
-const val TermsOfUse = "termsOfUse"
-const val PrivacyPolicy = "privacyPolicy"
-const val OTPConfirm = "OTPConfirm"
+enum class NavigationScreens{
+    Login,
+    SignUp,
+    ForgotPassword,
+    TermsOfUse,
+    PrivacyPolicy,
+    OTPConfirm,
+    MainScreen,
+}
 
 @Composable
 fun PostOfficeApp() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Login,
+        startDestination = NavigationScreens.Login.name,
     ) {
-        composable(Login) {
+        composable(NavigationScreens.Login.name) {
             SignInScreen(
                 onClick = { click ->
                     when(click) {
-                        SignInClicks.SignUp -> { navController.navigate(SignUp) }
-                        SignInClicks.ForgotPassword -> { navController.navigate(ForgotPassword) }
+                        SignInClicks.SignUp -> { navController.navigate(NavigationScreens.SignUp.name) }
+                        SignInClicks.ForgotPassword -> { navController.navigate(NavigationScreens.ForgotPassword.name) }
                         SignInClicks.SignInSuccess -> {
-                            navController.navigate(HomeScreen) {
-                                popUpTo(Login) { inclusive = true }
+                            navController.navigate(NavigationScreens.MainScreen.name) {
+                                popUpTo(NavigationScreens.Login.name) { inclusive = true }
                             }
                         }
                     }
@@ -47,7 +49,7 @@ fun PostOfficeApp() {
         }
 
         composable(
-            route = SignUp,
+            route = NavigationScreens.SignUp.name,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -77,18 +79,18 @@ fun PostOfficeApp() {
                 onClick = { click ->
                     when (click) {
                         SignUpClicks.SignUpSuccess -> {
-                            navController.navigate(HomeScreen) {
-                                popUpTo(SignUp) { inclusive = true }
+                            navController.navigate(NavigationScreens.MainScreen.name) {
+                                popUpTo(NavigationScreens.SignUp.name) { inclusive = true }
                             }
                         }
                         SignUpClicks.SignIn -> {
                             navController.navigateUp()
                         }
                         SignUpClicks.TermsOfUse -> {
-                            navController.navigate(TermsOfUse)
+                            navController.navigate(NavigationScreens.TermsOfUse.name)
                         }
                         SignUpClicks.PrivacyPolicy -> {
-                            navController.navigate(PrivacyPolicy)
+                            navController.navigate(NavigationScreens.PrivacyPolicy.name)
                         }
                     }
                 }
@@ -96,7 +98,7 @@ fun PostOfficeApp() {
         }
 
         composable(
-            route = ForgotPassword,
+            route = NavigationScreens.ForgotPassword.name,
             enterTransition = {
                 slideInVertically(
                     initialOffsetY = { fullHeight -> fullHeight },
@@ -129,7 +131,7 @@ fun PostOfficeApp() {
                             navController.navigateUp()
                         }
                         ForgotPasswordClicks.OTPConfirm -> {
-                            navController.navigate(OTPConfirm)
+                            navController.navigate(NavigationScreens.OTPConfirm.name)
                         }
                     }
                 }
@@ -137,7 +139,7 @@ fun PostOfficeApp() {
         }
 
         composable(
-            route = TermsOfUse,
+            route = NavigationScreens.TermsOfUse.name,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -169,7 +171,7 @@ fun PostOfficeApp() {
         }
 
         composable(
-            route = PrivacyPolicy,
+            route = NavigationScreens.PrivacyPolicy.name,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -201,7 +203,7 @@ fun PostOfficeApp() {
         }
 
         composable(
-            route = OTPConfirm,
+            route = NavigationScreens.OTPConfirm.name,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },
@@ -231,11 +233,13 @@ fun PostOfficeApp() {
                 onClick = { click ->
                     when (click) {
                         OTPClicks.BackToSignIn -> {
-                            navController.navigate(Login)
+                            navController.navigate(NavigationScreens.Login.name)
                         }
 
                         OTPClicks.OTPConfirm -> {
-                            navController.navigate(HomeScreen)
+                            navController.navigate(NavigationScreens.MainScreen.name) {
+                                popUpTo(NavigationScreens.OTPConfirm.name) { inclusive = true }
+                            }
                         }
                     }
                 }
@@ -243,8 +247,8 @@ fun PostOfficeApp() {
         }
 
 
-        composable(HomeScreen) {
-            HomeScreen {}
+        composable(NavigationScreens.MainScreen.name) {
+            MainNavigationScreen()
         }
     }
 }
