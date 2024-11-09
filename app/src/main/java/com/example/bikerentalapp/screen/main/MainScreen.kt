@@ -1,7 +1,5 @@
 package com.example.bikerentalapp.screen.main
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -10,16 +8,15 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FabPosition
-import androidx.compose.material3.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,11 +28,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
-import coil.imageLoader
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.navigationItems
+import com.example.bikerentalapp.screen.main.station.StationsScreen
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MainNavigationScreen(){
@@ -75,15 +72,9 @@ fun MainNavigationScreen(){
                 containerColor = PrimaryColor,
                 contentColor = Color.White
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = R.drawable.qr_scan,
-                        imageLoader = LocalContext.current.imageLoader
-                    ),
-                    contentDescription = "Scan QR Code",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
+                GlideImage(
+                    imageModel = { R.drawable.qr_scan},
+                    modifier = Modifier.size(56.dp).clip(CircleShape)
                 )
             }
         }
