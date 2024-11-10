@@ -77,15 +77,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.navigation.compose)
     implementation(libs.compose.ui)
     implementation(libs.compose.material)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
     implementation(libs.maps.compose)
     // Google Maps Compose utility library
     implementation(libs.maps.compose.utils)
     // Google Maps Compose widgets library
     implementation(libs.maps.compose.widgets)
+    // Load gif images
     implementation(libs.landscapist.glide)
 }
