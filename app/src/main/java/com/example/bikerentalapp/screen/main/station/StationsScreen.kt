@@ -29,7 +29,7 @@ fun StationsScreen() {
     }
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(21.043303, 105.793921), 12f, 0f, 0f)
+        position = CameraPosition(LatLng(21.043303, 105.793921), 15f, 0f, 0f)
     }
 // The screen with map of bike stations (Refer Trạm xe on TNGo)
     if(permissionState){
@@ -41,8 +41,14 @@ fun StationsScreen() {
                 zoomControlsEnabled = false,
                 compassEnabled = false
             ),
-            properties = MapProperties(isMyLocationEnabled = true),
-        )
+            properties = MapProperties(isMyLocationEnabled = true, minZoomPreference = 11f, maxZoomPreference = 20f),
+        ){
+            if(isMapLoaded){
+                StationCluster(
+                    stationList = mapViewModel.stationList,
+                )
+            }
+        }
     }else SideEffect{
         launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
     }
