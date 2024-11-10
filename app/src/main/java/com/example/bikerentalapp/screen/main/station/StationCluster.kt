@@ -141,7 +141,7 @@ fun ClusterItemContent(
 ){
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(40.dp),
         color = PrimaryColor,
         contentColor = Color.White,
         border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.12f))
@@ -149,7 +149,7 @@ fun ClusterItemContent(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp, 6.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -162,7 +162,7 @@ fun ClusterItemContent(
                 val imageBitmap: ImageBitmap = bitmap.asImageBitmap()
                 Image(bitmap = imageBitmap, contentDescription = null, modifier = Modifier.size(15.dp))
             }
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = text,
                 fontSize = 14.sp,
