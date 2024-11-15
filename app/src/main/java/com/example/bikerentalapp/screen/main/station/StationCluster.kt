@@ -1,7 +1,6 @@
 package com.example.bikerentalapp.screen.main.station
 
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,13 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,18 +32,15 @@ import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterItem
-import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.clustering.Clustering
-import com.google.maps.android.compose.clustering.rememberClusterManager
-import com.google.maps.android.compose.clustering.rememberClusterRenderer
 
 data class StationClusterItem(
     val station : Station,
 ) : ClusterItem {
     override fun getPosition() = LatLng(station.lat, station.lng)
     override fun getTitle() = "Station ${station.id}"
-    override fun getSnippet() = "Has ${station.numberBicycle} bicycles"
+    override fun getSnippet() = "Has ${station.listBicycle.size} bicycles"
     override fun getZIndex() = 0f
 }
 
@@ -57,58 +51,23 @@ fun StationCluster(
     onClusterClick: (Cluster<out ClusterItem>) -> Boolean = { false },
     onStationClick: (ClusterItem) -> Boolean = { false },
 ){
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-    val clusterManager = rememberClusterManager<StationClusterItem>()
-
-    clusterManager?.setAlgorithm(
-        NonHierarchicalViewBasedAlgorithm(
-            screenWidth.value.toInt(),
-            screenHeight.value.toInt()
-        )
-    )
-
-    val renderer = rememberClusterRenderer(
+    Clustering(
+        items = stationList.map { StationClusterItem(it) },
+        onClusterClick = onClusterClick,
+        onClusterItemClick = onStationClick,
         clusterContent = { cluster ->
             ClusterContent(
                 modifier = Modifier.size(50.dp),
                 text = "%,d".format(cluster.size),
             )
         },
-        clusterItemContent = {
+        clusterItemContent = { item ->
             ClusterItemContent(
                 modifier = Modifier.width(70.dp),
-                text = it.station.numberBicycle.toString(),
+                text = item.station.listBicycle.size.toString()
             )
         },
-        clusterManager = clusterManager,
     )
-
-    SideEffect {
-        clusterManager ?: return@SideEffect
-        clusterManager.setOnClusterClickListener {
-            onClusterClick(it)
-        }
-        clusterManager.setOnClusterItemClickListener {
-            onStationClick(it)
-        }
-        clusterManager.setOnClusterItemInfoWindowClickListener {
-            Log.d("TAG", "Cluster item info window clicked! $it")
-        }
-    }
-    SideEffect {
-        if (clusterManager?.renderer != renderer) {
-            clusterManager?.renderer = renderer ?: return@SideEffect
-        }
-    }
-
-    if (clusterManager != null) {
-        Clustering(
-            items = stationList.map { StationClusterItem(it) },
-            clusterManager = clusterManager,
-        )
-    }
 }
 
 @Composable
@@ -142,7 +101,7 @@ fun ClusterItemContent(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(40.dp),
-        color = PrimaryColor,
+        color = if(text.toInt() > 6)PrimaryColor else Color(0xffa5682a),
         contentColor = Color.White,
         border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.12f))
     ) {
