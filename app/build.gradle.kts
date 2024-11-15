@@ -84,6 +84,9 @@ dependencies {
     implementation(libs.maps.compose.utils)
     // Google Maps Compose widgets library
     implementation(libs.maps.compose.widgets)
+    implementation (libs.play.services.location)
     // Load gif images
     implementation(libs.landscapist.glide)
+    //Bottom Sheet
+    implementation(libs.flexible.bottomsheet.material3)
 }
