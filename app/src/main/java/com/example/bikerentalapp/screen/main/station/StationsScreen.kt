@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,9 +24,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.PedalBike
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Navigation
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,9 +47,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import com.example.bikerentalapp.R
+import com.example.bikerentalapp.components.SearchBarWithDebounce
+import com.example.bikerentalapp.components.StationInfoCard
+import com.example.bikerentalapp.model.BikeStatus
 import com.example.bikerentalapp.model.Station
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationServices
@@ -64,6 +75,7 @@ import kotlinx.coroutines.launch
 fun StationsScreen() {
     val context = LocalContext.current
     val mapViewModel = remember { GoogleMapViewModel() }
+    val searchStationState by mapViewModel.searchState.collectAsState()
     val permissionState by mapViewModel.locationPermissionGranted.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -88,6 +100,9 @@ fun StationsScreen() {
     )
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedStation by remember { mutableStateOf<Station?>(null) }
+
+    val kbController = LocalSoftwareKeyboardController.current
+    var text by remember { mutableStateOf("") }
 
     LaunchedEffect(permissionState) {
         if (ActivityCompat.checkSelfPermission(
@@ -123,7 +138,8 @@ fun StationsScreen() {
                     cameraPositionState = cameraPositionState,
                     uiSettings = MapUiSettings(
                         zoomControlsEnabled = false,
-                        compassEnabled = false
+                        compassEnabled = false,
+                        myLocationButtonEnabled = false,
                     ),
                     properties = MapProperties(
                         isMyLocationEnabled = true,
@@ -162,6 +178,48 @@ fun StationsScreen() {
                         )
                     }
                 }
+                SearchBarWithDebounce(
+                    query = text,
+                    onQueryChange = {text = it},
+                    onSearch = {
+                        coroutineScope.launch {
+                            mapViewModel.searchStation(it)
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    onActiveChange = {},
+                    placeholder = { Text("Search station") },
+                    kbController = kbController,
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Stations") },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            text = ""
+                            kbController?.hide()
+                            mapViewModel.searchStation("")
+                        }) {
+                            Icon(Icons.Default.DeleteForever, contentDescription = "Clear search")
+                        }
+                    },
+                    items =searchStationState.stationList ?: emptyList(),
+                    rows = { station ->
+                        StationInfoCard(
+                            station = station,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .background(Color.White)
+                                .clickable {
+                                    text = ""
+                                    kbController?.hide()
+                                    mapViewModel.selectDevice(
+                                        station,
+                                        cameraPositionState,
+                                        coroutineScope
+                                    )
+                                }
+                        )
+                    }
+                )
                 if (showBottomSheet) {
                     FlexibleBottomSheet(
                         onDismissRequest = {
@@ -192,49 +250,61 @@ fun StationDetailsBottomSheet(station: Station) {
             .background(Color.White)
             .padding(start = 16.dp, end = 16.dp)
     ) {
-        Text(
-            text = "Station:${station.id}",
-            fontSize = 20.sp,
-            color = PrimaryColor,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
         ) {
             Text(
-                text = "Distance: ${station.id} km",
-                fontSize = 16.sp,
-                color = Color.Gray
+                text = station.id,
+                fontSize = 20.sp,
+                color = PrimaryColor,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
-            OutlinedButton(
-                onClick = {
-                    val uri = Uri.parse("google.navigation:q=${station.lat},${station.lng}&mode=d")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-                        setPackage("com.google.android.apps.maps")
-                    }
 
-                    if (mapIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(mapIntent)
-                    }
-                },
-                shape = RoundedCornerShape(12),
-                border = BorderStroke(width = 1.dp, color = PrimaryColor),
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier.size(50.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Navigation,
-                    contentDescription = "Navigate",
-                    tint = PrimaryColor,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .rotate(50f)
+                OutlinedButton(
+                    onClick = {
+                        val uri = Uri.parse("google.navigation:q=${station.lat},${station.lng}&mode=d")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+                            setPackage("com.google.android.apps.maps")
+                        }
+
+                        if (mapIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(mapIntent)
+                        }
+                    },
+                    shape = RoundedCornerShape(12),
+                    border = BorderStroke(width = 1.dp, color = PrimaryColor),
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.size(50.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Navigation,
+                        contentDescription = "Navigate",
+                        tint = PrimaryColor,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .rotate(50f)
+                    )
+                }
+                Spacer(modifier =Modifier.height(4.dp))
+                Text(
+                    text = "${station.farAway} m",
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
             }
         }
+        Text(
+            text = "Address: ${station.address}",
+            fontSize = 16.sp,
+            color = Color.Gray
+        )
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
@@ -269,8 +339,12 @@ fun StationDetailsBottomSheet(station: Station) {
                             color = Color.Gray
                         )
                         Text(
-                            text = "Available: ${bicycle.isAvailable}",
-                            color = if (bicycle.isAvailable) Color.Green else Color.Red
+                            text = "Available: ${bicycle.bikeStatus}",
+                            color = when(bicycle.bikeStatus){
+                                BikeStatus.IN_USE -> PrimaryColor
+                                BikeStatus.AVAILABLE -> Color.Green
+                                BikeStatus.CHARGING -> Color.Blue
+                            }
                         )
                     }
                 }
@@ -278,3 +352,5 @@ fun StationDetailsBottomSheet(station: Station) {
         }
     }
 }
+
+
