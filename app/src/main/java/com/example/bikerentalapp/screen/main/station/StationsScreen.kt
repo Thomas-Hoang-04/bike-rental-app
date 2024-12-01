@@ -8,18 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,11 +37,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.SearchBarWithDebounce
 import com.example.bikerentalapp.components.StationInfoCard
 import com.example.bikerentalapp.model.BikeStatus
@@ -125,7 +112,9 @@ fun StationsScreen() {
     }
 // The screen with map of bike stations (Refer Trạm xe on TNGo)
     if(permissionState){
-        Scaffold {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) {
             paddingValues ->
             Box(
                 modifier = Modifier
@@ -269,10 +258,10 @@ fun StationDetailsBottomSheet(station: Station) {
             ) {
                 OutlinedButton(
                     onClick = {
-                        val uri = Uri.parse("google.navigation:q=${station.lat},${station.lng}&mode=d")
-                        val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-                            setPackage("com.google.android.apps.maps")
-                        }
+                        val uri = Uri.parse(
+                            "https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}&travelmode=two-wheeler"
+                        )
+                        val mapIntent = Intent(Intent.ACTION_VIEW, uri)
 
                         if (mapIntent.resolveActivity(context.packageManager) != null) {
                             context.startActivity(mapIntent)
