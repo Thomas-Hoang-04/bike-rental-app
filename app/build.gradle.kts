@@ -89,4 +89,13 @@ dependencies {
     implementation(libs.landscapist.glide)
     //Bottom Sheet
     implementation(libs.flexible.bottomsheet.material3)
+    //ML kit for scanning bar code
+    implementation(libs.mlkit.barcode.scanning)
+    // CameraX
+    implementation(libs.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    // Permissions
+    implementation(libs.accompanist.permissions)
 }
