@@ -177,6 +177,11 @@ fun StationsScreen() {
                     },
                     modifier = Modifier.align(Alignment.TopCenter),
                     onActiveChange = {},
+                    onFocusChange = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                        }
+                    },
                     placeholder = { Text("Search station") },
                     kbController = kbController,
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Stations") },
