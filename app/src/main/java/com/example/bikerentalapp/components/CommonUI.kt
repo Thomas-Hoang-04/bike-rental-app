@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +41,7 @@ fun <T> SearchBarWithDebounce (
     modifier: Modifier = Modifier,
     active: Boolean = false,
     onActiveChange: (Boolean) -> Unit,
+    onFocusChange: () -> Unit,
     placeholder: @Composable () -> Unit,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -47,16 +49,18 @@ fun <T> SearchBarWithDebounce (
     items: List<T>,
     rows: @Composable (T) -> Unit
 ) {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
         SearchBar(
             inputField = {
                 SearchBarDefaults.InputField(
                     query = query,
                     onQueryChange = {
                         onQueryChange(it)
-                        if (it.length > 2) {
-                            onSearch(it.lowercase(Locale.getDefault()))
-                        }
+                        onSearch(it.lowercase(Locale.getDefault()))
                     },
                     onSearch = {
                         onSearch(it.lowercase(Locale.getDefault()))
@@ -74,9 +78,14 @@ fun <T> SearchBarWithDebounce (
             onExpandedChange = onActiveChange,
             modifier = modifier
                 .height(55.dp)
-                .padding(horizontal = 5.dp),
+                .align(Alignment.CenterHorizontally)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused) {
+                        onFocusChange()
+                    }
+                },
             colors = SearchBarDefaults.colors(),
-            content =  {},
+            content = {},
         )
         if (query != "") Card(
             modifier = Modifier
