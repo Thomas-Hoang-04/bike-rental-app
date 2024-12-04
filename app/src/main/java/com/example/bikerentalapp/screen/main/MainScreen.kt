@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.NavBarShape
 import com.example.bikerentalapp.components.navigationItems
+import com.example.bikerentalapp.screen.main.qrcode.QrScreen
 import com.example.bikerentalapp.screen.main.station.StationsScreen
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.PrimaryNavBarColor
