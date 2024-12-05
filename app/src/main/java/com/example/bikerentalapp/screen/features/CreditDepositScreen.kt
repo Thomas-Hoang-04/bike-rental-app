@@ -63,9 +63,6 @@ fun CreditDepositScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-
-
-
             }
 
             Card(
