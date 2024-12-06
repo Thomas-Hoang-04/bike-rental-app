@@ -66,6 +66,20 @@ fun PointSharingScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
 
+            Text(
+                text = "Chia sẻ điểm",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Xem lịch sử chia sẻ điểm"
+                )
             }
 
             Card(
@@ -85,6 +99,21 @@ fun PointSharingScreen() {
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.White
                     )
+        Card(
+            backgroundColor = Color(0xFF00C853),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 40.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(20.dp)
+            ) {
+                androidx.compose.material3.Text(
+                    text = "Số điểm muốn chia sẻ (VND)",
+                    style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+                    color = Color.White
+                )
 
                     TextField(
                         value = NumberFormat.getInstance().format(selectedAmount),
