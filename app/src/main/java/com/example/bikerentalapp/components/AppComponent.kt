@@ -196,11 +196,12 @@ fun TextInput(
 fun ButtonComponent(
     value: String,
     onClick: () -> Unit,
-    color: ButtonColors
+    color: ButtonColors,
+    modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(48.dp),
         colors = color,
