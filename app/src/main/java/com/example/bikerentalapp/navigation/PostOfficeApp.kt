@@ -8,248 +8,288 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
 import com.example.bikerentalapp.screen.login.SignUpClicks
-import com.example.bikerentalapp.screen.main.MainNavigationScreen
+import com.example.bikerentalapp.screen.main.*
+import com.example.bikerentalapp.screen.main.station.StationsScreen
 
-enum class NavigationScreens{
-    Login,
-    SignUp,
-    ForgotPassword,
-    TermsOfUse,
-    PrivacyPolicy,
-    OTPConfirm,
-    MainScreen,
-}
+//@Serializable
+//enum class AuthScreens{
+//    Login,
+//    SignUp,
+//    ForgotPassword,
+//    TermsOfUse,
+//    PrivacyPolicy,
+//    OTPConfirm,
+//}
+//
+//@Serializable
+//enum class Screens.Main{
+//    Home,
+//}
+
+
 
 @Composable
 fun PostOfficeApp() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = NavigationScreens.Login.name,
+        startDestination = Screens.Auth,
     ) {
-        composable(NavigationScreens.Login.name) {
-            SignInScreen(
-                onClick = { click ->
-                    when(click) {
-                        SignInClicks.SignUp -> { navController.navigate(NavigationScreens.SignUp.name) }
-                        SignInClicks.ForgotPassword -> { navController.navigate(NavigationScreens.ForgotPassword.name) }
-                        SignInClicks.SignInSuccess -> {
-                            navController.navigate(NavigationScreens.MainScreen.name) {
-                                popUpTo(NavigationScreens.Login.name) { inclusive = true }
+        navigation<Screens.Auth>(
+            startDestination = Screens.Auth.Login
+        ) {
+            composable<Screens.Auth.Login> {
+                SignInScreen(
+                    onClick = { click ->
+                        when(click) {
+                            SignInClicks.SignUp -> { navController.navigate(Screens.Auth.SignUp) }
+                            SignInClicks.ForgotPassword -> { navController.navigate(Screens.Auth.ForgotPassword) }
+                            SignInClicks.SignInSuccess -> {
+                                navController.navigate(Screens.Main.Home) {
+                                    popUpTo(Screens.Auth.Login) { inclusive = true }
+                                }
                             }
                         }
                     }
-                }
-            )
-        }
-
-        composable(
-            route = NavigationScreens.SignUp.name,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
                 )
             }
-        ) {
-            SignUpScreen(
-                onClick = { click ->
-                    when (click) {
-                        SignUpClicks.SignUpSuccess -> {
-                            navController.navigate(NavigationScreens.MainScreen.name) {
-                                popUpTo(NavigationScreens.SignUp.name) { inclusive = true }
+
+            composable<Screens.Auth.SignUp>(
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ) {
+                SignUpScreen(
+                    onClick = { click ->
+                        when (click) {
+                            SignUpClicks.SignUpSuccess -> {
+                                navController.navigate(Screens.Main.Home) {
+                                    popUpTo(Screens.Auth.SignUp) { inclusive = true }
+                                }
                             }
-                        }
-                        SignUpClicks.SignIn -> {
-                            navController.navigateUp()
-                        }
-                        SignUpClicks.TermsOfUse -> {
-                            navController.navigate(NavigationScreens.TermsOfUse.name)
-                        }
-                        SignUpClicks.PrivacyPolicy -> {
-                            navController.navigate(NavigationScreens.PrivacyPolicy.name)
-                        }
-                    }
-                }
-            )
-        }
-
-        composable(
-            route = NavigationScreens.ForgotPassword.name,
-            enterTransition = {
-                slideInVertically(
-                    initialOffsetY = { fullHeight -> fullHeight },
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutVertically(
-                    targetOffsetY = { fullHeight -> -fullHeight },
-                    animationSpec = tween(400)
-                )
-            },
-            popEnterTransition = {
-                slideInVertically(
-                    initialOffsetY = { fullHeight -> -fullHeight },
-                    animationSpec = tween(400)
-                )
-            },
-            popExitTransition = {
-                slideOutVertically(
-                    targetOffsetY = { fullHeight -> fullHeight },
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
-            ForgotPassword(
-                onClick = { click ->
-                    when (click) {
-                        ForgotPasswordClicks.BackToSignIn -> {
-                            navController.navigateUp()
-                        }
-                        ForgotPasswordClicks.OTPConfirm -> {
-                            navController.navigate(NavigationScreens.OTPConfirm.name)
-                        }
-                    }
-                }
-            )
-        }
-
-        composable(
-            route = NavigationScreens.TermsOfUse.name,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
-            TermsOfUse(
-                onBackClick = { navController.navigateUp() }
-            )
-        }
-
-        composable(
-            route = NavigationScreens.PrivacyPolicy.name,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
-            PrivacyPolicy(
-                onBackClick = { navController.navigateUp() }
-            )
-        }
-
-        composable(
-            route = NavigationScreens.OTPConfirm.name,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(400)
-                )
-            },
-            popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
-            OTPScreen(
-                onClick = { click ->
-                    when (click) {
-                        OTPClicks.BackToSignIn -> {
-                            navController.navigate(NavigationScreens.Login.name)
-                        }
-
-                        OTPClicks.OTPConfirm -> {
-                            navController.navigate(NavigationScreens.MainScreen.name) {
-                                popUpTo(NavigationScreens.OTPConfirm.name) { inclusive = true }
+                            SignUpClicks.SignIn -> {
+                                navController.navigateUp()
+                            }
+                            SignUpClicks.TermsOfUse -> {
+                                navController.navigate(Screens.Auth.TermsOfUse)
+                            }
+                            SignUpClicks.PrivacyPolicy -> {
+                                navController.navigate(Screens.Auth.PrivacyPolicy)
                             }
                         }
                     }
+                )
+            }
+
+            composable<Screens.Auth.ForgotPassword>(
+                enterTransition = {
+                    slideInVertically(
+                        initialOffsetY = { fullHeight -> fullHeight },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutVertically(
+                        targetOffsetY = { fullHeight -> -fullHeight },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInVertically(
+                        initialOffsetY = { fullHeight -> -fullHeight },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutVertically(
+                        targetOffsetY = { fullHeight -> fullHeight },
+                        animationSpec = tween(400)
+                    )
                 }
-            )
+            ) {
+                ForgotPassword(
+                    onClick = { click ->
+                        when (click) {
+                            ForgotPasswordClicks.BackToSignIn -> {
+                                navController.navigateUp()
+                            }
+                            ForgotPasswordClicks.OTPConfirm -> {
+                                navController.navigate(Screens.Auth.OTPConfirm)
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable<Screens.Auth.TermsOfUse>(
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ) {
+                TermsOfUse(
+                    onBackClick = { navController.navigateUp() }
+                )
+            }
+
+            composable<Screens.Auth.PrivacyPolicy>(
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ) {
+                PrivacyPolicy(
+                    onBackClick = { navController.navigateUp() }
+                )
+            }
+
+            composable<Screens.Auth.OTPConfirm>(
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ) {
+                OTPScreen(
+                    onClick = { click ->
+                        when (click) {
+                            OTPClicks.BackToSignIn -> {
+                                navController.navigate(Screens.Auth.Login)
+                            }
+
+                            OTPClicks.OTPConfirm -> {
+                                navController.navigate(Screens.Main.Home) {
+                                    popUpTo(Screens.Auth.OTPConfirm) { inclusive = true }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
         }
 
 
-        composable(NavigationScreens.MainScreen.name) {
-            MainNavigationScreen()
+
+        navigation<Screens.Main>(
+            startDestination = Screens.Main.Home
+        ) {
+            composable<Screens.Main.Home> {
+                MainScreen(navController) {
+                    HomeScreen(onFeatureClick = {}, paddingValues = it)
+                }
+            }
+
+            composable<Screens.Main.Station> {
+                MainScreen(navController) {
+                    StationsScreen()
+                }
+            }
+
+            composable<Screens.Main.Notification> {
+                MainScreen(navController) {
+                    NotificationScreen()
+                }
+            }
+
+            composable<Screens.Main.Profile> {
+                MainScreen(navController) {
+                    ProfileScreen()
+                }
+            }
+
+            composable<Screens.Main.QRCode> {
+                MainScreen(navController) {
+                    QrScreen()
+                }
+            }
         }
     }
 }
+
 

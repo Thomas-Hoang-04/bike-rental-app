@@ -1,4 +1,4 @@
-package com.example.bikerentalapp.components
+package com.example.bikerentalapp.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -10,19 +10,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 data class NavigationItem (
     val label: String,
     val icon: ImageVector,
-    val route: String
+    val route: Any
 )
 
 val navigationItems = listOf(
     NavigationItem(
         label = "Trang chủ",
         icon = Icons.Default.Home,
-        route = "home"
+        route = Screens.Main.Home
     ),
     NavigationItem(
         label = "Trạm xe",
         icon = Icons.Default.LocationOn,
-        route = "station"
+        route = Screens.Main.Station
     ),
     //This item is hidden from the navigation bar and is only used for adding more space between items 2 and 3
     NavigationItem(
@@ -33,11 +33,11 @@ val navigationItems = listOf(
     NavigationItem(
         label = "Thông báo",
         icon = Icons.Default.Notifications,
-        route = "notification"
+        route = Screens.Main.Notification
     ),
     NavigationItem(
         label = "Hồ sơ",
         icon = Icons.Default.Person3,
-        route = "profile"
+        route = Screens.Main.Profile
     )
 )

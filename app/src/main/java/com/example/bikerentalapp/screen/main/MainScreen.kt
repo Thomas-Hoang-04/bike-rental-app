@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.screen.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,24 +19,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.NavBarShape
 import com.example.bikerentalapp.components.navigationItems
 import com.example.bikerentalapp.screen.main.qrcode.QrScreen
 import com.example.bikerentalapp.screen.main.station.StationsScreen
+import com.example.bikerentalapp.navigation.navigationItems
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.PrimaryNavBarColor
 import com.example.bikerentalapp.ui.theme.PrimarySelectedColor
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun MainNavigationScreen(){
-    val navController = rememberNavController()
+fun MainScreen(
+    navController: NavController,
+    content: @Composable (PaddingValues) -> Unit
+){
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +49,7 @@ fun MainNavigationScreen(){
             FloatingActionButton(
                 shape = CircleShape,
                 onClick = {
-                    navController.navigate("qrcode"){
+                    navController.navigate(Screens.Main.QRCode){
                         //other destinations in the back stack (before the start destination) are popped,
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
@@ -70,28 +73,8 @@ fun MainNavigationScreen(){
             }
         }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = "home"
-        ){
-            composable("home"){
-                HomeScreen(onFeatureClick = {}, paddingValues = paddingValues)
-            }
-            composable("station"){
-                StationsScreen()
-            }
-            composable("notification"){
-                NotificationScreen()
-            }
-            composable("profile"){
-                ProfileScreen()
-            }
-            composable("qrcode") {
-                QrScreen()
-            }
-        }
+        content(paddingValues)
     }
-
 }
 
 @Composable
@@ -110,13 +93,16 @@ fun BottomNav(navController: NavController){
             .clip(shape),
         containerColor = PrimaryNavBarColor,
     ){
-        navigationItems.forEachIndexed{index,item->
+        navigationItems.forEachIndexed{ index, item->
             if(index == 2){
                 NavigationBarItem(selected = false, enabled = false, onClick = {}, icon = {})
             }else{
                 NavigationBarItem(
-                    selected = currentRoute?.hierarchy?.any { it.route == item.route } == true,
+                    selected = currentRoute?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
                     onClick = {
+                        if (currentRoute?.hierarchy?.any { it.hasRoute(item.route::class) } == true) {
+                            return@NavigationBarItem
+                        }
                         navController.navigate(item.route){
                             popUpTo(navController.graph.startDestinationId){
                                 saveState = true
@@ -141,18 +127,18 @@ fun BottomNav(navController: NavController){
                             )
                         )
                     },
-                    colors = NavigationBarItemColors(
-                        selectedIconColor = PrimaryColor,
-                        unselectedIconColor = Color.Gray,
+                    colors = NavigationBarItemDefaults.colors(
                         selectedTextColor = PrimaryColor,
-                        unselectedTextColor = Color.Gray,
-                        disabledIconColor = Color.Gray,
-                        disabledTextColor = Color.Gray,
-                        selectedIndicatorColor = PrimarySelectedColor,
+                        selectedIconColor = PrimaryColor,
+                        indicatorColor = PrimarySelectedColor,
+                        unselectedIconColor = Color.Gray,
+                        unselectedTextColor = Color.Gray
                     )
                 )
             }
         }
     }
 }
+
+
 
