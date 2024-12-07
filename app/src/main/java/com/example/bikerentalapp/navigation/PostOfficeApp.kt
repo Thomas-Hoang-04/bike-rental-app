@@ -1,20 +1,26 @@
 package com.example.bikerentalapp.navigation
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
 import com.example.bikerentalapp.screen.login.SignUpClicks
 import com.example.bikerentalapp.screen.main.*
+import com.example.bikerentalapp.screen.main.qrcode.QrCodeResultScreen
+import com.example.bikerentalapp.screen.main.qrcode.QrScreen
+import com.example.bikerentalapp.screen.main.qrcode.TrackingMapScreen
 import com.example.bikerentalapp.screen.main.station.StationsScreen
 
 //@Serializable
@@ -287,6 +293,79 @@ fun PostOfficeApp() {
                 MainScreen(navController) {
                     QrScreen()
                 }
+            }
+
+            composable(
+                route = "${Screens.Main.QRResult}/{qrCodeContent}",
+                arguments = listOf(navArgument("qrCodeContent") {
+                    type = NavType.StringType
+                }),
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ){
+                backStackEntry ->
+                val qrCodeContent = backStackEntry.arguments?.getString("qrCodeContent")
+                QrCodeResultScreen(qrCodeContent = qrCodeContent.orEmpty(),navController = navController)
+            }
+
+            composable(
+                "${Screens.Main.TrackingMap}/{bikeId}",
+                arguments = listOf(navArgument("bikeId") {
+                    try{
+                        type = NavType.StringType
+                    }catch (e : Exception){
+                        Log.e("BikeId",e.toString())
+                    }
+                }),
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(500)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(400)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(400)
+                    )
+                }
+            ) { backStackEntry ->
+                val bikeId = backStackEntry.arguments?.getString("bikeId")
+                TrackingMapScreen(bikeId = bikeId.orEmpty())
             }
         }
     }
