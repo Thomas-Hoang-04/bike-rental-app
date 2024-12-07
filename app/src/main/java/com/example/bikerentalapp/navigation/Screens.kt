@@ -32,5 +32,9 @@ sealed class Screens {
         object Profile
         @Serializable
         object QRCode
+        @Serializable
+        object QRResult
+        @Serializable
+        object TrackingMap
     }
 }
