@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.ButtonComponent
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
 
@@ -108,7 +109,7 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         ButtonComponent(
             value = "Bat dau",
             onClick = {
-                navController.navigate("tracking_map/${qrCodeContent.substring(0, 10)}"){
+                navController.navigate("${Screens.Main.TrackingMap}/${qrCodeContent.substring(0, 10)}"){
                     popUpTo(navController.graph.startDestinationId){
                         saveState = true
                     }
