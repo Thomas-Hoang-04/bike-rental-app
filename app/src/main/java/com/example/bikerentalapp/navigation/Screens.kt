@@ -17,7 +17,7 @@ sealed class Screens {
         @Serializable
         object PrivacyPolicy
         @Serializable
-        object OTPConfirm
+        data class OTPConfirm(val phoneNumber: String)
     }
 
     @Serializable

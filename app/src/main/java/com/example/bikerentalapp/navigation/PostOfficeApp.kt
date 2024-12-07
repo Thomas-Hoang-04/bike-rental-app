@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
@@ -58,7 +59,7 @@ fun PostOfficeApp() {
                             SignInClicks.ForgotPassword -> { navController.navigate(Screens.Auth.ForgotPassword) }
                             SignInClicks.SignInSuccess -> {
                                 navController.navigate(Screens.Main.Home) {
-                                    popUpTo(Screens.Auth.Login) { inclusive = true }
+                                    popUpTo(Screens.Auth) { inclusive = true }
                                 }
                             }
                         }
@@ -97,7 +98,7 @@ fun PostOfficeApp() {
                         when (click) {
                             SignUpClicks.SignUpSuccess -> {
                                 navController.navigate(Screens.Main.Home) {
-                                    popUpTo(Screens.Auth.SignUp) { inclusive = true }
+                                    popUpTo(Screens.Auth) { inclusive = true }
                                 }
                             }
                             SignUpClicks.SignIn -> {
@@ -141,13 +142,13 @@ fun PostOfficeApp() {
                 }
             ) {
                 ForgotPassword(
-                    onClick = { click ->
+                    onClick = { click, phoneNum ->
                         when (click) {
                             ForgotPasswordClicks.BackToSignIn -> {
                                 navController.navigateUp()
                             }
                             ForgotPasswordClicks.OTPConfirm -> {
-                                navController.navigate(Screens.Auth.OTPConfirm)
+                                navController.navigate(Screens.Auth.OTPConfirm(phoneNum))
                             }
                         }
                     }
@@ -242,7 +243,9 @@ fun PostOfficeApp() {
                     )
                 }
             ) {
+                val args = it.toRoute<Screens.Auth.OTPConfirm>()
                 OTPScreen(
+                    phoneNumber = args.phoneNumber,
                     onClick = { click ->
                         when (click) {
                             OTPClicks.BackToSignIn -> {
@@ -251,7 +254,7 @@ fun PostOfficeApp() {
 
                             OTPClicks.OTPConfirm -> {
                                 navController.navigate(Screens.Main.Home) {
-                                    popUpTo(Screens.Auth.OTPConfirm) { inclusive = true }
+                                    popUpTo(Screens.Auth) { inclusive = true }
                                 }
                             }
                         }
