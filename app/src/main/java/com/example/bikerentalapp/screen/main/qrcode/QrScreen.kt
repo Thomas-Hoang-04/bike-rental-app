@@ -1,6 +1,7 @@
 package com.example.bikerentalapp.screen.main.qrcode
 
 import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraControl
@@ -10,7 +11,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,17 +18,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,12 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.example.bikerentalapp.components.CircularButtonWithText
+import com.example.bikerentalapp.navigation.Screens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
@@ -55,8 +51,10 @@ import kotlinx.coroutines.asExecutor
 fun QrScreen(navController: NavController) {
     val viewModel = remember { QRScannerViewModel() }
 
-    CameraScannerScreen(viewModel = viewModel, onQRCodeScanned = { qrCodeContent ->
-        navController.navigate("qr_result/$qrCodeContent"){
+    CameraScannerScreen(
+        viewModel = viewModel,
+        onQRCodeScanned = { qrCodeContent ->
+        navController.navigate("${Screens.Main.QRResult}/$qrCodeContent"){
             popUpTo(navController.graph.startDestinationId){
                 saveState = true
             }
@@ -121,9 +119,9 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
                                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                                 .build()
                                 .also { analysis ->
-                                    analysis.setAnalyzer(Dispatchers.Default.asExecutor()) { imageProxy ->
-                                        viewModel.analyzeImage(imageProxy, onQRCodeScanned)
-                                    }
+                                        analysis.setAnalyzer(Dispatchers.Default.asExecutor()) { imageProxy ->
+                                            viewModel.analyzeImage(imageProxy, onQRCodeScanned)
+                                        }
                                 }
 
                             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -176,19 +174,3 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
     }
 }
 
-@Composable
-fun CircularButtonWithText(icon:ImageVector,text:String,onClick : ()->Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier
-                .border(1.dp,Color.Gray, CircleShape)
-                .size(80.dp)
-        ) {
-            Icon(icon, modifier = Modifier.size(30.dp), contentDescription = null)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text,
-            style = MaterialTheme.typography.bodyLarge)
-    }
-}
