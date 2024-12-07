@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.bikerentalapp.components.SearchBarWithDebounce
 import com.example.bikerentalapp.components.StationInfoCard
-import com.example.bikerentalapp.model.BikeStatus
-import com.example.bikerentalapp.model.Station
+import com.example.bikerentalapp.api.data.BikeStatus
+import com.example.bikerentalapp.api.data.Station
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -139,7 +139,7 @@ fun StationsScreen() {
                     if (isMapLoaded) {
                         val newZoom = cameraPositionState.position.zoom + 1
                         StationCluster(
-                            stationList = mapViewModel.stationList,
+                            stationList = mapViewModel.stations,
                             onClusterClick = { cluster ->
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
@@ -252,7 +252,7 @@ fun StationDetailsBottomSheet(station: Station) {
                 .padding(horizontal = 10.dp)
         ) {
             Text(
-                text = station.id,
+                text = station.name,
                 fontSize = 20.sp,
                 color = PrimaryColor,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -264,7 +264,7 @@ fun StationDetailsBottomSheet(station: Station) {
                 OutlinedButton(
                     onClick = {
                         val uri = Uri.parse(
-                            "https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}&travelmode=two-wheeler"
+                            "https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}&travelmode=two-wheeler"
                         )
                         val mapIntent = Intent(Intent.ACTION_VIEW, uri)
 
@@ -286,12 +286,6 @@ fun StationDetailsBottomSheet(station: Station) {
                             .rotate(50f)
                     )
                 }
-                Spacer(modifier =Modifier.height(4.dp))
-                Text(
-                    text = "${station.farAway} m",
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )
             }
         }
         Text(
@@ -304,7 +298,7 @@ fun StationDetailsBottomSheet(station: Station) {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(station.listBicycle){
+            items(station.bikeList){
                 bicycle ->
                 Row(
                     modifier = Modifier
@@ -329,12 +323,12 @@ fun StationDetailsBottomSheet(station: Station) {
                             color = Color.Black
                         )
                         Text(
-                            text = "Battery: ${bicycle.batteryPercentage}%",
+                            text = "Battery: ${bicycle.battery}%",
                             color = Color.Gray
                         )
                         Text(
-                            text = "Available: ${bicycle.bikeStatus}",
-                            color = when(bicycle.bikeStatus){
+                            text = "Available: ${bicycle.status}",
+                            color = when(bicycle.status){
                                 BikeStatus.IN_USE -> PrimaryColor
                                 BikeStatus.AVAILABLE -> Color.Green
                                 BikeStatus.CHARGING -> Color.Blue

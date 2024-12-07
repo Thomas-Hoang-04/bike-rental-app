@@ -1,6 +1,8 @@
 package com.example.bikerentalapp.components
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
@@ -82,9 +85,10 @@ fun TextInput(
         Row {
             Text(
                 text = label,
-                color = Color.Black,
+                color = LabelColor,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp),
+                fontWeight = FontWeight.Bold
             )
 
             if (required) {
@@ -106,7 +110,9 @@ fun TextInput(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Transparent)
             ) {
                 BasicTextField(
                     value = value,
@@ -146,13 +152,14 @@ fun TextInput(
                         fontSize = 14.sp
                     ),
                     decorationBox = { innerText ->
-                        Box {
+                        Box(
+                            modifier = Modifier.background(Color.Transparent)
+                        ) {
                             if (value.isEmpty()) {
                                 Text(
                                     text = placeholder,
                                     color = Color.Gray,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
                                 )
                             }
                             innerText()
@@ -465,5 +472,23 @@ fun GridLayout(
     }
 }
 
+fun makeToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(1f)
+            .background(Color.Gray.copy(alpha = 0.5f))
+            .pointerInput(Unit) { },
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = PrimaryColor)
+    }
+
+}
 
 

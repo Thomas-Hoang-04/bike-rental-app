@@ -1,7 +1,6 @@
 package com.example.bikerentalapp.screen.test
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -12,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.example.bikerentalapp.keystore.CryptoManager
 import com.example.bikerentalapp.ui.theme.BikeRentalAppTheme
 import java.io.File
-import java.security.KeyStore
 
 @Composable
 fun TestScreen(context: Context) {

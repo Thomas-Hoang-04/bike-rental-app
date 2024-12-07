@@ -1,8 +1,7 @@
 package com.example.bikerentalapp.screen.main.station
 
 import androidx.lifecycle.ViewModel
-import com.example.bikerentalapp.model.Station
-import com.example.bikerentalapp.model.stations
+import com.example.bikerentalapp.api.data.Station
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -16,11 +15,17 @@ import kotlinx.coroutines.launch
 class GoogleMapViewModel : ViewModel() {
 
     //Example of list of stations
-    val stationList = stations
+    val stations: List<Station> = emptyList()
     private val _locationPermissionGranted = MutableStateFlow(false)
     val locationPermissionGranted = _locationPermissionGranted.asStateFlow()
     private val _searchState = MutableStateFlow(SearchStationState())
     val searchState = _searchState.asStateFlow()
+
+//    init {
+//        viewModelScope.launch {
+//            stations = RetrofitInstance.queryAPI.getStations().data
+//        }
+//    }
 
     fun setLocationPermissionGranted(granted: Boolean) {
         _locationPermissionGranted.value = granted
@@ -28,7 +33,7 @@ class GoogleMapViewModel : ViewModel() {
 
     fun searchStation(query: String) {
         val filteredStations = stations.filter {
-            it.id.lowercase(Locale.getDefault()).contains(query)
+            it.name.lowercase(Locale.getDefault()).contains(query)
         }
 
         if (query == "") {
@@ -41,11 +46,11 @@ class GoogleMapViewModel : ViewModel() {
 
     }
 
-    fun selectDevice(selectedDevice: Station,cameraPositionState: CameraPositionState,coroutineScope: CoroutineScope) {
+    fun selectDevice(selectedDevice: Station, cameraPositionState: CameraPositionState, coroutineScope: CoroutineScope) {
         coroutineScope.launch {
             cameraPositionState.animate(
                 update = CameraUpdateFactory.newLatLngZoom(
-                    LatLng(selectedDevice.lat, selectedDevice.lng),
+                    LatLng(selectedDevice.latitude, selectedDevice.longitude),
                     17f
                 ),
                 durationMs = 1000,

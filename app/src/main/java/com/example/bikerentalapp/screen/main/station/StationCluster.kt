@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.R
-import com.example.bikerentalapp.model.Station
+import com.example.bikerentalapp.api.data.Station
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.Cluster
@@ -38,9 +38,9 @@ import com.google.maps.android.compose.clustering.Clustering
 data class StationClusterItem(
     val station : Station,
 ) : ClusterItem {
-    override fun getPosition() = LatLng(station.lat, station.lng)
-    override fun getTitle() = "Station ${station.id}"
-    override fun getSnippet() = "Has ${station.listBicycle.size} bicycles"
+    override fun getPosition() = LatLng(station.latitude, station.longitude)
+    override fun getTitle() = station.name
+    override fun getSnippet() = "Has ${station.bikeList.size} bicycles"
     override fun getZIndex() = 0f
 }
 
@@ -64,7 +64,7 @@ fun StationCluster(
         clusterItemContent = { item ->
             ClusterItemContent(
                 modifier = Modifier.width(70.dp),
-                text = item.station.listBicycle.size.toString()
+                text = item.station.bikeList.size.toString()
             )
         },
     )

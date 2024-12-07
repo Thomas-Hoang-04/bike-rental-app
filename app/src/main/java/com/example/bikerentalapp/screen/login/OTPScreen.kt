@@ -39,23 +39,37 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
+import com.example.bikerentalapp.api.data.OTPRequest
+import com.example.bikerentalapp.api.data.OTPResponse
+import com.example.bikerentalapp.api.data.OTPStatus
+import com.example.bikerentalapp.api.data.OTPValidationRequest
+import com.example.bikerentalapp.api.network.RetrofitInstance
+import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.makeToast
+import com.google.gson.Gson
 
 @Composable
 fun OTPScreen(
+    phoneNumber: String,
     onClick: (OTPClicks) -> Unit
 ) {
     var otpValues by remember { mutableStateOf(List(5) { "" }) }
     val focusRequesters = remember { List(5) { FocusRequester() } }
+
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val isOTPComplete = otpValues.all { it.isNotEmpty() }
+    val isWaiting = remember { mutableStateOf(true) }
+    val isLoading = remember { mutableStateOf(false) }
+    val time = remember { mutableStateOf(60) }
 
     LaunchedEffect(isOTPComplete) {
         if (isOTPComplete) {
@@ -64,6 +78,16 @@ fun OTPScreen(
                 (context as? Activity)?.currentFocus?.let { view ->
                     hideSoftInputFromWindow(view.windowToken, 0)
                 }
+            }
+        }
+    }
+
+    LaunchedEffect(isWaiting.value) {
+        while (isWaiting.value) {
+            delay(1000)
+            time.value--
+            if (time.value == 0) {
+                isWaiting.value = false
             }
         }
     }
@@ -122,7 +146,7 @@ fun OTPScreen(
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text = "Chúng tôi sẽ gửi cho bạn một mã OTP để xác thực",
+                text = "Kiểm tra mã OTP trong tin nhắn SMS để xác thực",
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 40.dp),
@@ -203,9 +227,27 @@ fun OTPScreen(
 
             Button(
                 onClick = {
-                    // TODO:Handle OTP verification logic here
-                    val otp = otpValues.joinToString("")
-                    onClick(OTPClicks.OTPConfirm)
+                    isLoading.value = true
+                    scope.launch {
+                        val otp = otpValues.joinToString("")
+                        val res = RetrofitInstance.authAPI.verifyOTP(
+                            OTPValidationRequest(otp, phoneNumber)
+                        )
+                        if (res.isSuccessful) {
+                            val body: OTPResponse = res.body()!!
+                            if (body.status == OTPStatus.SUCCESS) {
+                                isLoading.value = false
+                                onClick(OTPClicks.OTPConfirm)
+                            } else {
+                                makeToast(context, body.message)
+                            }
+                        } else {
+                            val e = res.errorBody()?.string()
+                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                            makeToast(context, eBody.message)
+                            isLoading.value = false
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -239,17 +281,42 @@ fun OTPScreen(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Gửi lại",
+                    text = if (isWaiting.value) "Gửi lại sau ${time.value} giây" else "Gửi lại",
                     style = TextStyle(
                         color = PrimaryColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier
-                        .clickable { /* Handle resend */ }
+                        .clickable(!isWaiting.value) {
+                            isLoading.value = true
+                            scope.launch {
+                                Log.d("PhoneNumber", phoneNumber)
+                                val num: String = "+84" + phoneNumber.substring(1)
+                                Log.d("PhoneNumber", num)
+                                val res = RetrofitInstance.authAPI.sendOTP(
+                                    OTPRequest(username = phoneNumber, num)
+                                )
+                                if (res.isSuccessful) {
+                                    val body: OTPResponse = res.body()!!
+                                    makeToast(context, body.message)
+                                    isLoading.value = false
+                                    time.value = 60
+                                    isWaiting.value = true
+                                } else {
+                                    val e = res.errorBody()?.string()
+                                    val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                                    makeToast(context, eBody.message)
+                                    isLoading.value = false
+                                }
+                            }
+                        }
                 )
             }
         }
+    }
+    if (isLoading.value) {
+        LoadingScreen()
     }
 }
 
@@ -261,5 +328,7 @@ sealed class OTPClicks {
 @Preview
 @Composable
 fun OTPScreenPreview() {
-    OTPScreen {}
+    OTPScreen("") {
+        _ ->
+    }
 }

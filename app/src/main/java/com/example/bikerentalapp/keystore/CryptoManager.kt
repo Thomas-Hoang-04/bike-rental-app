@@ -3,7 +3,6 @@ package com.example.bikerentalapp.keystore
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import android.util.Log
 import java.security.*
 import java.security.spec.MGF1ParameterSpec
 import javax.crypto.Cipher

@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.R
-import com.example.bikerentalapp.model.Station
+import com.example.bikerentalapp.api.data.BikeType
+import com.example.bikerentalapp.api.data.Station
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import java.util.Locale
 
@@ -143,7 +144,7 @@ fun StationInfoCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = station.id,
+                    text = station.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -153,7 +154,7 @@ fun StationInfoCard(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            val uri = Uri.parse("google.navigation:q=${station.lat},${station.lng}&mode=d")
+                            val uri = Uri.parse("google.navigation:q=${station.latitude},${station.longitude}&mode=d")
                             val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
                                 setPackage("com.google.android.apps.maps")
                             }
@@ -176,11 +177,6 @@ fun StationInfoCard(
                                 .rotate(50f)
                         )
                     }
-                    Text(
-                        text = "${station.farAway} m",
-                        fontSize = 12.sp,
-                        color = Color.Gray
-                    )
                 }
                 Spacer(modifier = Modifier.width(4.dp))
             }
@@ -202,18 +198,18 @@ fun StationInfoCard(
                 InfoBox(
                     imageVector = Icons.Filled.PedalBike , // Replace with actual bicycle icon
                     label = "Xe đạp",
-                    count = station.listBicycle.filter { it.type == "Standard" }.size,
+                    count = station.bikeList.filter { it.type == BikeType.MANUAL }.size,
                 )
                 InfoBox(
                     imageVector = Icons.Filled.ElectricBike,
                     label = "Xe điện",
-                    count = station.listBicycle.filter { it.type == "Electric" }.size,
+                    count = station.bikeList.filter { it.type == BikeType.ELECTRIC }.size,
                     backgroundColor = Color(0xFFE8F5E9)
                 )
                 InfoBox(
                     imageVector = Icons.Filled.LocalParking,
                     label = "Số chỗ đậu",
-                    count = station.listBicycle.size,
+                    count = station.capacity - station.bikeList.size,
                     backgroundColor = Color(0xFFFFF9C4)
                 )
             }

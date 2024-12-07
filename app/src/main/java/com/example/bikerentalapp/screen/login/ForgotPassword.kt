@@ -14,20 +14,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -38,16 +30,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.api.data.OTPRequest
+import com.example.bikerentalapp.api.data.OTPResponse
+import com.example.bikerentalapp.api.data.OTPStatus
+import com.example.bikerentalapp.api.network.RetrofitInstance
 import com.example.bikerentalapp.components.HeadingTextComponent
+import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.makeToast
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.TextColor
+import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ForgotPassword(
-    onClick: (ForgotPasswordClicks) -> Unit
+    onClick: (ForgotPasswordClicks, String) -> Unit,
 ) {
     val phoneNumber = remember { mutableStateOf("") }
     val isPhoneNumberValid = phoneNumber.value.matches(Regex("^[0-9]{10,15}$"))
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val isLoading = remember { mutableStateOf(false) }
 
     Surface(
         color = Color.White,
@@ -62,7 +66,7 @@ fun ForgotPassword(
                 .padding(top = 20.dp)
         ) {
             IconButton(
-                onClick = { onClick(ForgotPasswordClicks.BackToSignIn) },
+                onClick = { onClick(ForgotPasswordClicks.BackToSignIn, "") },
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Icon(
@@ -125,7 +129,7 @@ fun ForgotPassword(
                         text = "Nhập số điện thoại",
                         color = Color.Gray,
                         modifier = Modifier
-                            .padding(start = 13.dp)
+                            .padding(start = 16.dp)
                             .align(Alignment.CenterStart)
                     )
                 }
@@ -134,7 +138,30 @@ fun ForgotPassword(
             Spacer(modifier = Modifier.padding(6.dp))
 
             Button(
-                onClick = { onClick(ForgotPasswordClicks.OTPConfirm) },
+                onClick = {
+                    isLoading.value = true
+                    coroutineScope.launch {
+                        val num: String = "+84" + phoneNumber.value.substring(1)
+                        val res = RetrofitInstance.authAPI.sendOTP(
+                            OTPRequest(username = phoneNumber.value, num)
+                        )
+                        if (res.isSuccessful) {
+                            val body: OTPResponse = res.body()!!
+                            if (body.status == OTPStatus.SUCCESS) {
+                                isLoading.value = false
+                                delay(100)
+                                onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
+                            } else {
+                                makeToast(context, body.message)
+                            }
+                        } else {
+                            val e = res.errorBody()?.string()
+                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                            makeToast(context, eBody.message)
+                            isLoading.value = false
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
@@ -155,7 +182,10 @@ fun ForgotPassword(
                 )
             }
         }
+    }
 
+    if (isLoading.value) {
+        LoadingScreen()
     }
 }
 
@@ -167,5 +197,7 @@ sealed class ForgotPasswordClicks {
 @Preview
 @Composable
 fun ForgotPasswordPreview() {
-    ForgotPassword {}
+    ForgotPassword {
+        _, _ ->
+    }
 }
