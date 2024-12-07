@@ -89,6 +89,8 @@ dependencies {
     implementation(libs.landscapist.glide)
     //Bottom Sheet
     implementation(libs.flexible.bottomsheet.material3)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson.converter)
     //ML kit for scanning bar code
     implementation(libs.mlkit.barcode.scanning)
     // CameraX

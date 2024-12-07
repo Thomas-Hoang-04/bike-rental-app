@@ -55,6 +55,8 @@ compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 mlkit-barcode-scanning = "com.google.mlkit:barcode-scanning:17.3.0"
+retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
+retrofit-gson-converter = { module = "com.squareup.retrofit2:converter-gson", version = "2.11.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
