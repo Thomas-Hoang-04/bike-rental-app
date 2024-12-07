@@ -4,9 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ElectricBike
@@ -24,7 +26,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.R
@@ -238,6 +242,58 @@ fun InfoBox(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black
+        )
+    }
+}
+
+@Composable
+fun CircularButtonWithText(icon:ImageVector,text:String,onClick : ()->Unit,color: Color = Color.White,iconColor : Color = Color.Black,size : Dp = 80.dp) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .border(1.dp,Color.Gray, CircleShape)
+                .size(size),
+            colors = IconButtonColors(
+                containerColor = color,
+                contentColor = Color.Black,
+                disabledContentColor = Color.Gray,
+                disabledContainerColor = Color.Gray,
+            )
+        ) {
+            Icon(icon, modifier = Modifier.size(30.dp), contentDescription = null, tint = iconColor)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text,
+            style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+fun IconWithText(
+    icon: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier,
+    iconSize: Dp = 24.dp,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    iconTint: Color = PrimaryColor,
+    textColor: Color = PrimaryColor
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(iconSize),
+            tint = iconTint
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            style = textStyle,
+            color = textColor
         )
     }
 }
