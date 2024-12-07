@@ -15,6 +15,7 @@ class QRScannerViewModel : ViewModel() {
     private val scanner: BarcodeScanner = BarcodeScanning.getClient()
     private val _cameraPermissionGranted = MutableStateFlow(false)
     val cameraPermissionGranted = _cameraPermissionGranted.asStateFlow()
+    private var scannedOnce = false
 
     fun setCameraPermissionGranted(granted: Boolean) {
         _cameraPermissionGranted.value = granted
@@ -27,9 +28,10 @@ class QRScannerViewModel : ViewModel() {
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
-                    for (barcode in barcodes) {
-                        barcode.rawValue?.let {
-                            onResult(it) // Pass the scanned QR code to the callback
+                    if(barcodes.isNotEmpty()) {
+                        if(!scannedOnce) {
+                            onResult(barcodes[0].rawValue ?: "")
+                            scannedOnce = true
                         }
                     }
                 }
