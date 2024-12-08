@@ -1,7 +1,6 @@
 package com.example.bikerentalapp.screen.main.qrcode
 
 import android.Manifest
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraControl
@@ -54,7 +53,7 @@ fun QrScreen(navController: NavController) {
     CameraScannerScreen(
         viewModel = viewModel,
         onQRCodeScanned = { qrCodeContent ->
-        navController.navigate("${Screens.Main.QRResult}/$qrCodeContent"){
+        navController.navigate(Screens.Main.QrResult(qrCodeContent)){
             popUpTo(navController.graph.startDestinationId){
                 saveState = true
             }
