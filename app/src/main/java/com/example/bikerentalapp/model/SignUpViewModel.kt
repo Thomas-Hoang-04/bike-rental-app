@@ -203,14 +203,8 @@ class SignUpViewModel : ViewModel() {
                 isTermAccepted
     }
 
-    fun signUp(onSuccess: () -> Unit) {
+    fun signUp(onSuccess: suspend () -> Unit) {
         viewModelScope.launch {
-            validatePhoneNumber(true)
-            validateName(true)
-            validateDateOfBirth(true)
-            validatePassword(true)
-            validateConfirmPassword(true)
-
             if (validateAll()) {
                 onSuccess()
             }

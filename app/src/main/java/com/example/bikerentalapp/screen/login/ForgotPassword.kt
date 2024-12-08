@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.api.data.OTPRequest
 import com.example.bikerentalapp.api.data.OTPResponse
 import com.example.bikerentalapp.api.data.OTPStatus
-import com.example.bikerentalapp.api.network.RetrofitInstance
+import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.HeadingTextComponent
 import com.example.bikerentalapp.components.LoadingScreen
 import com.example.bikerentalapp.components.makeToast
@@ -52,6 +52,7 @@ fun ForgotPassword(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(false) }
+    val retrofit = RetrofitInstances.Auth
 
     Surface(
         color = Color.White,
@@ -141,9 +142,11 @@ fun ForgotPassword(
                 onClick = {
                     isLoading.value = true
                     coroutineScope.launch {
-                        val num: String = "+84" + phoneNumber.value.substring(1)
-                        val res = RetrofitInstance.authAPI.sendOTP(
-                            OTPRequest(username = phoneNumber.value, num)
+                        val res = retrofit.authAPI.sendOTP(
+                            OTPRequest(
+                                username = phoneNumber.value,
+                                "+84964704623",
+                                OTPPurpose.RESET_PASSWORD)
                         )
                         if (res.isSuccessful) {
                             val body: OTPResponse = res.body()!!

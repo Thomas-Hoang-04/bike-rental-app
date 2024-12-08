@@ -23,7 +23,7 @@ class GoogleMapViewModel : ViewModel() {
 
 //    init {
 //        viewModelScope.launch {
-//            stations = RetrofitInstance.queryAPI.getStations().data
+//            stations = RetrofitInstances.queryAPI.getStations().data
 //        }
 //    }
 

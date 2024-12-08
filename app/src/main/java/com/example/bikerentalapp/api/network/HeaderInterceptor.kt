@@ -4,7 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 class HeaderInterceptor(
-    private val tokenProvider: () -> String?
+    private val token: String
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalReq = chain.request()
@@ -16,9 +16,7 @@ class HeaderInterceptor(
 
 
         val req = originalReq.newBuilder().apply {
-            tokenProvider()?.let { token ->
-                addHeader("Authorization", "Bearer $token")
-            }
+            addHeader("Authorization", "Bearer $token")
             addHeader("Content-Type", "application/json")
         }.build()
 

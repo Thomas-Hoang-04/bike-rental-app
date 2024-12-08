@@ -6,6 +6,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -15,6 +17,10 @@ import com.example.bikerentalapp.screen.login.ForgotPassword
 import com.example.bikerentalapp.screen.login.ForgotPasswordClicks
 import com.example.bikerentalapp.screen.login.OTPClicks
 import com.example.bikerentalapp.screen.login.OTPScreen
+import com.example.bikerentalapp.model.AccountViewModel
+import com.example.bikerentalapp.model.SignUpViewModel
+import com.example.bikerentalapp.screen.login.*
+import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
 import com.example.bikerentalapp.screen.login.SignInScreen
 import com.example.bikerentalapp.screen.login.SignUpClicks
@@ -36,10 +42,21 @@ import com.example.bikerentalapp.screen.policy.TermsOfUse
 @Composable
 fun PostOfficeApp() {
     val navController = rememberNavController()
+    val account = AccountViewModel()
+    val signUpViewModel = SignUpViewModel()
+
+    val startDestination = Screens.Auth
+
+    LaunchedEffect(key1 = account) {
+
+
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Screens.Auth,
+        startDestination = startDestination,
     ) {
+
         navigation<Screens.Auth>(
             startDestination = Screens.Auth.Login
         ) {
@@ -84,9 +101,15 @@ fun PostOfficeApp() {
                         animationSpec = tween(400)
                     )
                 }
-            ) {
+            ) { backstackEntry ->
+                val isOTPVerified = backstackEntry
+                    .savedStateHandle
+                    .getStateFlow("isOTPVerified", false)
+                    .collectAsState()
                 SignUpScreen(
-                    onClick = { click ->
+                    isOTPVerified.value,
+                    signUpViewModel,
+                    onClick = { click, phoneNum ->
                         when (click) {
                             SignUpClicks.SignUpSuccess -> {
                                 navController.navigate(Screens.Main.Home) {
@@ -95,6 +118,9 @@ fun PostOfficeApp() {
                             }
                             SignUpClicks.SignIn -> {
                                 navController.navigateUp()
+                            }
+                            SignUpClicks.OTPVerify -> {
+                                navController.navigate(Screens.Auth.OTPConfirm(phoneNum, OTPPurpose.SIGNUP))
                             }
                             SignUpClicks.TermsOfUse -> {
                                 navController.navigate(Screens.Auth.TermsOfUse)
@@ -140,7 +166,9 @@ fun PostOfficeApp() {
                                 navController.navigateUp()
                             }
                             ForgotPasswordClicks.OTPConfirm -> {
-                                navController.navigate(Screens.Auth.OTPConfirm(phoneNum))
+                                navController.navigate(
+                                    Screens.Auth.OTPConfirm(phoneNum, OTPPurpose.RESET_PASSWORD)
+                                )
                             }
                         }
                     }
@@ -238,6 +266,7 @@ fun PostOfficeApp() {
                 val args = it.toRoute<Screens.Auth.OTPConfirm>()
                 OTPScreen(
                     phoneNumber = args.phoneNumber,
+                    purpose = args.purpose,
                     onClick = { click ->
                         when (click) {
                             OTPClicks.BackToSignIn -> {
@@ -245,8 +274,16 @@ fun PostOfficeApp() {
                             }
 
                             OTPClicks.OTPConfirm -> {
-                                navController.navigate(Screens.Main.Home) {
-                                    popUpTo(Screens.Auth) { inclusive = true }
+                                navController
+                                    .previousBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("isOTPVerified", true)
+                                navController.popBackStack()
+                            }
+
+                            OTPClicks.PasswordResetConfirm -> {
+                                navController.navigate(Screens.Auth.Login) {
+                                    popUpTo(Screens.Auth.ForgotPassword) { inclusive = true }
                                 }
                             }
                         }

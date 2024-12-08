@@ -11,212 +11,269 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
+import com.example.bikerentalapp.api.data.OTPRequest
+import com.example.bikerentalapp.api.data.UserCreateRequest
+import com.example.bikerentalapp.api.data.UserDetails
+import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.*
 import com.example.bikerentalapp.model.SignUpViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    onClick: (SignUpClicks) -> Unit,
-    viewModel: SignUpViewModel = viewModel()
+    isOTPVerified: Boolean,
+    viewModel: SignUpViewModel,
+    onClick: (SignUpClicks, String) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val retrofit = RetrofitInstances.Auth
+    val verified = remember { mutableStateOf(isOTPVerified) }
+    val context = LocalContext.current
+    val isLoading = remember { mutableStateOf(isOTPVerified) }
 
-    Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(10.dp)
-    ) {
-        Column(
+    if (isLoading.value) {
+        LoadingScreen()
+    }
+
+    if (verified.value) {
+        isLoading.value = true
+        scope.launch {
+            val res = retrofit.authAPI.signup(
+                UserCreateRequest(
+                    username = viewModel.phoneNumber,
+                    password = viewModel.password,
+                    details = UserDetails(
+                        name = viewModel.name,
+                        phoneNum = viewModel.phoneNumber,
+                        email = viewModel.email,
+                        dob = viewModel.dateOfBirth,
+                    )
+                )
+            )
+            if (res.isSuccessful) {
+                verified.value = false
+                delay(150)
+                onClick(SignUpClicks.SignUpSuccess, "")
+            } else {
+                isLoading.value = false
+                verified.value = false
+                delay(100)
+                makeToast(context, "Có lỗi xảy ra, vui lòng thử lại")
+            }
+        }
+    } else {
+        Surface(
+            color = Color.White,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .background(Color.White)
+                .padding(10.dp)
         ) {
-            Spacer(modifier = Modifier.padding(top = 28.dp))
-
-            HeadingTextComponent(value = stringResource(id = R.string.sign_up))
-
-            Spacer(modifier = Modifier.padding(4.dp))
-
-            HorizontalDivider(
-                color = Color.Black,
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 6.dp)
-            )
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                TextInput(
-                    label = "Số điện thoại",
-                    placeholder = "Nhập số điện thoại",
-                    inputType = InputType.Phone,
-                    required = true,
-                    value = viewModel.phoneNumber,
-                    onValueChange = viewModel::updatePhoneNumber,
-                    error = viewModel.phoneNumberError,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.PHONE_NUMBER)
-                    }
+                Spacer(modifier = Modifier.padding(top = 28.dp))
+
+                HeadingTextComponent(value = stringResource(id = R.string.sign_up))
+
+                Spacer(modifier = Modifier.padding(4.dp))
+
+                HorizontalDivider(
+                    color = Color.Black,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(vertical = 6.dp)
                 )
 
-                TextInput(
-                    label = "Tên của bạn",
-                    placeholder = "Nhập tên của bạn",
-                    inputType = InputType.Text,
-                    required = true,
-                    value = viewModel.name,
-                    onValueChange = viewModel::updateName,
-                    error = viewModel.nameError,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.NAME)
-                    }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    TextInput(
+                        label = "Số điện thoại",
+                        placeholder = "Nhập số điện thoại",
+                        inputType = InputType.Phone,
+                        required = true,
+                        value = viewModel.phoneNumber,
+                        onValueChange = viewModel::updatePhoneNumber,
+                        error = viewModel.phoneNumberError,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.PHONE_NUMBER)
+                        },
+                    )
 
-                TextInput(
-                    label = "Email",
-                    placeholder = "Nhập email của bạn",
-                    inputType = InputType.Email,
-                    value = viewModel.email,
-                    onValueChange = viewModel::updateEmail,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.EMAIL)
-                    }
-                )
+                    TextInput(
+                        label = "Tên của bạn",
+                        placeholder = "Nhập tên của bạn",
+                        inputType = InputType.Text,
+                        required = true,
+                        value = viewModel.name,
+                        onValueChange = viewModel::updateName,
+                        error = viewModel.nameError,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.NAME)
+                        }
+                    )
 
-                TextInput(
-                    label = "Ngày sinh",
-                    placeholder = "DD/MM/YYYY",
-                    inputType = InputType.Text,
-                    required = true,
-                    value = viewModel.dateOfBirth,
-                    onValueChange = viewModel::updateDateOfBirth,
-                    error = viewModel.dateOfBirthError,
-                    onFocusChange = { focused ->
-                        if (focused) {
-                            showDatePicker = true
-                            viewModel.updateFocusField(FocusField.DATE_OF_BIRTH)
+                    TextInput(
+                        label = "Email",
+                        placeholder = "Nhập email của bạn",
+                        inputType = InputType.Email,
+                        value = viewModel.email,
+                        onValueChange = viewModel::updateEmail,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.EMAIL)
+                        }
+                    )
+
+                    TextInput(
+                        label = "Ngày sinh",
+                        placeholder = "DD/MM/YYYY",
+                        inputType = InputType.Text,
+                        required = true,
+                        value = viewModel.dateOfBirth,
+                        onValueChange = viewModel::updateDateOfBirth,
+                        error = viewModel.dateOfBirthError,
+                        onFocusChange = { focused ->
+                            if (focused) {
+                                showDatePicker = true
+                                viewModel.updateFocusField(FocusField.DATE_OF_BIRTH)
+                            }
+                        },
+                        readOnly = true
+                    )
+
+                    if (showDatePicker) {
+                        DatePickerDialog(
+                            onDateSelected = { date ->
+                                viewModel.updateDateOfBirth(date)
+                                showDatePicker = false
+                            },
+                            onDismiss = { showDatePicker = false }
+                        )
+                    }
+
+                    TextInput(
+                        label = "Mật khẩu",
+                        placeholder = "Nhập mật khẩu",
+                        inputType = InputType.Password,
+                        required = true,
+                        value = viewModel.password,
+                        onValueChange = viewModel::updatePassword,
+                        error = viewModel.passwordError,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.PASSWORD)
+                        }
+                    )
+
+                    TextInput(
+                        label = "Nhập lại mật khẩu",
+                        placeholder = "Nhập lại mật khẩu",
+                        inputType = InputType.Password,
+                        required = true,
+                        value = viewModel.confirmPassword,
+                        onValueChange = viewModel::updateConfirmPassword,
+                        error = viewModel.confirmPasswordError,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.CONFIRM_PASSWORD)
+                        }
+                    )
+
+                    TextInput(
+                        label = "Mã giới thiệu từ bạn bè",
+                        placeholder = "Nhập mã giới thiệu",
+                        inputType = InputType.Text,
+                        value = viewModel.referralCode,
+                        onValueChange = viewModel::updateReferralCode,
+                        onFocusChange = { focused ->
+                            if (focused) viewModel.updateFocusField(FocusField.REFERRAL_CODE)
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(2.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val termsOfUse = stringResource(id = R.string.term_of_use)
+                    val policy = stringResource(id = R.string.policy)
+
+                    val texts = listOf(
+                        AnnotatedText.Plain("Bằng cách tiếp tục, bạn đã đọc và đồng ý với "),
+                        AnnotatedText.Clickable(termsOfUse, onClick = { onClick(SignUpClicks.TermsOfUse, "") }),
+                        AnnotatedText.Plain(" và "),
+                        AnnotatedText.Clickable(policy, onClick = { onClick(SignUpClicks.PrivacyPolicy, "") }),
+                        AnnotatedText.Plain(" của chúng tôi.")
+                    )
+
+                    Box (
+                        modifier = Modifier.padding(start = 0.dp)
+                    ) {
+                        Checkbox(
+                            checked = viewModel.isTermAccepted,
+                            onCheckedChange = viewModel::updateTermAccepted,
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = PrimaryColor,
+                                uncheckedColor = Color.Gray
+                            ),
+                            modifier = Modifier.padding(0.dp)
+                        )
+                    }
+
+                    ClickableTextComponent(texts = texts)
+                }
+
+                Spacer(modifier = Modifier.padding(4.dp))
+
+                ButtonComponent(
+                    value = stringResource(id = R.string.sign_up),
+                    onClick = {
+                        isLoading.value = true
+                        viewModel.signUp {
+                            val res = retrofit.authAPI.sendOTP(
+                                OTPRequest(
+                                    username = viewModel.phoneNumber,
+                                    "+84964704623",
+                                    OTPPurpose.SIGNUP)
+                            )
+                            if (res.isSuccessful) {
+                                isLoading.value = false
+                                delay(100)
+                                onClick(SignUpClicks.OTPVerify, viewModel.phoneNumber)
+                            } else {
+                                isLoading.value = false
+                                makeToast(context, "Có lỗi xảy ra, vui lòng thử lại sau")
+                            }
                         }
                     },
-                    readOnly = true
+                    color = ButtonDefaults.buttonColors(
+                        containerColor = if (viewModel.validateAll()) PrimaryColor else Color.LightGray,
+                        contentColor = if (viewModel.validateAll()) Color.White else Color.Gray
+                    ),
                 )
 
-                if (showDatePicker) {
-                    DatePickerDialog(
-                        onDateSelected = { date ->
-                            viewModel.updateDateOfBirth(date)
-                            showDatePicker = false
-                        },
-                        onDismiss = { showDatePicker = false }
-                    )
-                }
+                Spacer(modifier = Modifier.weight(1f))
 
-                TextInput(
-                    label = "Mật khẩu",
-                    placeholder = "Nhập mật khẩu",
-                    inputType = InputType.Password,
-                    required = true,
-                    value = viewModel.password,
-                    onValueChange = viewModel::updatePassword,
-                    error = viewModel.passwordError,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.PASSWORD)
-                    }
-                )
-
-                TextInput(
-                    label = "Nhập lại mật khẩu",
-                    placeholder = "Nhập lại mật khẩu",
-                    inputType = InputType.Password,
-                    required = true,
-                    value = viewModel.confirmPassword,
-                    onValueChange = viewModel::updateConfirmPassword,
-                    error = viewModel.confirmPasswordError,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.CONFIRM_PASSWORD)
-                    }
-                )
-
-                TextInput(
-                    label = "Mã giới thiệu từ bạn bè",
-                    placeholder = "Nhập mã giới thiệu",
-                    inputType = InputType.Text,
-                    value = viewModel.referralCode,
-                    onValueChange = viewModel::updateReferralCode,
-                    onFocusChange = { focused ->
-                        if (focused) viewModel.updateFocusField(FocusField.REFERRAL_CODE)
-                    }
+                ClickableTextLoginComponent(
+                    tryingToLogin = true,
+                    onTextSelected = { onClick(SignUpClicks.SignIn, "") },
                 )
             }
-
-            Spacer(modifier = Modifier.padding(2.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val termsOfUse = stringResource(id = R.string.term_of_use)
-                val policy = stringResource(id = R.string.policy)
-
-                val texts = listOf(
-                    AnnotatedText.Plain("Bằng cách tiếp tục, bạn đã đọc và đồng ý với "),
-                    AnnotatedText.Clickable(termsOfUse, onClick = { onClick(SignUpClicks.TermsOfUse) }),
-                    AnnotatedText.Plain(" và "),
-                    AnnotatedText.Clickable(policy, onClick = { onClick(SignUpClicks.PrivacyPolicy) }),
-                    AnnotatedText.Plain(" của chúng tôi.")
-                )
-
-                Box (
-                    modifier = Modifier.padding(start = 0.dp)
-                ) {
-                    Checkbox(
-                        checked = viewModel.isTermAccepted,
-                        onCheckedChange = viewModel::updateTermAccepted,
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = PrimaryColor,
-                            uncheckedColor = Color.Gray
-                        ),
-                        modifier = Modifier.padding(0.dp)
-                    )
-                }
-
-                ClickableTextComponent(texts = texts)
-            }
-
-            Spacer(modifier = Modifier.padding(4.dp))
-
-            ButtonComponent(
-                value = stringResource(id = R.string.sign_up),
-                onClick = {
-                    viewModel.signUp {
-                        onClick(SignUpClicks.SignUpSuccess)
-                    }
-                },
-                color = ButtonDefaults.buttonColors(
-                    containerColor = if (viewModel.validateAll()) PrimaryColor else Color.LightGray,
-                    contentColor = if (viewModel.validateAll()) Color.White else Color.Gray
-                ),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            ClickableTextLoginComponent(
-                tryingToLogin = true,
-                onTextSelected = { onClick(SignUpClicks.SignIn) },
-            )
         }
     }
 }
@@ -226,10 +283,5 @@ sealed class SignUpClicks {
     data object SignUpSuccess: SignUpClicks()
     data object TermsOfUse: SignUpClicks()
     data object PrivacyPolicy: SignUpClicks()
-}
-
-@Preview
-@Composable
-fun SignUpPreview() {
-    SignUpScreen({})
+    data object OTPVerify: SignUpClicks()
 }

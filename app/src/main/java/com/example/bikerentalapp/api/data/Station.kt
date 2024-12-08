@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.api.data
 
+import com.example.bikerentalapp.screen.login.OTPPurpose
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
@@ -97,7 +98,8 @@ data class UserDetails(
     @SerializedName("phone_num")
     val phoneNum: String,
     val email: String,
-    val dob: String
+    val dob: String,
+    val balance: Int = 0
 )
 
 data class User(
@@ -110,14 +112,15 @@ data class User(
 data class UserCreateRequest(
     val username: String,
     val password: String,
-    val role: UserRole?,
+    val role: UserRole = UserRole.USER,
     val details: UserDetails
 )
 
 data class OTPRequest(
     val username: String,
     @SerializedName("phone_number")
-    val phoneNumber: String
+    val phoneNumber: String,
+    val purpose: OTPPurpose
 )
 
 data class OTPResponse(

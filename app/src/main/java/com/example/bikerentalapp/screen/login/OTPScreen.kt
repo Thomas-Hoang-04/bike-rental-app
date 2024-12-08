@@ -39,7 +39,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -49,7 +48,7 @@ import com.example.bikerentalapp.api.data.OTPRequest
 import com.example.bikerentalapp.api.data.OTPResponse
 import com.example.bikerentalapp.api.data.OTPStatus
 import com.example.bikerentalapp.api.data.OTPValidationRequest
-import com.example.bikerentalapp.api.network.RetrofitInstance
+import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.LoadingScreen
 import com.example.bikerentalapp.components.makeToast
 import com.google.gson.Gson
@@ -57,6 +56,7 @@ import com.google.gson.Gson
 @Composable
 fun OTPScreen(
     phoneNumber: String,
+    purpose: OTPPurpose,
     onClick: (OTPClicks) -> Unit
 ) {
     var otpValues by remember { mutableStateOf(List(5) { "" }) }
@@ -70,6 +70,7 @@ fun OTPScreen(
     val isWaiting = remember { mutableStateOf(true) }
     val isLoading = remember { mutableStateOf(false) }
     val time = remember { mutableStateOf(60) }
+    val retrofit = RetrofitInstances.Auth
 
     LaunchedEffect(isOTPComplete) {
         if (isOTPComplete) {
@@ -230,14 +231,17 @@ fun OTPScreen(
                     isLoading.value = true
                     scope.launch {
                         val otp = otpValues.joinToString("")
-                        val res = RetrofitInstance.authAPI.verifyOTP(
+                        val res = retrofit.authAPI.verifyOTP(
                             OTPValidationRequest(otp, phoneNumber)
                         )
                         if (res.isSuccessful) {
                             val body: OTPResponse = res.body()!!
                             if (body.status == OTPStatus.SUCCESS) {
                                 isLoading.value = false
-                                onClick(OTPClicks.OTPConfirm)
+                                when (purpose) {
+                                    OTPPurpose.RESET_PASSWORD -> onClick(OTPClicks.PasswordResetConfirm)
+                                    OTPPurpose.SIGNUP -> onClick(OTPClicks.OTPConfirm)
+                                }
                             } else {
                                 makeToast(context, body.message)
                             }
@@ -291,11 +295,8 @@ fun OTPScreen(
                         .clickable(!isWaiting.value) {
                             isLoading.value = true
                             scope.launch {
-                                Log.d("PhoneNumber", phoneNumber)
-                                val num: String = "+84" + phoneNumber.substring(1)
-                                Log.d("PhoneNumber", num)
-                                val res = RetrofitInstance.authAPI.sendOTP(
-                                    OTPRequest(username = phoneNumber, num)
+                                val res = retrofit.authAPI.sendOTP(
+                                    OTPRequest(username = phoneNumber, "+84964704623", purpose)
                                 )
                                 if (res.isSuccessful) {
                                     val body: OTPResponse = res.body()!!
@@ -323,12 +324,15 @@ fun OTPScreen(
 sealed class OTPClicks {
     data object BackToSignIn: OTPClicks()
     data object OTPConfirm: OTPClicks()
+    data object PasswordResetConfirm: OTPClicks()
 }
+
+enum class OTPPurpose { RESET_PASSWORD, SIGNUP }
 
 @Preview
 @Composable
 fun OTPScreenPreview() {
-    OTPScreen("") {
+    OTPScreen("", OTPPurpose.RESET_PASSWORD) {
         _ ->
     }
 }

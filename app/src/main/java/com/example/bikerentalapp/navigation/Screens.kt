@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.navigation
 
+import com.example.bikerentalapp.screen.login.OTPPurpose
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +18,10 @@ sealed class Screens {
         @Serializable
         object PrivacyPolicy
         @Serializable
-        data class OTPConfirm(val phoneNumber: String)
+        data class OTPConfirm(
+            val phoneNumber: String,
+            val purpose: OTPPurpose
+        )
     }
 
     @Serializable
