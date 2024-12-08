@@ -33,8 +33,10 @@ sealed class Screens {
         @Serializable
         object QRCode
         @Serializable
-        object QRResult
+        data class QrResult(val qrContent : String)
         @Serializable
-        object TrackingMap
+        data class TrackingMap(val bikeId : String)
+        @Serializable
+        data class Feedback(val totalMinutes : Int, val bikeId: String)
     }
 }
