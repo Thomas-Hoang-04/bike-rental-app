@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.ButtonComponent
+import com.example.bikerentalapp.components.TextColumn
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
@@ -71,9 +72,9 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ){
-            TextColumn("San sang:",qrCodeContent.substring(0, 10))
+            TextColumn("San sang:",qrCodeContent.substring(0, 10),Modifier.padding(10.dp))
             Spacer(modifier = Modifier.width(16.dp))
-            TextColumn("78%","Pin")
+            TextColumn("78%","Pin",Modifier.padding(10.dp))
         }
         RowWithTextAndDropdown(
             title = "Hình thức trả phí:",
@@ -109,7 +110,7 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         ButtonComponent(
             value = "Bat dau",
             onClick = {
-                navController.navigate("${Screens.Main.TrackingMap}/${qrCodeContent.substring(0, 10)}"){
+                navController.navigate(Screens.Main.TrackingMap(qrCodeContent.substring(0, 10))){
                     popUpTo(navController.graph.startDestinationId){
                         saveState = true
                     }
@@ -128,27 +129,6 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
     }
 }
 
-@Composable
-fun TextColumn(title:String,subTitle : String){
-    Column(
-        modifier = Modifier
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = PrimaryColor,
-            modifier = Modifier.padding(bottom = 5.dp)
-        )
-        Text(
-            text = subTitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray.copy(alpha = 0.6f)
-        )
-    }
-}
 
 @Composable
 fun RowWithTextAndDropdown(title: String, dropdownItems: List<String>) {
