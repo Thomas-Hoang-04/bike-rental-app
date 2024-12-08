@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,8 +47,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.example.bikerentalapp.components.CircularButtonWithText
-import com.example.bikerentalapp.components.IconWithText
+import com.example.bikerentalapp.components.IconWithTextHorizontal
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -64,15 +67,15 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Locale
 
 @Composable
-fun TrackingMapScreen(bikeId: String) {
+fun TrackingMapScreen(bikeId: String,navController: NavController) {
     val context = LocalContext.current
     val fusedClientLocation = remember{LocationServices.getFusedLocationProviderClient(context)}
     var polylinePoints by remember { mutableStateOf(listOf<LatLng>()) }
     val cameraPositionState = rememberCameraPositionState()
 
     //Time Counter
-    var minutesElapsed by remember { mutableIntStateOf(0) }
-    var isRunning by remember { mutableStateOf(true) }
+    var minutesElapsed by rememberSaveable { mutableIntStateOf(0) }
+    var isRunning by rememberSaveable { mutableStateOf(true) }
     var showStopDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isRunning) {
@@ -153,6 +156,15 @@ fun TrackingMapScreen(bikeId: String) {
             BottomCard(
                 bikeId,
                 minutesElapsed,
+                onClickReturnBikeButton = {
+                    navController.navigate(Screens.Main.Feedback(minutesElapsed,bikeId)){
+                        popUpTo(navController.graph.startDestinationId){
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 onClickLockBikeButton = {
                     if(isRunning){
                         showStopDialog = true
@@ -211,16 +223,16 @@ fun BottomCard(bikeId: String,minutes : Int,onClickReturnBikeButton : () -> Unit
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Text("$bikeId - dang di chuyen", style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
+                Text(if(!isLock)"$bikeId - dang di chuyen" else "$bikeId - dang khoa", style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
                 IconButton(
                     onClick = {
                         expanded.value = !expanded.value
                     }
                 ) {
-                    if(expanded.value)
+                    if(!expanded.value)
                         Icon(Icons.Default.ArrowDropUp, contentDescription = "Drop up", tint = Color.Black, modifier = Modifier.size(40.dp))
                     else
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Drop up", tint = Color.Black, modifier = Modifier.size(40.dp))
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Drop down", tint = Color.Black, modifier = Modifier.size(40.dp))
                 }
             }
 
@@ -231,9 +243,9 @@ fun BottomCard(bikeId: String,minutes : Int,onClickReturnBikeButton : () -> Unit
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    IconWithText(icon = Icons.Default.CreditCard, text = "10000")
-                    IconWithText(icon = Icons.Default.Timer, text = String.format(Locale.ENGLISH," %02d phut",minutes))
-                    IconWithText(icon = Icons.Default.Battery5Bar, text = "78%")
+                    IconWithTextHorizontal(icon = Icons.Default.CreditCard, text = "10000")
+                    IconWithTextHorizontal(icon = Icons.Default.Timer, text = String.format(Locale.ENGLISH," %02d phut",minutes))
+                    IconWithTextHorizontal(icon = Icons.Default.Battery5Bar, text = "78%")
                 }
             }
 
