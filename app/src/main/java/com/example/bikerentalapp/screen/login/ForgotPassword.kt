@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.api.data.OTPPurpose
 import com.example.bikerentalapp.api.data.OTPRequest
 import com.example.bikerentalapp.api.data.OTPResponse
 import com.example.bikerentalapp.api.data.OTPStatus
@@ -48,7 +49,7 @@ fun ForgotPassword(
     onClick: (ForgotPasswordClicks, String) -> Unit,
 ) {
     val phoneNumber = remember { mutableStateOf("") }
-    val isPhoneNumberValid = phoneNumber.value.matches(Regex("^[0-9]{10,15}$"))
+    val isPhoneNumberValid = phoneNumber.value.matches(Regex("^0[1-9][0-9]{8}\$"))
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(false) }
@@ -140,35 +141,38 @@ fun ForgotPassword(
 
             Button(
                 onClick = {
-                    isLoading.value = true
-                    coroutineScope.launch {
-                        val res = retrofit.authAPI.sendOTP(
-                            OTPRequest(
-                                username = phoneNumber.value,
-                                "+84964704623",
-                                OTPPurpose.RESET_PASSWORD)
-                        )
-                        if (res.isSuccessful) {
-                            val body: OTPResponse = res.body()!!
-                            if (body.status == OTPStatus.SUCCESS) {
-                                isLoading.value = false
-                                delay(100)
-                                onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
-                            } else {
-                                makeToast(context, body.message)
-                            }
-                        } else {
-                            val e = res.errorBody()?.string()
-                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
-                            makeToast(context, eBody.message)
-                            isLoading.value = false
-                        }
-                    }
+                        onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
+//                    isLoading.value = true
+//                    coroutineScope.launch {
+//                        val res = retrofit.authAPI.sendOTP(
+//                            OTPRequest(
+//                                username = phoneNumber.value,
+//                                "+84964704623",
+//                                OTPPurpose.RESET_PASSWORD)
+//                        )
+//                        if (res.isSuccessful) {
+//                            val body: OTPResponse = res.body()!!
+//                            if (body.status == OTPStatus.SUCCESS) {
+//                                isLoading.value = false
+//                                delay(100)
+//                                onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
+//                            } else {
+//                                makeToast(context, body.message)
+//                            }
+//                        } else {
+//                            val e = res.errorBody()?.string()
+//                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+//                            makeToast(context, eBody.message)
+//                            isLoading.value = false
+//                        }
+//                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
-                    .height(48.dp),
+                    .height(48.dp)
+                ,
+                enabled = isPhoneNumberValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isPhoneNumberValid) PrimaryColor else Color.LightGray,
                     contentColor = if (isPhoneNumberValid) Color.White else Color.Gray

@@ -1,6 +1,7 @@
 package com.example.bikerentalapp.navigation
 
-import com.example.bikerentalapp.screen.login.OTPPurpose
+
+import com.example.bikerentalapp.api.data.OTPPurpose
 import kotlinx.serialization.Serializable
 
 @Serializable

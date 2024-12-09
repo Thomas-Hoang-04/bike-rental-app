@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -17,6 +18,7 @@ import com.example.bikerentalapp.screen.login.ForgotPassword
 import com.example.bikerentalapp.screen.login.ForgotPasswordClicks
 import com.example.bikerentalapp.screen.login.OTPClicks
 import com.example.bikerentalapp.screen.login.OTPScreen
+import com.example.bikerentalapp.api.data.OTPPurpose
 import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.model.SignUpViewModel
 import com.example.bikerentalapp.screen.login.*
@@ -34,6 +36,7 @@ import com.example.bikerentalapp.screen.main.qrcode.QrScreen
 import com.example.bikerentalapp.screen.main.qrcode.ReturnBikeScreen
 import com.example.bikerentalapp.screen.main.qrcode.TrackingMapScreen
 import com.example.bikerentalapp.screen.main.station.StationsScreen
+
 import com.example.bikerentalapp.screen.policy.PrivacyPolicy
 import com.example.bikerentalapp.screen.policy.TermsOfUse
 
@@ -42,13 +45,11 @@ import com.example.bikerentalapp.screen.policy.TermsOfUse
 @Composable
 fun PostOfficeApp() {
     val navController = rememberNavController()
-    val account = AccountViewModel()
-    val signUpViewModel = SignUpViewModel()
+    val account = remember { AccountViewModel() }
 
     val startDestination = Screens.Auth
 
-    LaunchedEffect(key1 = account) {
-
+    LaunchedEffect(account) {
 
     }
 
@@ -60,6 +61,8 @@ fun PostOfficeApp() {
         navigation<Screens.Auth>(
             startDestination = Screens.Auth.Login
         ) {
+            val signUpViewModel = SignUpViewModel()
+
             composable<Screens.Auth.Login> {
                 SignInScreen(
                     onClick = { click ->

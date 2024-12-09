@@ -40,14 +40,12 @@ import kotlinx.coroutines.launch
 import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
-import com.example.bikerentalapp.api.data.OTPRequest
-import com.example.bikerentalapp.api.data.OTPResponse
-import com.example.bikerentalapp.api.data.OTPStatus
-import com.example.bikerentalapp.api.data.OTPValidationRequest
+import com.example.bikerentalapp.api.data.*
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.LoadingScreen
 import com.example.bikerentalapp.components.makeToast
@@ -202,6 +200,17 @@ fun OTPScreen(
                             .focusRequester(focusRequesters[index])
                             .onFocusChanged {
                                 isFocused = it.isFocused
+                            }
+                            .onKeyEvent {
+                                if (it.nativeKeyEvent.keyCode == 67) {
+                                    if (index > 0) {
+                                        val newOtpValues = otpValues.toMutableList()
+                                        newOtpValues[index] = ""
+                                        otpValues = newOtpValues
+                                        focusRequesters[index - 1].requestFocus()
+                                    }
+                                }
+                                false
                             },
                         textStyle = TextStyle(
                             fontSize = 20.sp,
@@ -228,30 +237,34 @@ fun OTPScreen(
 
             Button(
                 onClick = {
-                    isLoading.value = true
-                    scope.launch {
-                        val otp = otpValues.joinToString("")
-                        val res = retrofit.authAPI.verifyOTP(
-                            OTPValidationRequest(otp, phoneNumber)
-                        )
-                        if (res.isSuccessful) {
-                            val body: OTPResponse = res.body()!!
-                            if (body.status == OTPStatus.SUCCESS) {
-                                isLoading.value = false
-                                when (purpose) {
+                    when (purpose) {
                                     OTPPurpose.RESET_PASSWORD -> onClick(OTPClicks.PasswordResetConfirm)
                                     OTPPurpose.SIGNUP -> onClick(OTPClicks.OTPConfirm)
                                 }
-                            } else {
-                                makeToast(context, body.message)
-                            }
-                        } else {
-                            val e = res.errorBody()?.string()
-                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
-                            makeToast(context, eBody.message)
-                            isLoading.value = false
-                        }
-                    }
+//                    isLoading.value = true
+//                    scope.launch {
+//                        val otp = otpValues.joinToString("")
+//                        val res = retrofit.authAPI.verifyOTP(
+//                            OTPValidationRequest(otp, phoneNumber)
+//                        )
+//                        if (res.isSuccessful) {
+//                            val body: OTPResponse = res.body()!!
+//                            if (body.status == OTPStatus.SUCCESS) {
+//                                isLoading.value = false
+//                                when (purpose) {
+//                                    OTPPurpose.RESET_PASSWORD -> onClick(OTPClicks.PasswordResetConfirm)
+//                                    OTPPurpose.SIGNUP -> onClick(OTPClicks.OTPConfirm)
+//                                }
+//                            } else {
+//                                makeToast(context, body.message)
+//                            }
+//                        } else {
+//                            val e = res.errorBody()?.string()
+//                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+//                            makeToast(context, eBody.message)
+//                            isLoading.value = false
+//                        }
+//                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -293,24 +306,24 @@ fun OTPScreen(
                     ),
                     modifier = Modifier
                         .clickable(!isWaiting.value) {
-                            isLoading.value = true
-                            scope.launch {
-                                val res = retrofit.authAPI.sendOTP(
-                                    OTPRequest(username = phoneNumber, "+84964704623", purpose)
-                                )
-                                if (res.isSuccessful) {
-                                    val body: OTPResponse = res.body()!!
-                                    makeToast(context, body.message)
-                                    isLoading.value = false
-                                    time.value = 60
-                                    isWaiting.value = true
-                                } else {
-                                    val e = res.errorBody()?.string()
-                                    val eBody = Gson().fromJson(e, OTPResponse::class.java)
-                                    makeToast(context, eBody.message)
-                                    isLoading.value = false
-                                }
-                            }
+//                            isLoading.value = true
+//                            scope.launch {
+//                                val res = retrofit.authAPI.sendOTP(
+//                                    OTPRequest(username = phoneNumber, "+84964704623", purpose)
+//                                )
+//                                if (res.isSuccessful) {
+//                                    val body: OTPResponse = res.body()!!
+//                                    makeToast(context, body.message)
+//                                    isLoading.value = false
+//                                    time.value = 60
+//                                    isWaiting.value = true
+//                                } else {
+//                                    val e = res.errorBody()?.string()
+//                                    val eBody = Gson().fromJson(e, OTPResponse::class.java)
+//                                    makeToast(context, eBody.message)
+//                                    isLoading.value = false
+//                                }
+//                            }
                         }
                 )
             }
@@ -326,8 +339,6 @@ sealed class OTPClicks {
     data object OTPConfirm: OTPClicks()
     data object PasswordResetConfirm: OTPClicks()
 }
-
-enum class OTPPurpose { RESET_PASSWORD, SIGNUP }
 
 @Preview
 @Composable

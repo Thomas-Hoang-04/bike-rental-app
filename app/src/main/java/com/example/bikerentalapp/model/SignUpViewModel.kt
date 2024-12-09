@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.model
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -37,19 +38,13 @@ class SignUpViewModel : ViewModel() {
         private set
     var confirmPasswordError by mutableStateOf<String?>(null)
         private set
+    var emailError by mutableStateOf<String?>(null)
+        private set
 
     private var focusedField by mutableStateOf<FocusField?>(null)
 
     fun updateFocusField(field: FocusField) {
         focusedField = field
-        when (field) {
-            FocusField.PHONE_NUMBER -> validatePhoneNumber(true)
-            FocusField.NAME -> validateName(true)
-            FocusField.DATE_OF_BIRTH -> validateDateOfBirth(true)
-            FocusField.PASSWORD -> validatePassword(true)
-            FocusField.CONFIRM_PASSWORD -> validateConfirmPassword(true)
-            else -> {}
-        }
     }
 
     fun updatePhoneNumber(value: String) {
@@ -68,6 +63,10 @@ class SignUpViewModel : ViewModel() {
 
     fun updateEmail(value: String) {
         email = value
+        if (focusedField == FocusField.EMAIL) {
+            if (value.isNotBlank()) validateEmail(true)
+            else emailError = null
+        }
     }
 
     fun updateDateOfBirth(value: String) {
@@ -105,7 +104,7 @@ class SignUpViewModel : ViewModel() {
     private fun validatePhoneNumber(showError: Boolean = false): Boolean {
         val error = when {
             phoneNumber.isEmpty() -> "Số điện thoại không được để trống"
-            !phoneNumber.matches(Regex("^[0-9]{10}$")) -> "Số điện thoại không hợp lệ"
+            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}\$")) -> "Số điện thoại không hợp lệ"
             else -> null
         }
 
@@ -115,6 +114,19 @@ class SignUpViewModel : ViewModel() {
         return error == null
     }
 
+    private fun validateEmail(showError: Boolean = false): Boolean {
+        val error = if (email.isNotBlank()) {
+            when {
+                !email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) -> "Email không hợp lệ"
+                else -> null
+            }
+        } else null
+
+        if (showError) {
+            emailError = error
+        }
+        return error == null
+    }
 
     private fun validateName(showError: Boolean = false): Boolean {
         val error = when {
@@ -194,13 +206,14 @@ class SignUpViewModel : ViewModel() {
         val isDateValid = validateDateOfBirth(false)
         val isPasswordValid = validatePassword(false)
         val isConfirmPasswordValid = validateConfirmPassword(false)
+        val isEmailValid = validateEmail(false)
 
         return isPhoneValid &&
                 isNameValid &&
                 isDateValid &&
                 isPasswordValid &&
                 isConfirmPasswordValid &&
-                isTermAccepted
+                isTermAccepted && isEmailValid
     }
 
     fun signUp(onSuccess: suspend () -> Unit) {

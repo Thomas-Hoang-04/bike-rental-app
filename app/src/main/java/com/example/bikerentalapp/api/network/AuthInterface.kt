@@ -3,6 +3,7 @@ package com.example.bikerentalapp.api.network
 import com.example.bikerentalapp.api.data.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface AuthInterface {
@@ -17,4 +18,7 @@ interface AuthInterface {
 
     @POST("otp/verify")
     suspend fun verifyOTP(@Body otp: OTPValidationRequest): Response<OTPResponse>
+
+    @PATCH("auth/forgot-password")
+    suspend fun forgotPassword(@Body reset: ResetPwdRequest): Response<CRUDResponse<Boolean>>
 }

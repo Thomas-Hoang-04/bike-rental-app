@@ -204,7 +204,8 @@ fun ButtonComponent(
     value: String,
     onClick: () -> Unit,
     color: ButtonColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -212,6 +213,7 @@ fun ButtonComponent(
             .fillMaxWidth()
             .heightIn(48.dp),
         colors = color,
+        enabled = enabled,
         shape = RoundedCornerShape(6.dp)
     ) {
         Text(

@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ButtonDefaults
@@ -15,13 +16,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.bikerentalapp.R
-import com.example.bikerentalapp.api.data.OTPRequest
-import com.example.bikerentalapp.api.data.UserCreateRequest
-import com.example.bikerentalapp.api.data.UserDetails
+import com.example.bikerentalapp.api.data.*
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.*
 import com.example.bikerentalapp.model.SignUpViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -62,10 +62,13 @@ fun SignUpScreen(
                 delay(150)
                 onClick(SignUpClicks.SignUpSuccess, "")
             } else {
+                val e = res.errorBody()?.string()
+                val eBody = Gson().fromJson(e, ErrorResponse::class.java)
                 isLoading.value = false
                 verified.value = false
-                delay(100)
-                makeToast(context, "Có lỗi xảy ra, vui lòng thử lại")
+                delay(50)
+                makeToast(context, eBody.message)
+                Log.d("SignUpScreen", "Error: ${eBody.message}")
             }
         }
     } else {
@@ -132,6 +135,7 @@ fun SignUpScreen(
                         inputType = InputType.Email,
                         value = viewModel.email,
                         onValueChange = viewModel::updateEmail,
+                        error = viewModel.emailError,
                         onFocusChange = { focused ->
                             if (focused) viewModel.updateFocusField(FocusField.EMAIL)
                         }
@@ -256,11 +260,15 @@ fun SignUpScreen(
                                 delay(100)
                                 onClick(SignUpClicks.OTPVerify, viewModel.phoneNumber)
                             } else {
+                                val e = res.errorBody()?.string()
+                                val eBody = Gson().fromJson(e, OTPResponse::class.java)
                                 isLoading.value = false
-                                makeToast(context, "Có lỗi xảy ra, vui lòng thử lại sau")
+                                delay(50)
+                                makeToast(context, eBody.message)
                             }
                         }
                     },
+                    enabled = viewModel.validateAll(),
                     color = ButtonDefaults.buttonColors(
                         containerColor = if (viewModel.validateAll()) PrimaryColor else Color.LightGray,
                         contentColor = if (viewModel.validateAll()) Color.White else Color.Gray

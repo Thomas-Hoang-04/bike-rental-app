@@ -18,3 +18,12 @@ data class CRUDResponse<T>(
     val targetCount: Int = 1,
     val target: T?
 )
+
+data class ErrorResponse(
+    val timestamp: String,
+    val status: Int,
+    val error: String,
+    val type: Any,
+    val message: String,
+    val path: String,
+)
