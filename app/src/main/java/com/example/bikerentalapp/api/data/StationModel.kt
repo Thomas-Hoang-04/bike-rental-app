@@ -1,40 +1,12 @@
 package com.example.bikerentalapp.api.data
 
-import com.example.bikerentalapp.screen.login.OTPPurpose
 import com.google.gson.annotations.SerializedName
 import java.util.*
-
-enum class BikeStatus {
-    IN_USE,
-    AVAILABLE,
-    CHARGING,
-}
-
-enum class BikeType {
-    MANUAL, ELECTRIC
-}
 
 @Suppress("unused")
 enum class StationStatus {
     ACTIVE,
     INACTIVE
-}
-
-@Suppress("unused")
-enum class BikeAction {
-    RENT,
-    RETURN
-}
-
-@Suppress("unused")
-enum class UserRole {
-    USER,
-    ADMIN
-}
-
-@Suppress("unused")
-enum class OTPStatus {
-    SUCCESS, FAILED, INVALID, EXPIRED
 }
 
 data class NearbyStation(
@@ -64,74 +36,6 @@ data class Station(
 )
 
 
-data class Bike(
-    val id: UUID,
-    val plate: String,
-    val type: BikeType,
-    val battery: Int,
-    val status: BikeStatus,
-    val location: UUID?,
-)
-
-data class BikeRenting(
-    val plate: String,
-    val latitude: Double,
-    val longitude: Double,
-    val action: BikeAction,
-    val battery: Int?
-)
-
-data class LoginRequest(
-    val username: String,
-    val password: String
-)
-
-data class LoginResponse(
-    @SerializedName("access_token")
-    val accessToken: String,
-    @SerializedName("user")
-    val targetUser: User
-)
-
-data class UserDetails(
-    val name: String,
-    @SerializedName("phone_num")
-    val phoneNum: String,
-    val email: String,
-    val dob: String,
-    val balance: Int = 0
-)
-
-data class User(
-    val id: UUID,
-    val username: String,
-    val role: UserRole,
-    val details: UserDetails
-)
-
-data class UserCreateRequest(
-    val username: String,
-    val password: String,
-    val role: UserRole = UserRole.USER,
-    val details: UserDetails
-)
-
-data class OTPRequest(
-    val username: String,
-    @SerializedName("phone_number")
-    val phoneNumber: String,
-    val purpose: OTPPurpose
-)
-
-data class OTPResponse(
-    val status: OTPStatus,
-    val message: String
-)
-
-data class OTPValidationRequest(
-    val otp: String,
-    val username: String
-)
 
 //val stations = listOf(
 //    Station(
