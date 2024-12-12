@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Face2
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @Composable
 fun ProfileScreen() {
@@ -39,7 +41,6 @@ fun ProfileScreen() {
                     contentDescription = "Quay lại"
                 )
             }
-
             Text(
                 text = "Nguyễn Văn A",
                 style = MaterialTheme.typography.h6.copy(
@@ -75,7 +76,7 @@ fun ProfileScreen() {
                     horizontalAlignment = Alignment.Start
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Face2,
+                        imageVector = Icons.Default.Person,
                         contentDescription = "Hình nền",
                         modifier = Modifier
                             .size(80.dp)
@@ -171,8 +172,8 @@ fun ProfileScreen() {
                 Tab(
                     selected = true,
                     onClick = { /*TODO*/ },
-                    selectedContentColor = Color(0xFF4ECBB5),
-                    unselectedContentColor = Color.LightGray
+                    selectedContentColor = PrimaryColor,
+                    unselectedContentColor = Color.Gray
                 ) {
                     Text(
                         "Thư viện ảnh",
@@ -203,7 +204,7 @@ fun StatCard(value: String, unit: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
-            .background(Color(0xFF4ECBB5))
+            .background(PrimaryColor)
             .padding(horizontal = 25.dp, vertical = 16.dp)
     ) {
         Text(

@@ -104,7 +104,7 @@ fun TransactionItem(
     }
 
     val isPositiveAmount = amount.replace(",", "").replace(".", "").toIntOrNull() ?: 0 > 0
-    val icon = if (isPositiveAmount) {
+   val icon = if (isPositiveAmount) {
         Icons.Default.CreditCard
     } else {
         Icons.Default.Money
