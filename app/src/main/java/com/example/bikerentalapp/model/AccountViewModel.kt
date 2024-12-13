@@ -16,21 +16,21 @@ class AccountViewModel: ViewModel() {
     private val _details = MutableStateFlow<UserDetails?>(null)
     val details = _details.asStateFlow()
 
-    private fun setUsername(username: String) {
+    fun setUsername(username: String) {
         _username.value = username
     }
 
-    private fun setDetails(details: UserDetails) {
+    fun setDetails(details: UserDetails) {
         _details.value = details
     }
 
-    private fun setBalance(balance: Int) {
+    fun setBalance(balance: Int) {
         _details.update {
             it?.copy(balance = balance)
         }
     }
 
-    private fun setToken(token: String) {
+    fun setToken(token: String) {
         _token.value = token
     }
 }

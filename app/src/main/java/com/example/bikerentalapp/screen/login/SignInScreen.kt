@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,8 +29,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.api.data.ErrorResponse
 import com.example.bikerentalapp.api.data.LoginRequest
+import com.example.bikerentalapp.api.data.LoginResponse
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.*
+import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.model.SignInViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
@@ -40,7 +43,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignInScreen(
     onClick: (SignInClicks) -> Unit,
-    viewModel: SignInViewModel = viewModel()
+    viewModel: SignInViewModel = viewModel(),
+    accModel: AccountViewModel
 ) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp.dp
@@ -116,6 +120,11 @@ fun SignInScreen(
                                     )
                                     if (res.isSuccessful) {
                                         delay(100)
+                                        val body: LoginResponse = res.body() as LoginResponse
+                                        accModel.setUsername(body.targetUser.username)
+                                        accModel.setDetails(body.targetUser.details)
+                                        accModel.setToken(body.accessToken)
+                                        Log.d("Message", "User ${accModel.username} with ${accModel.token}is logging in")
                                         onClick(SignInClicks.SignInSuccess)
                                     } else {
                                         val e = res.errorBody()?.string()
@@ -128,7 +137,6 @@ fun SignInScreen(
                                     }
                                 }
                             }
-
                         },
                         color = ButtonColors(
                             contentColor = Color.White,
@@ -137,7 +145,6 @@ fun SignInScreen(
                             disabledContainerColor = disablePrimaryColor
                         )
                     )
-
                     Text(
                         text = stringResource(id = R.string.forgot_password),
                         style = TextStyle(
@@ -179,5 +186,5 @@ sealed class SignInClicks {
 @Preview
 @Composable
 fun SignInPreview() {
-    SignInScreen({})
+    SignInScreen({}, accModel = AccountViewModel())
 }
