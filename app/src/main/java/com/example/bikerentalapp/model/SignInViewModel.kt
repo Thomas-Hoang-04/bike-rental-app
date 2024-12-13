@@ -13,6 +13,9 @@ class SignInViewModel : ViewModel() {
     var password by mutableStateOf("")
         private set
 
+    var error by mutableStateOf<String?>(null)
+        private set
+
     var phoneNumberError by mutableStateOf<String?>(null)
         private set
     var passwordError by mutableStateOf<String?>(null)
@@ -26,6 +29,10 @@ class SignInViewModel : ViewModel() {
     fun updatePassword(value: String) {
         password = value
         validatePassword()
+    }
+
+    fun showError(message: String) {
+        error = message
     }
 
     private fun validatePhoneNumber() {
@@ -43,6 +50,7 @@ class SignInViewModel : ViewModel() {
         return phoneNumberError == null && passwordError == null
     }
 
+    @Suppress("unused")
     fun signIn(onSuccess: () -> Unit) {
         viewModelScope.launch {
             if (validateAll()) {

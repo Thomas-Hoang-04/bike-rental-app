@@ -9,7 +9,9 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,10 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bikerentalapp.R
+import com.example.bikerentalapp.api.data.ErrorResponse
+import com.example.bikerentalapp.api.data.LoginRequest
+import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.*
 import com.example.bikerentalapp.model.SignInViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
@@ -36,6 +43,10 @@ fun SignInScreen(
 ) {
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp.dp
+
+    val retrofit = RetrofitInstances.Auth
+    val scope = rememberCoroutineScope()
+    val isLoading = remember { mutableStateOf(false) }
 
     Surface(
         color = Color.White,
@@ -94,8 +105,29 @@ fun SignInScreen(
                     ButtonComponent(
                         value = stringResource(id = R.string.sign_in),
                         onClick = {
-                            viewModel.signIn {
-                                onClick(SignInClicks.SignInSuccess)
+                            isLoading.value = true
+                            scope.launch {
+                                val res = retrofit.authAPI.login(
+                                    LoginRequest(
+                                        viewModel.phoneNumber,
+                                        viewModel.password
+                                    )
+                                )
+                                if (res.isSuccessful) {
+                                    onClick(SignInClicks.SignInSuccess)
+                                } else {
+                                    val errorResponse = Gson().fromJson(
+                                        res.errorBody()?.string(),
+                                        ErrorResponse::class.java
+                                    )
+
+                                    val errorMessage = when (errorResponse?.message) {
+                                        "Bad Credentials" -> "Sai tài khoản hoặc mật khẩu"
+                                        else -> errorResponse?.message ?: "An unknown error occurred. Please try again."
+                                    }
+
+                                    viewModel.showError(errorMessage)
+                                }
                             }
                         },
                         color = ButtonColors(
