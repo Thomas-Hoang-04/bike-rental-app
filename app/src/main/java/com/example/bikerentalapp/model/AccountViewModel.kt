@@ -21,7 +21,7 @@ class AccountViewModel: ViewModel() {
     }
 
     fun setDetails(details: UserDetails) {
-        _details.value = details
+        _details.update { details }
     }
 
     fun setBalance(balance: Int) {

@@ -1,10 +1,7 @@
 package com.example.bikerentalapp.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person3
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class NavigationItem (
@@ -36,8 +33,8 @@ val navigationItems = listOf(
         route = Screens.Main.Notification
     ),
     NavigationItem(
-        label = "Hồ sơ",
-        icon = Icons.Default.Person3,
-        route = Screens.Main.Profile
+        label = "Cài đặt",
+        icon = Icons.Default.Settings,
+        route = Screens.Main.Settings
     )
 )

@@ -43,5 +43,7 @@ sealed class Screens {
         data class TrackingMap(val bikeId : String)
         @Serializable
         data class Feedback(val totalMinutes : Int, val bikeId: String)
+        @Serializable
+        object Settings
     }
 }

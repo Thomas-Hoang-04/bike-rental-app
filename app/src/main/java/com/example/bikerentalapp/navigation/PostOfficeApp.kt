@@ -49,10 +49,6 @@ fun PostOfficeApp() {
 
     val startDestination = Screens.Auth
 
-    LaunchedEffect(account) {
-
-    }
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -303,7 +299,7 @@ fun PostOfficeApp() {
         ) {
             composable<Screens.Main.Home> {
                 MainScreen(navController) {
-                    HomeScreen(onFeatureClick = {}, paddingValues = it)
+                    HomeScreen(onFeatureClick = {}, paddingValues = it, accModel = account)
                 }
             }
 
@@ -319,9 +315,9 @@ fun PostOfficeApp() {
                 }
             }
 
-            composable<Screens.Main.Profile> {
+            composable<Screens.Main.Settings> {
                 MainScreen(navController) {
-                    ProfileScreen()
+                    SettingsScreen(it)
                 }
             }
 

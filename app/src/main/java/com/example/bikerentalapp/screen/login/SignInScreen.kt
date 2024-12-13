@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,9 +47,19 @@ fun SignInScreen(
     val config = LocalConfiguration.current
     val screenHeight = config.screenHeightDp.dp
 
+//    val isLoading = remember { mutableStateOf(false) }
+
     val retrofit = RetrofitInstances.Auth
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val username = accModel.username.collectAsState()
+    val token = accModel.token.collectAsState()
+    val details = accModel.details.collectAsState()
+
+//    if (isLoading.value) {
+//        LoadingScreen()
+//    }
 
     Surface(
         color = Color.White,
@@ -120,20 +128,30 @@ fun SignInScreen(
                                     )
                                     if (res.isSuccessful) {
                                         delay(100)
-                                        val body: LoginResponse = res.body() as LoginResponse
+                                        val body = res.body() as LoginResponse
                                         accModel.setUsername(body.targetUser.username)
                                         accModel.setDetails(body.targetUser.details)
                                         accModel.setToken(body.accessToken)
-                                        Log.d("Message", "User ${accModel.username} with ${accModel.token}is logging in")
+//                                        Log.d("Username", username.value)
+//                                        Log.d("Token", token.value)
+//                                        Log.d("Details", details.value.toString())
                                         onClick(SignInClicks.SignInSuccess)
                                     } else {
+//                                        isLoading.value = false
                                         val e = res.errorBody()?.string()
                                         val errorResponse = Gson().fromJson(e, ErrorResponse::class.java)
-                                        val errorMessage = when(errorResponse.message) {
-                                            "Bad Credentials" -> "Tài khoản hoặc mật khẩu không đúng"
-                                            else -> "Lỗi đăng nhập"
+                                        when(errorResponse.message) {
+                                            "Bad credentials" -> {
+                                                viewModel.passwordError = "Mật khẩu không đúng"
+                                            }
+                                            "Username ${viewModel.phoneNumber} not found" -> {
+                                                viewModel.phoneNumberError = "Tài khoản không tồn tại"
+                                            }
+                                            else -> {
+                                                makeToast(context, "Lỗi đăng nhập. Vui lòng thử lại")
+                                                Log.d("Error", errorResponse.message)
+                                            }
                                         }
-                                        makeToast(context, errorMessage)
                                     }
                                 }
                             }

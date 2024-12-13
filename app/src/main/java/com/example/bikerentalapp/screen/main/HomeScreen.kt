@@ -9,11 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,22 +24,31 @@ import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.components.GridLayout
 import com.example.bikerentalapp.components.SearchBar
 import com.example.bikerentalapp.components.features
+import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import java.text.NumberFormat
 
 @Composable
 fun HomeScreen(
     onFeatureClick: (HomeScreenClicks) -> Unit,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    accModel: AccountViewModel
 ) {
     var searchStation by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
+    val username = accModel.username.collectAsState()
+    val details = accModel.details.collectAsState()
+    val token = accModel.token.collectAsState()
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp,
+            .padding(
+                0.dp,
                 paddingValues.calculateTopPadding(),
-                0.dp, 0.dp)
+                0.dp, 0.dp
+            )
             .verticalScroll(scrollState),
         color = Color.White
     ) {
@@ -76,7 +81,7 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Xin chào",
+                        text = "Xin chào, ${details.value?.name}",
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -148,7 +153,7 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
-                                    text = "50.000 đồng",
+                                    text = "${NumberFormat.getInstance().format(details.value?.balance)} đồng",
                                     style = TextStyle(
                                         fontSize = 13.sp,
                                         color = Color.Black

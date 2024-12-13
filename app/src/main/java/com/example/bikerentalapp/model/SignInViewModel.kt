@@ -13,13 +13,9 @@ class SignInViewModel : ViewModel() {
     var password by mutableStateOf("")
         private set
 
-    var error by mutableStateOf<String?>(null)
-        private set
-
     var phoneNumberError by mutableStateOf<String?>(null)
-        private set
+
     var passwordError by mutableStateOf<String?>(null)
-        private set
 
     fun updatePhoneNumber(value: String) {
         phoneNumber = value
@@ -31,16 +27,24 @@ class SignInViewModel : ViewModel() {
         validatePassword()
     }
 
-    fun showError(message: String) {
-        error = message
-    }
-
     private fun validatePhoneNumber() {
-        // TODO: Check whether the phone number is valid
+        val error = when {
+            phoneNumber.isEmpty() -> "Tài khoản không được để trống"
+            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}\$")) -> "Tài khoản không hợp lệ"
+            else -> null
+        }
+
+        phoneNumberError = error
     }
 
     private fun validatePassword() {
-        // TODO: Check whether the password is valid
+        val error = when {
+            password.isEmpty() -> "Mật khẩu không được để trống"
+            password.length < 6 -> "Mật khẩu phải có ít nhất 6 ký tự"
+            else -> null
+        }
+
+        passwordError = error
     }
 
     private fun validateAll(): Boolean {
