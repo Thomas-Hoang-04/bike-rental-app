@@ -9,7 +9,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -34,6 +34,7 @@ import com.example.bikerentalapp.model.SignInViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,7 +47,7 @@ fun SignInScreen(
 
     val retrofit = RetrofitInstances.Auth
     val scope = rememberCoroutineScope()
-    val isLoading = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Surface(
         color = Color.White,
@@ -105,30 +106,29 @@ fun SignInScreen(
                     ButtonComponent(
                         value = stringResource(id = R.string.sign_in),
                         onClick = {
-                            isLoading.value = true
-                            scope.launch {
-                                val res = retrofit.authAPI.login(
-                                    LoginRequest(
-                                        viewModel.phoneNumber,
-                                        viewModel.password
+                            viewModel.signIn {
+                                scope.launch {
+                                    val res = retrofit.authAPI.login(
+                                        LoginRequest(
+                                            viewModel.phoneNumber,
+                                            viewModel.password
+                                        )
                                     )
-                                )
-                                if (res.isSuccessful) {
-                                    onClick(SignInClicks.SignInSuccess)
-                                } else {
-                                    val errorResponse = Gson().fromJson(
-                                        res.errorBody()?.string(),
-                                        ErrorResponse::class.java
-                                    )
-
-                                    val errorMessage = when (errorResponse?.message) {
-                                        "Bad Credentials" -> "Sai tài khoản hoặc mật khẩu"
-                                        else -> errorResponse?.message ?: "An unknown error occurred. Please try again."
+                                    if (res.isSuccessful) {
+                                        delay(100)
+                                        onClick(SignInClicks.SignInSuccess)
+                                    } else {
+                                        val e = res.errorBody()?.string()
+                                        val errorResponse = Gson().fromJson(e, ErrorResponse::class.java)
+                                        val errorMessage = when(errorResponse.message) {
+                                            "Bad Credentials" -> "Tài khoản hoặc mật khẩu không đúng"
+                                            else -> "Lỗi đăng nhập"
+                                        }
+                                        makeToast(context, errorMessage)
                                     }
-
-                                    viewModel.showError(errorMessage)
                                 }
                             }
+
                         },
                         color = ButtonColors(
                             contentColor = Color.White,
