@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -233,5 +234,14 @@ sealed class HomeScreenClicks {
     data object ManualUserScreenClick: HomeScreenClicks()
     data object InviteFriendsScreenClick: HomeScreenClicks()
     data object PromotionScreenClick: HomeScreenClicks()
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        {},
+        paddingValues = PaddingValues(0.dp)
+    )
 }
 
