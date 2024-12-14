@@ -100,4 +100,6 @@ dependencies {
     implementation(libs.androidx.camera.view)
     // Permissions
     implementation(libs.accompanist.permissions)
+    implementation(libs.datastore.preferences)
+    implementation(libs.core.splashscreen)
 }
