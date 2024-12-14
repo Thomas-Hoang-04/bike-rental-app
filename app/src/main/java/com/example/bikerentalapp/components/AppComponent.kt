@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
+import androidx.navigation.NavController
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.ui.theme.*
 import java.util.Calendar
@@ -394,7 +394,8 @@ fun FeatureCard(
 fun GridLayout(
     items: List<FeatureItem>,
     column: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Column(
         modifier = modifier
@@ -416,7 +417,15 @@ fun GridLayout(
                             FeatureCard(
                                 icon = items[itemIndex].icon,
                                 title = items[itemIndex].title,
-                                onClick = items[itemIndex].onClick
+                                onClick = {
+                                    navController.navigate(items[itemIndex].route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
                             )
                         }
                     } else {
