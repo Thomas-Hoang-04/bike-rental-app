@@ -46,4 +46,24 @@ sealed class Screens {
         @Serializable
         object Settings
     }
+
+    @Serializable
+    object Features {
+        @Serializable
+        object Home
+        @Serializable
+        object BuyingTickets
+        @Serializable
+        object MyTrips
+        @Serializable
+        object News
+        @Serializable
+        object Ranking
+        @Serializable
+        object ManualUser
+        @Serializable
+        object InviteFriends
+        @Serializable
+        object Promotion
+    }
 }
