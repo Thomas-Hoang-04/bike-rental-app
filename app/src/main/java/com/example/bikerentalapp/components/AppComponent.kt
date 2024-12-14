@@ -25,10 +25,26 @@ import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
+import androidx.datastore.core.DataStore
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.bikerentalapp.R
+import com.example.bikerentalapp.keystore.UserSettings
+import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.ui.theme.*
 import java.util.Calendar
+
+val UserAccount = compositionLocalOf<AccountViewModel> {
+    error("No AccountViewModel provided")
+}
+
+val LocalNavigation = staticCompositionLocalOf<NavHostController> {
+    error("No NavHostController provided")
+}
+
+val LocalDataStore = staticCompositionLocalOf<DataStore<UserSettings>> {
+    error("No datastore provided")
+}
 
 @Composable
 fun HeadingTextComponent(value: String) {
@@ -350,7 +366,7 @@ fun FeatureCard(
     ) {
         Card (
             modifier = Modifier
-                .size(84.dp),
+                .size(75.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             ),
@@ -364,14 +380,18 @@ fun FeatureCard(
             ) {
                 IconButton(
                     onClick = onClick,
-                    modifier = Modifier.size(72.dp)
+                    modifier = Modifier
+                        .size(60.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = PrimaryColor
+                    )
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = title,
                         tint = PrimaryColor,
                         modifier = Modifier
-                            .size(56.dp)
+                            .size(48.dp)
                     )
                 }
             }

@@ -69,7 +69,7 @@ class CryptoManager {
     }
 
     companion object {
-        private const val ALIAS = "secret"
+        private const val ALIAS = "bike_rental_key"
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_ECB
         private const val DIGEST = KeyProperties.DIGEST_SHA256

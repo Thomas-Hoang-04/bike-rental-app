@@ -17,6 +17,8 @@ class SignInViewModel : ViewModel() {
 
     var passwordError by mutableStateOf<String?>(null)
 
+    var rememberMe by mutableStateOf(false)
+
     fun updatePhoneNumber(value: String) {
         phoneNumber = value
         validatePhoneNumber()
@@ -25,6 +27,10 @@ class SignInViewModel : ViewModel() {
     fun updatePassword(value: String) {
         password = value
         validatePassword()
+    }
+
+    fun updateRememberMe(value: Boolean) {
+        rememberMe = value
     }
 
     private fun validatePhoneNumber() {

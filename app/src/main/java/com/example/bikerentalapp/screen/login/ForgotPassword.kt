@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.api.data.OTPPurpose
@@ -37,7 +36,9 @@ import com.example.bikerentalapp.api.data.OTPStatus
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.HeadingTextComponent
 import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.makeToast
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.TextColor
 import com.google.gson.Gson
@@ -45,15 +46,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPassword(
-    onClick: (ForgotPasswordClicks, String) -> Unit,
-) {
+fun ForgotPassword() {
     val phoneNumber = remember { mutableStateOf("") }
     val isPhoneNumberValid = phoneNumber.value.matches(Regex("^0[1-9][0-9]{8}\$"))
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(false) }
     val retrofit = RetrofitInstances.Auth
+    val navController = LocalNavigation.current
 
     Surface(
         color = Color.White,
@@ -68,7 +68,7 @@ fun ForgotPassword(
                 .padding(top = 20.dp)
         ) {
             IconButton(
-                onClick = { onClick(ForgotPasswordClicks.BackToSignIn, "") },
+                onClick = { navController.navigateUp() },
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Icon(
@@ -141,31 +141,35 @@ fun ForgotPassword(
 
             Button(
                 onClick = {
-                        onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
-//                    isLoading.value = true
-//                    coroutineScope.launch {
-//                        val res = retrofit.authAPI.sendOTP(
-//                            OTPRequest(
-//                                username = phoneNumber.value,
-//                                "+84964704623",
-//                                OTPPurpose.RESET_PASSWORD)
-//                        )
-//                        if (res.isSuccessful) {
-//                            val body: OTPResponse = res.body()!!
-//                            if (body.status == OTPStatus.SUCCESS) {
-//                                isLoading.value = false
-//                                delay(100)
-//                                onClick(ForgotPasswordClicks.OTPConfirm, phoneNumber.value)
-//                            } else {
-//                                makeToast(context, body.message)
-//                            }
-//                        } else {
-//                            val e = res.errorBody()?.string()
-//                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
-//                            makeToast(context, eBody.message)
-//                            isLoading.value = false
-//                        }
-//                    }
+                    isLoading.value = true
+                    coroutineScope.launch {
+                        val res = retrofit.authAPI.sendOTP(
+                            OTPRequest(
+                                username = phoneNumber.value,
+                                "+84964704623",
+                                OTPPurpose.RESET_PASSWORD)
+                        )
+                        if (res.isSuccessful) {
+                            val body: OTPResponse = res.body()!!
+                            if (body.status == OTPStatus.SUCCESS) {
+                                isLoading.value = false
+                                delay(100)
+                                navController.navigate(
+                                    Screens.Auth.OTPConfirm(
+                                        phoneNumber.value,
+                                        OTPPurpose.RESET_PASSWORD
+                                    )
+                                )
+                            } else {
+                                makeToast(context, body.message)
+                            }
+                        } else {
+                            val e = res.errorBody()?.string()
+                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                            makeToast(context, eBody.message)
+                            isLoading.value = false
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -193,18 +197,5 @@ fun ForgotPassword(
 
     if (isLoading.value) {
         LoadingScreen()
-    }
-}
-
-sealed class ForgotPasswordClicks {
-    data object BackToSignIn: ForgotPasswordClicks()
-    data object OTPConfirm: ForgotPasswordClicks()
-}
-
-@Preview
-@Composable
-fun ForgotPasswordPreview() {
-    ForgotPassword {
-        _, _ ->
     }
 }

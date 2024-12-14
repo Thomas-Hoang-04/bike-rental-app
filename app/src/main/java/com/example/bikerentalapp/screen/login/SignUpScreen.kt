@@ -20,6 +20,7 @@ import com.example.bikerentalapp.api.data.*
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.*
 import com.example.bikerentalapp.model.SignUpViewModel
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -29,7 +30,6 @@ import kotlinx.coroutines.launch
 fun SignUpScreen(
     isOTPVerified: Boolean,
     viewModel: SignUpViewModel,
-    onClick: (SignUpClicks, String) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -37,6 +37,7 @@ fun SignUpScreen(
     val verified = remember { mutableStateOf(isOTPVerified) }
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(isOTPVerified) }
+    val navController = LocalNavigation.current
 
     if (isLoading.value) {
         LoadingScreen()
@@ -60,7 +61,9 @@ fun SignUpScreen(
             if (res.isSuccessful) {
                 verified.value = false
                 delay(150)
-                onClick(SignUpClicks.SignUpSuccess, "")
+                navController.navigate(Screens.Main) {
+                    popUpTo(Screens.Auth) { inclusive = true }
+                }
             } else {
                 val e = res.errorBody()?.string()
                 val eBody = Gson().fromJson(e, ErrorResponse::class.java)
@@ -219,9 +222,9 @@ fun SignUpScreen(
 
                     val texts = listOf(
                         AnnotatedText.Plain("Bằng cách tiếp tục, bạn đã đọc và đồng ý với "),
-                        AnnotatedText.Clickable(termsOfUse, onClick = { onClick(SignUpClicks.TermsOfUse, "") }),
+                        AnnotatedText.Clickable(termsOfUse, onClick = { navController.navigate(Screens.Auth.TermsOfUse) }),
                         AnnotatedText.Plain(" và "),
-                        AnnotatedText.Clickable(policy, onClick = { onClick(SignUpClicks.PrivacyPolicy, "") }),
+                        AnnotatedText.Clickable(policy, onClick = { navController.navigate(Screens.Auth.PrivacyPolicy) }),
                         AnnotatedText.Plain(" của chúng tôi.")
                     )
 
@@ -258,7 +261,9 @@ fun SignUpScreen(
                             if (res.isSuccessful) {
                                 isLoading.value = false
                                 delay(100)
-                                onClick(SignUpClicks.OTPVerify, viewModel.phoneNumber)
+                                navController.navigate(Screens.Auth.OTPConfirm(
+                                    viewModel.phoneNumber, OTPPurpose.SIGNUP)
+                                )
                             } else {
                                 val e = res.errorBody()?.string()
                                 val eBody = Gson().fromJson(e, OTPResponse::class.java)
@@ -279,17 +284,10 @@ fun SignUpScreen(
 
                 ClickableTextLoginComponent(
                     tryingToLogin = true,
-                    onTextSelected = { onClick(SignUpClicks.SignIn, "") },
+                    onTextSelected = { navController.navigateUp() },
                 )
             }
         }
     }
 }
 
-sealed class SignUpClicks {
-    data object SignIn: SignUpClicks()
-    data object SignUpSuccess: SignUpClicks()
-    data object TermsOfUse: SignUpClicks()
-    data object PrivacyPolicy: SignUpClicks()
-    data object OTPVerify: SignUpClicks()
-}

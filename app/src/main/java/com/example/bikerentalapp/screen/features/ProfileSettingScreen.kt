@@ -159,7 +159,7 @@ fun InputRowWithDivider(
                 )
             }
         }
-        Divider(color = Color.LightGray, thickness = 1.dp)
+        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
     }
 }
 

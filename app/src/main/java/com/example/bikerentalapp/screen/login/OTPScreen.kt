@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.components.HeadingTextComponent
@@ -48,14 +47,15 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import com.example.bikerentalapp.api.data.*
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.makeToast
+import com.example.bikerentalapp.navigation.Screens
 import com.google.gson.Gson
 
 @Composable
 fun OTPScreen(
     phoneNumber: String,
     purpose: OTPPurpose,
-    onClick: (OTPClicks) -> Unit
 ) {
     var otpValues by remember { mutableStateOf(List(5) { "" }) }
     val focusRequesters = remember { List(5) { FocusRequester() } }
@@ -69,6 +69,7 @@ fun OTPScreen(
     val isLoading = remember { mutableStateOf(false) }
     val time = remember { mutableStateOf(60) }
     val retrofit = RetrofitInstances.Auth
+    val navController = LocalNavigation.current
 
     LaunchedEffect(isOTPComplete) {
         if (isOTPComplete) {
@@ -105,7 +106,7 @@ fun OTPScreen(
                 .padding(top = 20.dp)
         ) {
             IconButton(
-                onClick = { onClick(OTPClicks.BackToSignIn) },
+                onClick = { navController.navigate(Screens.Auth.Login) },
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Icon(
@@ -237,34 +238,40 @@ fun OTPScreen(
 
             Button(
                 onClick = {
-                    when (purpose) {
-                                    OTPPurpose.RESET_PASSWORD -> onClick(OTPClicks.PasswordResetConfirm)
-                                    OTPPurpose.SIGNUP -> onClick(OTPClicks.OTPConfirm)
+                    isLoading.value = true
+                    scope.launch {
+                        val otp = otpValues.joinToString("")
+                        val res = retrofit.authAPI.verifyOTP(
+                            OTPValidationRequest(otp, phoneNumber)
+                        )
+                        if (res.isSuccessful) {
+                            val body: OTPResponse = res.body()!!
+                            if (body.status == OTPStatus.SUCCESS) {
+                                isLoading.value = false
+                                when (purpose) {
+                                    OTPPurpose.RESET_PASSWORD -> {
+                                        navController.navigate(Screens.Auth.ResetPassword(phoneNumber)) {
+                                            popUpTo(Screens.Auth.ForgotPassword) { inclusive = true }
+                                        }
+                                    }
+                                    OTPPurpose.SIGNUP -> {
+                                        navController
+                                            .previousBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.set("isOTPVerified", true)
+                                        navController.popBackStack()
+                                    }
                                 }
-//                    isLoading.value = true
-//                    scope.launch {
-//                        val otp = otpValues.joinToString("")
-//                        val res = retrofit.authAPI.verifyOTP(
-//                            OTPValidationRequest(otp, phoneNumber)
-//                        )
-//                        if (res.isSuccessful) {
-//                            val body: OTPResponse = res.body()!!
-//                            if (body.status == OTPStatus.SUCCESS) {
-//                                isLoading.value = false
-//                                when (purpose) {
-//                                    OTPPurpose.RESET_PASSWORD -> onClick(OTPClicks.PasswordResetConfirm)
-//                                    OTPPurpose.SIGNUP -> onClick(OTPClicks.OTPConfirm)
-//                                }
-//                            } else {
-//                                makeToast(context, body.message)
-//                            }
-//                        } else {
-//                            val e = res.errorBody()?.string()
-//                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
-//                            makeToast(context, eBody.message)
-//                            isLoading.value = false
-//                        }
-//                    }
+                            } else {
+                                makeToast(context, body.message)
+                            }
+                        } else {
+                            val e = res.errorBody()?.string()
+                            val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                            makeToast(context, eBody.message)
+                            isLoading.value = false
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -306,24 +313,24 @@ fun OTPScreen(
                     ),
                     modifier = Modifier
                         .clickable(!isWaiting.value) {
-//                            isLoading.value = true
-//                            scope.launch {
-//                                val res = retrofit.authAPI.sendOTP(
-//                                    OTPRequest(username = phoneNumber, "+84964704623", purpose)
-//                                )
-//                                if (res.isSuccessful) {
-//                                    val body: OTPResponse = res.body()!!
-//                                    makeToast(context, body.message)
-//                                    isLoading.value = false
-//                                    time.value = 60
-//                                    isWaiting.value = true
-//                                } else {
-//                                    val e = res.errorBody()?.string()
-//                                    val eBody = Gson().fromJson(e, OTPResponse::class.java)
-//                                    makeToast(context, eBody.message)
-//                                    isLoading.value = false
-//                                }
-//                            }
+                            isLoading.value = true
+                            scope.launch {
+                                val res = retrofit.authAPI.sendOTP(
+                                    OTPRequest(username = phoneNumber, "+84964704623", purpose)
+                                )
+                                if (res.isSuccessful) {
+                                    val body: OTPResponse = res.body()!!
+                                    makeToast(context, body.message)
+                                    isLoading.value = false
+                                    time.value = 60
+                                    isWaiting.value = true
+                                } else {
+                                    val e = res.errorBody()?.string()
+                                    val eBody = Gson().fromJson(e, OTPResponse::class.java)
+                                    makeToast(context, eBody.message)
+                                    isLoading.value = false
+                                }
+                            }
                         }
                 )
             }
@@ -331,19 +338,5 @@ fun OTPScreen(
     }
     if (isLoading.value) {
         LoadingScreen()
-    }
-}
-
-sealed class OTPClicks {
-    data object BackToSignIn: OTPClicks()
-    data object OTPConfirm: OTPClicks()
-    data object PasswordResetConfirm: OTPClicks()
-}
-
-@Preview
-@Composable
-fun OTPScreenPreview() {
-    OTPScreen("", OTPPurpose.RESET_PASSWORD) {
-        _ ->
     }
 }

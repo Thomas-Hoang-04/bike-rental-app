@@ -21,7 +21,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavType
@@ -31,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bikerentalapp.R
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.NavBarShape
 import com.example.bikerentalapp.components.navigationItems
 import com.example.bikerentalapp.screen.main.qrcode.QrCodeResultScreen
@@ -46,14 +46,15 @@ import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MainScreen(
-    navController: NavController,
     content: @Composable (PaddingValues) -> Unit
-){
+) {
+    val navController = LocalNavigation.current
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent),
-        bottomBar = { BottomNav(navController = navController) },
+        bottomBar = { BottomNav() },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(
@@ -182,7 +183,8 @@ fun MainScreen(
 }
 
 @Composable
-fun BottomNav(navController: NavController){
+fun BottomNav(){
+    val navController = LocalNavigation.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
     val withPx = LocalContext.current.resources.displayMetrics.widthPixels

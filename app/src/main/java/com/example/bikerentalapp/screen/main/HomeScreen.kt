@@ -54,9 +54,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.bikerentalapp.api.data.UserDetails
 import com.example.bikerentalapp.components.GridLayout
+import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.features
 import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
@@ -66,17 +67,18 @@ import java.text.NumberFormat
 fun HomeScreen(
     onFeatureClick: (HomeScreenClicks) -> Unit,
     paddingValues: PaddingValues,
-    accModel: AccountViewModel
+    accModel: AccountViewModel,
     navController: NavController,
-    paddingValues: PaddingValues
 ) {
     val scrollState = rememberScrollState()
+    val isBalanceVisible = remember { mutableStateOf(false) }
+    val navController = LocalNavigation.current
+    val accModel = UserAccount.current
     val balance = "50.000"
     val isBalanceVisible = remember { mutableStateOf(true) }
 
     val username = accModel.username.collectAsState()
     val details = accModel.details.collectAsState()
-    val token = accModel.token.collectAsState()
 
     Surface(
         modifier = Modifier
@@ -193,7 +195,8 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(
                                 modifier = Modifier
@@ -204,13 +207,13 @@ fun HomeScreen(
                                 Text(
                                     text = "Tài khoản chính",
                                     style = TextStyle(
-                                        fontSize = 13.sp,
+                                        fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = Color.Black
                                     )
                                 )
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
 
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
@@ -229,24 +232,26 @@ fun HomeScreen(
                                             )
                                         )
                                     }
-
-                                    IconButton(
-                                        onClick = {
-                                            isBalanceVisible.value = !isBalanceVisible.value
-                                        },
-                                        modifier = Modifier.size(16.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = if (isBalanceVisible.value)
-                                                Icons.Filled.VisibilityOff
-                                            else
-                                                Icons.Filled.Visibility,
-                                            contentDescription = "Balance Visibility",
-                                            tint = Color.Gray
-                                        )
-                                    }
-                                }
                             }
+
+                            IconButton(
+                                onClick = {
+                                    isBalanceVisible.value = !isBalanceVisible.value
+                                },
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isBalanceVisible.value)
+                                        Icons.Filled.Visibility
+                                    else
+                                        Icons.Filled.VisibilityOff,
+                                    contentDescription = "Balance Visibility",
+                                    tint = PrimaryColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
 
                         HorizontalDivider(
@@ -395,14 +400,5 @@ fun HomeScreen(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        navController = rememberNavController(),
-        paddingValues = PaddingValues(0.dp)
-    )
 }
 

@@ -23,6 +23,10 @@ sealed class Screens {
             val phoneNumber: String,
             val purpose: OTPPurpose
         )
+        @Serializable
+        data class ResetPassword(
+            val username: String
+        )
     }
 
     @Serializable
@@ -49,8 +53,6 @@ sealed class Screens {
 
     @Serializable
     object Features {
-        @Serializable
-        object Home
         @Serializable
         object BuyingTickets
         @Serializable
