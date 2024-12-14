@@ -350,32 +350,34 @@ fun FeatureCard(
     ) {
         Card (
             modifier = Modifier
-                .size(72.dp)
-                .clickable(onClick = onClick),
+                .size(84.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             ),
             shape = RoundedCornerShape(10.dp),
-
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = title,
-                    tint = PrimaryColor,
-                    modifier = Modifier
-                        .size(56.dp)
-                )
+                IconButton(
+                    onClick = onClick,
+                    modifier = Modifier.size(72.dp)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = title,
+                        tint = PrimaryColor,
+                        modifier = Modifier
+                            .size(56.dp)
+                    )
+                }
             }
-
         }
 
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = title,
@@ -386,54 +388,6 @@ fun FeatureCard(
             textAlign = TextAlign.Center
         )
     }
-}
-
-@Composable
-fun SearchBar(
-    hint: String,
-    searchText: String,
-    onSearchChange: (String) -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = onSearchChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(45.dp),
-        placeholder = {
-            Text(
-                text = hint,
-                color = Color.White.copy(alpha = 0.7f),
-                style = TextStyle(
-                    fontSize = 12.sp
-                )
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = Color.White
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White,
-            cursorColor = Color.White,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White
-        ),
-        textStyle = TextStyle(
-            fontSize = 12.sp
-        ),
-        shape = RoundedCornerShape(14.dp),
-        singleLine = true,
-        visualTransformation = VisualTransformation.None,
-        interactionSource = interactionSource,
-
-    )
 }
 
 @Composable
@@ -466,7 +420,7 @@ fun GridLayout(
                             )
                         }
                     } else {
-                        Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.weight(2f))
                     }
                 }
             }
