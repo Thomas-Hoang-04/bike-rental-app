@@ -1,13 +1,20 @@
 package com.example.bikerentalapp.screen.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ControlPointDuplicate
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,12 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.components.GridLayout
-import com.example.bikerentalapp.components.SearchBar
 import com.example.bikerentalapp.components.features
 import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.ui.theme.PrimaryColor
@@ -34,8 +41,9 @@ fun HomeScreen(
     paddingValues: PaddingValues,
     accModel: AccountViewModel
 ) {
-    var searchStation by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
+    val balance = "50.000"
+    val isBalanceVisible = remember { mutableStateOf(true) }
 
     val username = accModel.username.collectAsState()
     val details = accModel.details.collectAsState()
@@ -111,11 +119,34 @@ fun HomeScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    SearchBar(
-                        hint = "Tìm kiếm trạm xe",
-                        searchText = searchStation,
-                        onSearchChange = { searchStation = it }
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color.White.copy(alpha = 0.1f))
+                            .clickable(onClick = {})
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search Icon",
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Tìm kiếm trạm xe",
+                                color = Color.White.copy(alpha = 0.7f),
+                                style = TextStyle(
+                                    fontSize = 13.sp
+                                )
+                            )
+                        }
+                    }
 
                     Card(
                         modifier = Modifier
@@ -152,13 +183,40 @@ fun HomeScreen(
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                Text(
-                                    text = "${NumberFormat.getInstance().format(details.value?.balance)} đồng",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        color = Color.Black
-                                    )
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(96.dp),
+                                        contentAlignment = Alignment.CenterStart
+                                    ) {
+                                        Text(
+                                            text = if (isBalanceVisible.value) "$balance điểm" else "**********",
+                                            style = TextStyle(
+                                                fontSize = 15.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = PrimaryColor
+                                            )
+                                        )
+                                    }
+
+                                    IconButton(
+                                        onClick = {
+                                            isBalanceVisible.value = !isBalanceVisible.value
+                                        },
+                                        modifier = Modifier.size(16.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = if (isBalanceVisible.value)
+                                                Icons.Filled.VisibilityOff
+                                            else
+                                                Icons.Filled.Visibility,
+                                            contentDescription = "Balance Visibility",
+                                            tint = Color.Gray
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -172,26 +230,112 @@ fun HomeScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
+                                .padding(6.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            IconButton(onClick = { /*TODO*/ }) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.Center) {
+                                    IconButton(
+                                        onClick = { /*TODO*/ }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Wallet,
+                                            contentDescription = "Deposit",
+                                            tint = PrimaryColor,
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                        )
+                                    }
+                                }
 
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                Text(
+                                    text = "Nạp điểm",
+                                    style = TextStyle(
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
                             }
 
-                            IconButton(onClick = { /*TODO*/ }) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    IconButton(
+                                        onClick = { /*TODO*/ }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.History,
+                                            contentDescription = "Transaction History",
+                                            tint = PrimaryColor,
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                        )
+                                    }
+                                }
 
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                Text(
+                                    text = "Lịch sử\ngiao dịch",
+                                    style = TextStyle(
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
                             }
 
-                            IconButton(onClick = { /*TODO*/ }) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier,
+                                    contentAlignment = Alignment.Center) {
+                                    IconButton(
+                                        onClick = { /*TODO*/ }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.ControlPointDuplicate,
+                                            contentDescription = "Share points",
+                                            tint = PrimaryColor,
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                        )
+                                    }
+                                }
 
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                Text(
+                                    text = "Chia sẻ điểm",
+                                    style = TextStyle(
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
                             }
                         }
                     }
-
                 }
             }
-
 
             Spacer(modifier = Modifier.height(80.dp))
 
