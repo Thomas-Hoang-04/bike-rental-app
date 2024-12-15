@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,14 +36,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bikerentalapp.R
+import com.example.bikerentalapp.api.data.BikeStatus
 import com.example.bikerentalapp.components.ButtonComponent
 import com.example.bikerentalapp.components.TextColumn
+import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.example.bikerentalapp.ui.theme.disablePrimaryColor
 
 @Composable
 fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
+    val account = UserAccount.current
+    val viewModel = remember { QrResultViewModel(account,qrCodeContent) }
+    val bike by viewModel.bike.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -72,9 +79,16 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ){
-            TextColumn("San sang:",qrCodeContent.substring(0, 10),Modifier.padding(10.dp))
+            TextColumn(
+                when(bike?.status){
+                    BikeStatus.AVAILABLE -> "Còn trống"
+                    BikeStatus.IN_USE -> "Đang sử dụng"
+                    BikeStatus.CHARGING -> "Đang sạc"
+                    else -> "Không xác định"
+                },
+                qrCodeContent,Modifier.padding(10.dp))
             Spacer(modifier = Modifier.width(16.dp))
-            TextColumn("78%","Pin",Modifier.padding(10.dp))
+            TextColumn("${bike?.battery ?: 0}%" ,"Pin",Modifier.padding(10.dp))
         }
         RowWithTextAndDropdown(
             title = "Hình thức trả phí:",
