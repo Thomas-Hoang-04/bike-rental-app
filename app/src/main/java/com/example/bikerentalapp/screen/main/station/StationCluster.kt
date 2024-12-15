@@ -38,7 +38,7 @@ import com.google.maps.android.compose.clustering.Clustering
 data class StationClusterItem(
     val station : Station,
 ) : ClusterItem {
-    override fun getPosition() = LatLng(station.latitude, station.longitude)
+    override fun getPosition() = LatLng(station.coordinates.lat, station.coordinates.lng)
     override fun getTitle() = station.name
     override fun getSnippet() = "Has ${station.bikeList.size} bicycles"
     override fun getZIndex() = 0f
@@ -101,7 +101,7 @@ fun ClusterItemContent(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(40.dp),
-        color = if(text.toInt() > 6)PrimaryColor else Color(0xffa5682a),
+        color = if(text.toInt() > 2)PrimaryColor else Color(0xffa5682a),
         contentColor = Color.White,
         border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.12f))
     ) {
