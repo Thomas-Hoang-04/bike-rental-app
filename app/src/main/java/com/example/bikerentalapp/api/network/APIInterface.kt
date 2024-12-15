@@ -7,14 +7,18 @@ import java.util.UUID
 
 interface APIInterface {
     // Station API
-    @GET("stations/available")
+    @GET("station/available")
     suspend fun getStations(): Response<QueryResponse<String, Station>>
 
-    @GET("stations/{id}")
+    @GET("station/{id}")
     suspend fun getStationById(@Path("id") id: UUID): Response<QueryResponse<UUID, Station>>
 
-    @GET("nearby")
-    suspend fun getNearbyStation(@Body query: NearbyStation): Response<QueryResponse<Double, Station>>
+    @GET("station/nearby")
+    suspend fun getNearbyStation(
+        @Query("lat") lat: Double,
+        @Query("lng") lng: Double,
+        @Query("radius") radius: Double
+    ): Response<QueryResponse<Double, Station>>
 
     // Bike API
     @GET("bike/id/{id}")
