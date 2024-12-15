@@ -53,12 +53,19 @@ fun QrScreen(navController: NavController) {
     CameraScannerScreen(
         viewModel = viewModel,
         onQRCodeScanned = { qrCodeContent ->
-        navController.navigate(Screens.Main.QrResult(qrCodeContent)){
-            popUpTo(navController.graph.startDestinationId){
-                saveState = true
+        if(viewModel.isValidFormat(qrCodeContent)){
+            if(isAddingBike == true){
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("newBikeId", qrCodeContent.lineSequence().first())
+                navController.popBackStack()
+            }else{
+                val sanitizedInput = qrCodeContent.trim().replace("\uFEFF", "")
+                val firstLine = sanitizedInput.lineSequence().first().replace("\r", "").replace("\n", "").trim()
+                navController.navigate(Screens.Main.QrResult(firstLine))
             }
-            launchSingleTop = true
-            restoreState = true
+        }else{
+            Toast.makeText(context, "Mã QR không hợp lệ", Toast.LENGTH_SHORT).show()
         }
     })
 }
