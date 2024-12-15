@@ -44,6 +44,7 @@ import com.example.bikerentalapp.components.SearchBarWithDebounce
 import com.example.bikerentalapp.components.StationInfoCard
 import com.example.bikerentalapp.api.data.BikeStatus
 import com.example.bikerentalapp.api.data.Station
+import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -61,7 +62,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun StationsScreen() {
     val context = LocalContext.current
-    val mapViewModel = remember { GoogleMapViewModel() }
+    val user = UserAccount.current
+    val mapViewModel = remember { GoogleMapViewModel(user) }
     val searchStationState by mapViewModel.searchState.collectAsState()
     val permissionState by mapViewModel.locationPermissionGranted.collectAsState()
     val launcher = rememberLauncherForActivityResult(
@@ -103,6 +105,7 @@ fun StationsScreen() {
                     cameraPositionState.position =  CameraPosition.fromLatLngZoom(
                         userLocation, 15f
                     )
+                    mapViewModel.updateCurrentUserLocation(it.latitude,it.longitude)
                 }
             }
         } else {
@@ -132,7 +135,7 @@ fun StationsScreen() {
                     ),
                     properties = MapProperties(
                         isMyLocationEnabled = true,
-                        minZoomPreference = 11f,
+                        minZoomPreference = 10f,
                         maxZoomPreference = 20f
                     ),
                 ) {
@@ -178,6 +181,7 @@ fun StationsScreen() {
                     modifier = Modifier.align(Alignment.TopCenter),
                     onActiveChange = {},
                     onFocusChange = {
+                        mapViewModel.getNearbyStation()
                         coroutineScope.launch {
                             sheetState.hide()
                         }
@@ -249,7 +253,6 @@ fun StationDetailsBottomSheet(station: Station) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp)
         ) {
             Text(
                 text = station.name,
@@ -258,34 +261,30 @@ fun StationDetailsBottomSheet(station: Station) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        val uri = Uri.parse(
-                            "https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}&travelmode=two-wheeler"
-                        )
-                        val mapIntent = Intent(Intent.ACTION_VIEW, uri)
-
-                        if (mapIntent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(mapIntent)
-                        }
-                    },
-                    shape = RoundedCornerShape(12),
-                    border = BorderStroke(width = 1.dp, color = PrimaryColor),
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier.size(50.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Navigation,
-                        contentDescription = "Navigate",
-                        tint = PrimaryColor,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .rotate(50f)
+            OutlinedButton(
+                onClick = {
+                    val uri = Uri.parse(
+                        "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler"
                     )
-                }
+                    val mapIntent = Intent(Intent.ACTION_VIEW, uri)
+
+                    if (mapIntent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(mapIntent)
+                    }
+                },
+                shape = RoundedCornerShape(12),
+                border = BorderStroke(width = 1.dp, color = PrimaryColor),
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.size(50.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Navigation,
+                    contentDescription = "Navigate",
+                    tint = PrimaryColor,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .rotate(50f)
+                )
             }
         }
         Text(
@@ -315,7 +314,7 @@ fun StationDetailsBottomSheet(station: Station) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = "ID: ${bicycle.id}",
+                            text = "ID: ${bicycle.plate}",
                             color = Color.Black
                         )
                         Text(
@@ -329,8 +328,8 @@ fun StationDetailsBottomSheet(station: Station) {
                         Text(
                             text = "Available: ${bicycle.status}",
                             color = when(bicycle.status){
-                                BikeStatus.IN_USE -> PrimaryColor
-                                BikeStatus.AVAILABLE -> Color.Green
+                                BikeStatus.IN_USE -> Color.Red
+                                BikeStatus.AVAILABLE -> PrimaryColor
                                 BikeStatus.CHARGING -> Color.Blue
                             }
                         )

@@ -125,17 +125,17 @@ fun <T> SearchBarWithDebounce (
                 .height(55.dp)
                 .align(Alignment.CenterHorizontally)
                 .onFocusChanged { focusState ->
-                    if (focusState.isFocused) {
+                    if(focusState.isFocused){
                         onFocusChange()
                     }
                 },
             colors = SearchBarDefaults.colors(),
             content = {},
         )
-        if (query != "") Card(
+        Card(
             modifier = Modifier
-                .padding(12.dp)
-                .background(color = Color.White)
+                .padding(start = 12.dp, end = 12.dp, bottom = 70.dp)
+                .background(color = Color.Transparent)
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -194,10 +194,10 @@ fun StationInfoCard(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            val uri = Uri.parse("google.navigation:q=${station.latitude},${station.longitude}&mode=d")
-                            val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                setPackage("com.google.android.apps.maps")
-                            }
+                            val uri = Uri.parse(
+                                "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler"
+                            )
+                            val mapIntent = Intent(Intent.ACTION_VIEW, uri)
 
                             if (mapIntent.resolveActivity(context.packageManager) != null) {
                                 context.startActivity(mapIntent)
