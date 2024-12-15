@@ -9,7 +9,7 @@ sealed class RetrofitInstances {
         private const val BASE_URL = "https://bikegorental.my/api/"
     }
 
-    inner class Query(token: String) {
+    class Query(token: String) {
         private val queryClient = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor(token))
             .build()
