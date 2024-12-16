@@ -48,8 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.bikerentalapp.api.data.Geolocation
 import com.example.bikerentalapp.components.CircularButtonWithText
 import com.example.bikerentalapp.components.IconWithTextHorizontal
+import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationCallback
@@ -67,7 +69,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Locale
 
 @Composable
-fun TrackingMapScreen(bikeId: String,navController: NavController) {
+fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavController) {
     val context = LocalContext.current
     val fusedClientLocation = remember{LocationServices.getFusedLocationProviderClient(context)}
     var polylinePoints by remember { mutableStateOf(listOf<LatLng>()) }
@@ -77,6 +79,22 @@ fun TrackingMapScreen(bikeId: String,navController: NavController) {
     var minutesElapsed by rememberSaveable { mutableIntStateOf(0) }
     var isRunning by rememberSaveable { mutableStateOf(true) }
     var showStopDialog by remember { mutableStateOf(false) }
+    var showReturnBikeDialog by remember { mutableStateOf(false) }
+
+    val user = UserAccount.current
+    val trackingMapViewModel = remember {TrackingMapViewModel(accountViewModel = user, qrCodeContent = qrCodeContent)}
+
+    val listBikeId = remember {mutableListOf(trackingMapViewModel.firstLine)}
+    val bottomTitle = remember { mutableStateOf(trackingMapViewModel.firstLine) }
+
+    navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("newBikeId")
+        ?.observeAsState()?.value?.let {newBikeId ->
+            if(!listBikeId.contains(newBikeId)){
+                listBikeId.add(newBikeId)
+            }
+        }
 
     LaunchedEffect(isRunning) {
         if(isRunning){
@@ -173,7 +191,9 @@ fun TrackingMapScreen(bikeId: String,navController: NavController) {
                         isRunning = true
                     }
                 },
-                isLock = !isRunning
+                isLock = !isRunning,
+                battery = battery,
+                fee = minutesElapsed * 2000
             )
         }
         
@@ -200,11 +220,112 @@ fun TrackingMapScreen(bikeId: String,navController: NavController) {
                 }
             )
         }
+
+        if(showReturnBikeDialog){
+            AlertDialog(
+                onDismissRequest = {
+                    showReturnBikeDialog = false
+                },
+                title = { Text("Tra xe") },
+                text = { Text("Ban co chac chan muon tra xe khong?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        trackingMapViewModel.route = polylinePoints.map {
+                            Geolocation(it.latitude,it.longitude)
+                        }
+                        trackingMapViewModel.fee = minutesElapsed * 2000
+                        listBikeId.forEach{
+                            trackingMapViewModel.returnBike(it){
+                                navController.navigate(Screens.Main.Feedback(minutesElapsed,trackingMapViewModel.firstLine,trackingMapViewModel.fee,trackingMapViewModel.id)){
+                                    popUpTo(navController.graph.startDestinationId){
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        }
+                    }) {
+                        Text("Yes")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showStopDialog = false }) {
+                        Text("No")
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun BottomCard(bikeId: String,minutes : Int,onClickReturnBikeButton : () -> Unit = {}, onClickLockBikeButton : () -> Unit = {},isLock : Boolean){
+fun TopCard(bikeListId:List<String>,onClickRow : (String) -> Unit = {}){
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 45.dp, horizontal = 20.dp),
+        shape = MaterialTheme.shapes.large,
+        shadowElevation = 8.dp,
+        color = Color.White
+    ) {
+        val isExpanded = remember { mutableStateOf(false) }
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+                    .clickable { onClickRow(bikeListId[0]) },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(bikeListId[0], style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
+                IconButton(
+                    onClick = {
+                        isExpanded.value = !isExpanded.value
+                    }
+                ) {
+                    if(!isExpanded.value)
+                        Icon(Icons.Default.ArrowDropUp, contentDescription = "Drop up", tint = Color.Black, modifier = Modifier.size(40.dp))
+                    else
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Drop down", tint = Color.Black, modifier = Modifier.size(40.dp))
+                }
+            }
+            if(isExpanded.value && bikeListId.size > 1){
+                for(i in 1 until bikeListId.size){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, end = 30.dp, bottom = 10.dp)
+                            .clickable { onClickRow(bikeListId[i]) },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ){
+                        Text(bikeListId[i], style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(PrimaryColor, shape = CircleShape)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomCard(
+    bikeId: String,
+    minutes : Int,
+    onClickAddBikeButton : () -> Unit = {},
+    onClickReturnBikeButton : () -> Unit = {},
+    onClickLockBikeButton : () -> Unit = {},
+    isLock : Boolean,
+    battery: String,
+    fee : Int = 0
+){
     val expanded = remember { mutableStateOf(true) }
     Surface(
         modifier = Modifier
@@ -243,9 +364,9 @@ fun BottomCard(bikeId: String,minutes : Int,onClickReturnBikeButton : () -> Unit
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    IconWithTextHorizontal(icon = Icons.Default.CreditCard, text = "10000")
+                    IconWithTextHorizontal(icon = Icons.Default.CreditCard, text = "$fee VND")
                     IconWithTextHorizontal(icon = Icons.Default.Timer, text = String.format(Locale.ENGLISH," %02d phut",minutes))
-                    IconWithTextHorizontal(icon = Icons.Default.Battery5Bar, text = "78%")
+                    IconWithTextHorizontal(icon = Icons.Default.Battery5Bar, text = battery)
                 }
             }
 
