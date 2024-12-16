@@ -44,9 +44,9 @@ sealed class Screens {
         @Serializable
         data class QrResult(val qrContent : String)
         @Serializable
-        data class TrackingMap(val bikeId : String)
+        data class TrackingMap(val bikeId : String,val battery : String)
         @Serializable
-        data class Feedback(val totalMinutes : Int, val bikeId: String)
+        data class Feedback(val totalMinutes : Int, val bikeId: String,val fee : Int,val tripId : String)
         @Serializable
         object Settings
     }
