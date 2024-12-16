@@ -51,7 +51,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavController) {
+fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavController,fee : Int,tripId : String) {
     var feedback by remember { mutableStateOf("") }
     var rating by remember { mutableFloatStateOf(0f) }
     val currentDateTime = LocalDateTime.now()
@@ -114,7 +114,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ){
-                    IconWithTextVertical(Icons.Default.Wallet, "10000")
+                    IconWithTextVertical(Icons.Default.Wallet, "$fee VND")
                     IconWithTextVertical(Icons.Default.PedalBike, "1 xe")
                     IconWithTextVertical(Icons.Default.AccessTime, "$totalMinutes phút")
                 }
@@ -152,7 +152,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ){
                     Text("Ma chuyen di", style = MaterialTheme.typography.titleMedium, color = PrimaryColor, modifier = Modifier.padding(start = 16.dp))
-                    Text("0123456789_12345", style = MaterialTheme.typography.bodyMedium, color = Color.Black.copy(0.5f), modifier = Modifier.padding(16.dp))
+                    Text(tripId, style = MaterialTheme.typography.bodyMedium, color = Color.Black.copy(0.5f), modifier = Modifier.padding(16.dp))
                 }
 
                 Row(
@@ -167,7 +167,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
                             .width(120.dp)
                             .height(80.dp)
                     ){
-                        TextColumn(title = "10.000", subTitle = "Gia cuoc", modifier = Modifier.align(Alignment.Center))
+                        TextColumn(title = "$fee", subTitle = "Gia cuoc", modifier = Modifier.align(Alignment.Center))
                     }
 
                     Box(
