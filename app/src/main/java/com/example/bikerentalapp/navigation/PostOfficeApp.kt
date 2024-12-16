@@ -5,10 +5,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.example.bikerentalapp.screen.login.ForgotPassword
 import com.example.bikerentalapp.screen.login.ForgotPasswordClicks
@@ -36,6 +38,9 @@ import com.example.bikerentalapp.screen.main.qrcode.ReturnBikeScreen
 import com.example.bikerentalapp.screen.main.qrcode.TrackingMapScreen
 import com.example.bikerentalapp.screen.main.*
 import com.example.bikerentalapp.screen.main.station.StationsScreen
+import kotlinx.serialization.json.Json
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 import com.example.bikerentalapp.screen.policy.PrivacyPolicy
 import com.example.bikerentalapp.screen.policy.TermsOfUse
@@ -221,12 +226,37 @@ fun PostOfficeApp() {
 
             composable<Screens.Main.TrackingMap>{
                 val args = it.toRoute<Screens.Main.TrackingMap>()
-                TrackingMapScreen(bikeId = args.bikeId,navController)
+                TrackingMapScreen(qrCodeContent = args.bikeId, battery = args.battery,navController)
             }
 
             composable<Screens.Main.Feedback> {
                 val args = it.toRoute<Screens.Main.Feedback>()
-                ReturnBikeScreen(totalMinutes =args.totalMinutes, bikeId = args.bikeId,navController)
+                ReturnBikeScreen(totalMinutes =args.totalMinutes, bikeId = args.bikeId,navController,args.fee,args.tripId)
+            }
+
+            composable<Screens.Features.MyTrips> {
+                MyTripsScreen(navController)
+            }
+
+            composable(
+                "tripsMap/{polylinePoints}/{time}/{id}",
+                arguments = listOf(
+                    navArgument("polylinePoints") { type = NavType.StringType },
+                    navArgument("time") { type = NavType.StringType },
+                    navArgument("id") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val polylinePointsJson = backStackEntry.arguments?.getString("polylinePoints")
+                val time = URLDecoder.decode(backStackEntry.arguments?.getString("time")?: "",
+                    StandardCharsets.UTF_8.toString())
+                val id = backStackEntry.arguments?.getString("id") ?: ""
+
+                // Decode polylinePoints
+                val polylinePoints = polylinePointsJson?.let { json ->
+                    Json.decodeFromString<List<SerializableLatLng>>(json)
+                } ?: emptyList()
+
+                TripsMap(polylinePoints.map { it.toLatLng() }, time, id)
             }
         }
     }
