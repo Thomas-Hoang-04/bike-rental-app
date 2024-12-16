@@ -326,7 +326,11 @@ fun StationDetailsBottomSheet(station: Station) {
                             color = Color.Gray
                         )
                         Text(
-                            text = "Available: ${bicycle.status}",
+                            text = when(bicycle.status){
+                                BikeStatus.IN_USE -> "Status: Dang dung"
+                                BikeStatus.AVAILABLE -> "Status: San sang"
+                                BikeStatus.CHARGING -> "Status: Dang sac"
+                            },
                             color = when(bicycle.status){
                                 BikeStatus.IN_USE -> Color.Red
                                 BikeStatus.AVAILABLE -> PrimaryColor
