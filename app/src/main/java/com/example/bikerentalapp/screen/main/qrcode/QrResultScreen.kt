@@ -81,12 +81,12 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         ){
             TextColumn(
                 when(bike?.status){
-                    BikeStatus.AVAILABLE -> "Còn trống"
+                    BikeStatus.AVAILABLE -> "San sang"
                     BikeStatus.IN_USE -> "Đang sử dụng"
                     BikeStatus.CHARGING -> "Đang sạc"
                     else -> "Không xác định"
                 },
-                qrCodeContent,Modifier.padding(10.dp))
+                viewModel.firstLine,Modifier.padding(10.dp))
             Spacer(modifier = Modifier.width(16.dp))
             TextColumn("${bike?.battery ?: 0}%" ,"Pin",Modifier.padding(10.dp))
         }
@@ -124,12 +124,14 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         ButtonComponent(
             value = "Bat dau",
             onClick = {
-                navController.navigate(Screens.Main.TrackingMap(qrCodeContent.substring(0, 10))){
-                    popUpTo(navController.graph.startDestinationId){
-                        saveState = true
+                viewModel.rentBike {
+                    navController.navigate(Screens.Main.TrackingMap(qrCodeContent,"${bike?.battery} %")){
+                        popUpTo(navController.graph.startDestinationId){
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
             },
             color = ButtonColors(
