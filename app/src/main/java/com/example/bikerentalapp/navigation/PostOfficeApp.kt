@@ -1,5 +1,7 @@
 package com.example.bikerentalapp.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -16,9 +18,8 @@ import com.example.bikerentalapp.api.data.OTPPurpose
 import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.components.LocalNavigation
-import com.example.bikerentalapp.components.horizontalNavigation
-import com.example.bikerentalapp.components.verticalNavigation
 import com.example.bikerentalapp.model.SignUpViewModel
+import com.example.bikerentalapp.screen.features.*
 import com.example.bikerentalapp.screen.login.*
 import com.example.bikerentalapp.screen.policy.*
 import com.example.bikerentalapp.screen.login.SignInClicks
@@ -137,6 +138,54 @@ fun PostOfficeApp() {
                     MainScreen {
                         QrScreen()
                     }
+                }
+
+                horizontalNavigation<Screens.Features.TopUp> {
+                    CreditDepositScreen()
+                }
+
+                horizontalNavigation<Screens.Features.TransactionHistory> {
+                    TransactionHistoryScreen()
+                }
+
+                horizontalNavigation<Screens.Features.PointSharing> {
+                    PointSharingScreen()
+                }
+
+                horizontalNavigation<Screens.Main.Profile> {
+                    ProfileScreen()
+                }
+
+                horizontalNavigation<Screens.Features.News> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.Promotion> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.Ranking> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.Promotion> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.InviteFriends> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.ManualUser> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.BuyingTickets> {
+                    NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.MyTrips> {
+                    NewsScreen()
                 }
             }
 

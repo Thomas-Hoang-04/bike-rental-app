@@ -67,5 +67,11 @@ sealed class Screens {
         object InviteFriends
         @Serializable
         object Promotion
+        @Serializable
+        object PointSharing
+        @Serializable
+        object TopUp
+        @Serializable
+        object TransactionHistory
     }
 }

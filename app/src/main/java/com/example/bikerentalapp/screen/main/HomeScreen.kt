@@ -2,22 +2,8 @@ package com.example.bikerentalapp.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +46,7 @@ import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.features
 import com.example.bikerentalapp.model.AccountViewModel
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import java.text.NumberFormat
 
@@ -142,7 +129,14 @@ fun HomeScreen(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Profile",
                             tint = PrimaryColor,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp).clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                navController.navigate(Screens.Main.Profile) {
+                                    launchSingleTop = true
+                                }
+                            }
                         )
                     }
                 }
@@ -156,12 +150,26 @@ fun HomeScreen(
                             .height(45.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(Color.White.copy(alpha = 0.1f))
-                            .clickable(onClick = {})
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                            ) {}
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize().clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                            ) {
+                                navController.navigate(Screens.Main.Station) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -277,7 +285,11 @@ fun HomeScreen(
                                     modifier = Modifier,
                                     contentAlignment = Alignment.Center) {
                                     IconButton(
-                                        onClick = { /*TODO*/ }
+                                        onClick = {
+                                            navController.navigate(Screens.Features.TopUp) {
+                                                launchSingleTop = true
+                                            }
+                                        }
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.Wallet,
@@ -310,7 +322,11 @@ fun HomeScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     IconButton(
-                                        onClick = { /*TODO*/ }
+                                        onClick = {
+                                            navController.navigate(Screens.Features.TransactionHistory) {
+                                                launchSingleTop = true
+                                            }
+                                        }
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.History,
@@ -344,7 +360,11 @@ fun HomeScreen(
                                     modifier = Modifier,
                                     contentAlignment = Alignment.Center) {
                                     IconButton(
-                                        onClick = { /*TODO*/ }
+                                        onClick = {
+                                            navController.navigate(Screens.Features.PointSharing) {
+                                                launchSingleTop = true
+                                            }
+                                        }
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.ControlPointDuplicate,

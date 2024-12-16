@@ -1,4 +1,4 @@
-package com.example.bikerentalapp.components
+package com.example.bikerentalapp.navigation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally

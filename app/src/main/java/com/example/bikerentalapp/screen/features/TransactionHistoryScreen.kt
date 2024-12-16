@@ -1,135 +1,197 @@
 package com.example.bikerentalapp.screen.features
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.api.data.QueryResponse
+import com.example.bikerentalapp.api.data.TransactionStatus
+import com.example.bikerentalapp.api.data.TransactionsDetails
+import com.example.bikerentalapp.api.network.RetrofitInstances
+import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.LocalNavigation
+import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.components.makeToast
+import com.example.bikerentalapp.ui.theme.PrimaryColor
+import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
-data class Transaction(
-    val description: String,
-    val status: String,
-    val date: String,
-    val amount: String,
-    val amountColor: Color,
-)
-
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionHistoryScreen(transactions: List<Transaction>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { /* Handle Back Action */ },
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Quay lại"
-                )
-            }
+fun TransactionHistoryScreen() {
+    val context = LocalContext.current
+    val navController = LocalNavigation.current
+    var transactionsList by remember { mutableStateOf<List<TransactionsDetails>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
 
-            Text(
-                text = "Lịch sử giao dịch",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
+    val account = UserAccount.current
+    val token = account.token.collectAsState()
+    val username = account.username.collectAsState()
+    val scope = rememberCoroutineScope()
+    val retrofit = RetrofitInstances.Query(token.value).queryAPI
 
-            IconButton(
-                onClick = { /* Handle Reload Action */ },
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Refresh,
-                    contentDescription = "Tải lại"
-                )
-            }
+    val fetchTransaction = suspend {
+        val req = retrofit.getTransactions(username.value)
+        if (req.isSuccessful) {
+            val body = req.body() as QueryResponse
+            transactionsList = body.data
+        } else {
+            makeToast(context, "Lỗi khi tải dữ liệu. Vui lòng thử lại")
         }
+        isLoading = false
+    }
 
-        Spacer(modifier = Modifier.height(20.dp))
+    LaunchedEffect(true) {
+        fetchTransaction()
+    }
 
+    if (isLoading) {
+        LoadingScreen()
+    }
+
+    Scaffold (
+        containerColor = Color.White,
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Lịch sử giao dịch",
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                             navController.popBackStack()
+                        },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Quay lại"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                isLoading = true
+                                fetchTransaction()
+                            }
+                        },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = "Tải lại"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.White
+                )
+            )
+        }
+    ) { pad ->
         LazyColumn(
+            contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(
+                top = pad.calculateTopPadding(),
+                bottom = pad.calculateBottomPadding(),
+                start = pad.calculateStartPadding(LayoutDirection.Ltr) + 20.dp,
+                end = pad.calculateEndPadding(LayoutDirection.Ltr) + 20.dp
+            )
         ) {
-            items(transactions.size) { index ->
-                val transaction = transactions[index]
+            items(transactionsList) { transaction ->
                 TransactionItem(
-                    description = transaction.description,
+                    description = transaction.descriptions,
                     status = transaction.status,
-                    date = transaction.date,
+                    date = OffsetDateTime.parse(transaction.createdAt),
                     amount = transaction.amount,
-                    amountColor = transaction.amountColor
                 )
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionItem(
     description: String,
-    status: String,
-    date: String,
-    amount: String,
-    amountColor: Color
+    status: TransactionStatus,
+    date: OffsetDateTime,
+    amount: Int,
 ) {
     val statusColor = when (status) {
-        "Thành công" -> Color(0xFF4CAF50)
-        "Hủy giao dịch" -> Color(0xFFF44336)
+        TransactionStatus.SUCCESS -> Color(0xFF4CAF50)
+        TransactionStatus.FAILED -> Color(0xFFF44336)
         else -> Color.Gray
     }
 
-    val isPositiveAmount = amount.replace(",", "").replace(".", "").toIntOrNull() ?: 0 > 0
-   val icon = if (isPositiveAmount) {
-        Icons.Default.CreditCard
-    } else {
-        Icons.Default.Money
+    val statusString = when (status) {
+        TransactionStatus.SUCCESS -> "Thành công"
+        TransactionStatus.FAILED -> "Thất bại"
+        else -> "Đang xử lý"
     }
+
+    val amountColor = when (status) {
+        TransactionStatus.SUCCESS -> PrimaryColor
+        TransactionStatus.FAILED -> Color.Red
+        else -> Color.Gray
+    }
+
+    val timestamp = {
+        val hour = NumberFormat.getInstance().format(date.toLocalTime().hour)
+        val minute = NumberFormat.getInstance().format(date.toLocalTime().minute)
+        val datestamp = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        "$hour:$minute, $datestamp"
+    }
+
+    val isPositiveAmount = amount > 0
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = 4.dp,
-        backgroundColor = Color.White
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = icon,
+                imageVector = Icons.Filled.CreditCard,
                 contentDescription = if (isPositiveAmount) "Thẻ tín dụng" else "Tiền",
                 modifier = Modifier
                     .size(40.dp)
-                    .padding(end = 16.dp),
-                tint = if (isPositiveAmount) Color(0xFF4CAF50) else Color(0xFFF44336)
+                    .padding(end = 12.dp),
+                tint = if (isPositiveAmount) PrimaryColor else Color.Red
             )
 
             Column(
@@ -138,65 +200,31 @@ fun TransactionItem(
                 Text(
                     text = description,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    style = MaterialTheme.typography.body1.copy(lineHeight = 28.sp)
+                    fontSize = 18.sp,
                 )
                 Text(
-                    text = status,
+                    text = statusString,
                     fontSize = 14.sp,
                     color = statusColor,
-                    style = MaterialTheme.typography.body2.copy(lineHeight = 20.sp)
                 )
             }
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-
                 Text(
-                    text = amount,
-                    fontSize = 20.sp,
+                    text = NumberFormat.getInstance().format(amount),
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = amountColor,
-                    style = MaterialTheme.typography.body1.copy(lineHeight = 28.sp)
                 )
                 Text(
-                    text = date,
+                    text = timestamp(),
                     fontSize = 12.sp,
                     color = Color.Gray,
-                    style = MaterialTheme.typography.body2.copy(lineHeight = 22.sp)
                 )
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun TransactionHistoryScreenPreview() {
-    val transactions = listOf(
-        Transaction(
-            description = "Thanh toán chuyến đi",
-            status = "Thành công",
-            date = "08:51, 10/10/2024",
-            amount = "-10,000",
-            amountColor = Color.Red
-        ),
-        Transaction(
-            description = "Thanh toán trực tuyến",
-            status = "Thành công",
-            date = "08:52, 10/10/2024",
-            amount = "+60,000",
-            amountColor = Color.Blue
-        ),
-        Transaction(
-            description = "Thanh toán trực tuyến",
-            status = "Hủy giao dịch",
-            date = "08:52, 10/10/2024",
-            amount = "+60,000",
-            amountColor = Color.Blue
-        )
-    )
-
-    TransactionHistoryScreen(transactions = transactions)
-}
 

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bikerentalapp.api.data.LoginRequest
 import com.example.bikerentalapp.api.data.LoginResponse
+import com.example.bikerentalapp.api.data.QueryResponse
+import com.example.bikerentalapp.api.data.User
 import com.example.bikerentalapp.api.data.UserDetails
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.keystore.UserSettings
@@ -45,6 +47,19 @@ class AccountViewModel: ViewModel() {
 
     fun setToken(token: String) {
         _token.value = token
+    }
+
+    fun update() {
+        val retrofit = RetrofitInstances.Query(_token.value).queryAPI
+        viewModelScope.launch {
+            val req = retrofit.getUser()
+            if (req.isSuccessful) {
+                val body = req.body() as QueryResponse<*, *>?
+                val user = body?.data?.get(0) as User
+                _username.value = user.username
+                _details.value = user.details
+            }
+        }
     }
 
     fun store(dataStore: DataStore<UserSettings>, data: LoginResponse, pwd: String) {

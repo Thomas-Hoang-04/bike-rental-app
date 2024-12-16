@@ -210,7 +210,7 @@ fun BottomNav(){
                             return@NavigationBarItem
                         }
                         navController.navigate(item.route){
-                            popUpTo(navController.graph.startDestinationId){
+                            popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
                             launchSingleTop = true

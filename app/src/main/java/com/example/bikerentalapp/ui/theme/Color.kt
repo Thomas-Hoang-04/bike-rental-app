@@ -21,3 +21,4 @@ val backgroundColor = Color.White
 val onBackgroundColor = Color.Gray
 val bg_inputColor = Color(0xFFF8F8F8)
 val LabelColor = Color(0xFF575757)
+val DialogColor = Color(0xFFF0FDFA)

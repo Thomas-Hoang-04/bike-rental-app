@@ -37,18 +37,18 @@ interface APIInterface {
     @POST("user/sharing")
     suspend fun pointSharing(@Body sharing: TopUpRequest): Response<CRUDResponse<TransactionStatus>>
 
-    @POST("user/topup")
+    @POST("user/top-up")
     suspend fun topUp(@Body topUp: TopUpRequest): Response<CRUDResponse<TransactionStatus>>
 
     @POST("user/transaction")
     suspend fun createTransaction(@Body transaction: TransactionRequest): Response<CRUDResponse<TransactionStatus>>
 
-    @GET("user/transaction")
-    suspend fun getTransactions(): Response<QueryResponse<String, TransactionsDetails>>
+    @GET("user/transaction/{username}")
+    suspend fun getTransactions(@Path("username") username: String): Response<QueryResponse<String, TransactionsDetails>>
 
     @POST("user/trip")
     suspend fun createTrip(@Body trip: TripRequest): Response<CRUDResponse<TransactionStatus>>
 
-    @GET("user/trip")
-    suspend fun getTrips(): Response<QueryResponse<String, TripDetails>>
+    @GET("user/trip/{username}")
+    suspend fun getTrips(@Path("username") username: String): Response<QueryResponse<String, TripDetails>>
 }

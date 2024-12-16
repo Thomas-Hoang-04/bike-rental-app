@@ -4,7 +4,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-sealed class RetrofitInstances {
+class RetrofitInstances {
     companion object{
         private const val BASE_URL = "https://bikegorental.my/api/"
     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -18,13 +19,16 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.*
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.Dialog
 import androidx.datastore.core.DataStore
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -439,11 +443,7 @@ fun GridLayout(
                                 title = items[itemIndex].title,
                                 onClick = {
                                     navController.navigate(items[itemIndex].route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
                                         launchSingleTop = true
-                                        restoreState = true
                                     }
                                 }
                             )
@@ -473,7 +473,128 @@ fun LoadingScreen() {
     ) {
         CircularProgressIndicator(color = PrimaryColor)
     }
-
 }
 
+
+@Composable
+fun CustomDialog(
+    title: String,
+    message: String = "",
+    onDismiss: () -> Unit = { },
+    onAccept: () -> Unit = { },
+    canDismiss: Boolean = true,
+    icon: ImageVector = Icons.Outlined.Info
+) {
+    val config = LocalConfiguration.current
+    val width = config.screenWidthDp.dp
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .padding(8.dp)
+                .then(
+                    if (!canDismiss) Modifier.height(180.dp) else Modifier.height(200.dp)
+                ).then(
+                    if (!canDismiss) Modifier.width(width * 2/3) else Modifier.width(width * 0.72f)
+                )
+                .background(DialogColor, shape = RoundedCornerShape(8.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize().padding(10.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Info",
+                    tint = PrimaryColor,
+                    modifier = Modifier.size(32.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = TextColor,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                if (message.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    Text(
+                        text = message,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = TextColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().then(
+                        if (!canDismiss) Modifier.padding(horizontal = 12.dp) else Modifier
+                    ),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (canDismiss) {
+                        Button(
+                            onClick = onDismiss,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = PrimaryColor
+                            )
+                        ) {
+                            Text(
+                                text = "Quay lại",
+                                style = TextStyle(
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = PrimaryColor
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    Button(
+                        onClick = onAccept,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryColor,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = if (!canDismiss) Modifier.fillMaxWidth() else Modifier
+                    ) {
+                        Text(
+                            text = "Xác nhận",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewDialog() {
+    CustomDialog(
+        title = "Xác nhận chia sẻ điểm",
+    )
+}
 
