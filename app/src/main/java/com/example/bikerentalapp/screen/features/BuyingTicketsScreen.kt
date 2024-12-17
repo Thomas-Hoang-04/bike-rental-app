@@ -192,7 +192,7 @@ fun TicketItem(
     }
 
     val timestamp: (String) -> String = { time ->
-        val hour = "%02d".format(OffsetDateTime.parse(time).toLocalTime().hour)
+        val hour = "%02d".format(OffsetDateTime.parse(time).toLocalTime().hour + 7)
         val minute = "%02d".format(OffsetDateTime.parse(time).toLocalTime().minute)
         val datestamp = OffsetDateTime.parse(time).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         "$hour:$minute, $datestamp"

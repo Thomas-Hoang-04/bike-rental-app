@@ -149,7 +149,7 @@ fun TransactionItem(
     }
 
     val timestamp = {
-        val hour = "%02d".format(date.toLocalTime().hour)
+        val hour = "%02d".format(date.toLocalTime().hour + 7)
         val minute = "%02d".format(date.toLocalTime().minute)
         val datestamp = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         "$hour:$minute, $datestamp"
