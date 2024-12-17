@@ -1,10 +1,13 @@
 package com.example.bikerentalapp.screen.features
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -22,13 +25,14 @@ import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.ui.theme.PrimaryColor
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileSettingScreen() {
-    val gender by remember { mutableStateOf("Nam") }
-
     val navController = LocalNavigation.current
     val account = UserAccount.current
     val username = account.username.collectAsState()
@@ -41,7 +45,7 @@ fun ProfileSettingScreen() {
                     Text(
                         text = "Chỉnh sửa",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                     )
                 },
                 navigationIcon = {
@@ -62,75 +66,83 @@ fun ProfileSettingScreen() {
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        bottomBar = {
-            BottomAppBar(
-                content = {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryColor,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(
-                            text = "Lưu thay đổi",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                },
-                containerColor = Color.White
-            )
-        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 10.dp, vertical = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+                .padding(horizontal = 10.dp, vertical = 40.dp)
+                .padding(top = 40.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "Avatar",
+            Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray)
-                        .padding(8.dp),
-                    tint = Color.White
-                )
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Avatar",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray)
+                            .padding(8.dp),
+                        tint = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = "Chỉnh sửa avatar",
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.clickable { }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = "Chỉnh sửa avatar",
-                    color = PrimaryColor,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.clickable { }
-                )
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    InputRowWithDivider(label = "Tên", value = "${details.value?.name}")
+                    InputRowWithDivider(label = "Số điện thoại", value = username.value)
+                    InputRowWithDivider(label = "Ngày sinh", value = LocalDate.parse("${details.value?.dob}")
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                    InputRowWithDivider(label = "Email", value = "${details.value?.email}")
+                }
             }
 
-            Column(
+            Button(
+                onClick = { /*TODO*/ },
                 modifier = Modifier
-                    .padding(4.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp)
+                    .background(
+                        color = PrimaryColor,
+                        shape = RoundedCornerShape(6.dp)
+                    ),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryColor,
+                    contentColor = Color.White
+                )
             ) {
-                InputRowWithDivider(label = "Tên", value = "${details.value?.name}")
-                InputRowWithDivider(label = "Số điện thoại", value = username.value)
-                InputRowWithDivider(label = "Ngày sinh", value = "${details.value?.dob}")
-                InputRowWithDivider(label = "Email", value = "${details.value?.email}")
-                InputRowWithDivider(label = "Giới tính", value = gender)
+                Text(
+                    text = "Lưu thay đổi",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
+
+
     }
 }
 
@@ -169,10 +181,4 @@ fun InputRowWithDivider(
         }
         HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
     }
-}
-
-@Preview
-@Composable
-fun ProfileSettingScreenPreview() {
-    ProfileSettingScreen()
 }
