@@ -105,4 +105,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson.converter)
     implementation("androidx.compose.runtime:runtime-livedata:1.7.6")
+    implementation(libs.androidx.runtime.livedata)
 }
