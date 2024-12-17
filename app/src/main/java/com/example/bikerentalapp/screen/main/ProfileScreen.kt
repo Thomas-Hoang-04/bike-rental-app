@@ -1,5 +1,6 @@
 package com.example.bikerentalapp.screen.main
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +25,7 @@ import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
@@ -92,38 +94,41 @@ fun ProfileScreen() {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Column(
-                        horizontalAlignment = Alignment.Start
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Hình nền",
+                        Box(
                             modifier = Modifier
                                 .size(80.dp)
                                 .clip(CircleShape)
-                                .background(Color.Gray.copy(alpha = 0.1f))
-                        )
+                                .background(Color.Gray.copy(alpha = 0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Hình nền",
+                                modifier = Modifier
+                                    .size(60.dp)
+                            )
+                        }
                         Text("${details.value?.name}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Text(phoneNumber.value, fontWeight = FontWeight.Bold)
                     }
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Row {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("150", fontWeight = FontWeight.Bold)
-                                Text("Người theo dõi", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    Row() {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("150", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text("Người theo dõi", fontWeight = FontWeight.Bold, fontSize = 14.sp)
 
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("200", fontWeight = FontWeight.Bold)
-                                Text("Đang theo dõi ", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-
-                            }
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("200", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text("Đang theo dõi ", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
                 }
@@ -136,7 +141,7 @@ fun ProfileScreen() {
                 ) {
                     Row(
                         modifier = Modifier.wrapContentSize(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         StatCard("3", "km")
