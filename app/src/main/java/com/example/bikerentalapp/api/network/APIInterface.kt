@@ -51,4 +51,10 @@ interface APIInterface {
 
     @GET("user/trip/{username}")
     suspend fun getTrips(@Path("username") username: String): Response<QueryResponse<String, TripDetails>>
+
+    @POST("user/ticket")
+    suspend fun createTicket(@Body ticket: TicketRequest): Response<CRUDResponse<TransactionStatus>>
+
+    @GET("user/ticket/{username}")
+    suspend fun getTickets(@Path("username") username: String): Response<QueryResponse<String, TicketDetails>>
 }

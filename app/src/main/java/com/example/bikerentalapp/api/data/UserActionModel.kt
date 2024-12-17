@@ -12,7 +12,7 @@ enum class TransactionStatus {
 
 @Suppress("unused")
 enum class TransactionPurpose {
-    TOPUP, POINTSHARE, TRIP, REFUND
+    TOPUP, POINTSHARE, TRIP, REFUND, TICKET
 }
 
 @Suppress("unused")
@@ -126,4 +126,26 @@ data class TripRequest(
 
     val fee: Int,
     val route: List<Geolocation>
+)
+
+enum class TicketStatus {
+    ACTIVE,
+    EXPIRED
+}
+
+data class TicketRequest(
+    val username: String,
+    val ticket: TicketTypes,
+    val price: Int,
+    val quantity: Int = 1,
+)
+
+data class TicketDetails(
+    val ticket: TicketTypes,
+    val username: String,
+    @SerializedName("issued_at")
+    val issuedAt: String,
+    @SerializedName("valid_till")
+    val validTill: String,
+    val status: TicketStatus
 )

@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.api.data.QueryResponse
@@ -26,6 +25,7 @@ import com.example.bikerentalapp.components.LoadingScreen
 import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.components.makeToast
+import com.example.bikerentalapp.ui.theme.ListColor
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -67,7 +67,7 @@ fun TransactionHistoryScreen() {
     }
 
     Scaffold (
-        containerColor = Color.White,
+        containerColor = ListColor,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -112,14 +112,9 @@ fun TransactionHistoryScreen() {
         }
     ) { pad ->
         LazyColumn(
-            contentPadding = PaddingValues(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize().padding(
-                top = pad.calculateTopPadding(),
-                bottom = pad.calculateBottomPadding(),
-                start = pad.calculateStartPadding(LayoutDirection.Ltr) + 20.dp,
-                end = pad.calculateEndPadding(LayoutDirection.Ltr) + 20.dp
-            )
+            contentPadding = PaddingValues(top = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.fillMaxSize().padding(pad).padding(horizontal = 20.dp)
         ) {
             items(transactionsList) { transaction ->
                 TransactionItem(
@@ -153,15 +148,9 @@ fun TransactionItem(
         else -> "Đang xử lý"
     }
 
-    val amountColor = when (status) {
-        TransactionStatus.SUCCESS -> PrimaryColor
-        TransactionStatus.FAILED -> Color.Red
-        else -> Color.Gray
-    }
-
     val timestamp = {
-        val hour = NumberFormat.getInstance().format(date.toLocalTime().hour)
-        val minute = NumberFormat.getInstance().format(date.toLocalTime().minute)
+        val hour = "%02d".format(date.toLocalTime().hour)
+        val minute = "%02d".format(date.toLocalTime().minute)
         val datestamp = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         "$hour:$minute, $datestamp"
     }
@@ -171,7 +160,7 @@ fun TransactionItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 10.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp,
         ),
@@ -199,12 +188,13 @@ fun TransactionItem(
             ) {
                 Text(
                     text = description,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
                 )
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = statusString,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     color = statusColor,
                 )
             }
@@ -212,11 +202,12 @@ fun TransactionItem(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = NumberFormat.getInstance().format(amount),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = amountColor,
+                    text = (if (isPositiveAmount) "+" else "") + NumberFormat.getInstance().format(amount),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isPositiveAmount) PrimaryColor else Color.Red,
                 )
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = timestamp(),
                     fontSize = 12.sp,

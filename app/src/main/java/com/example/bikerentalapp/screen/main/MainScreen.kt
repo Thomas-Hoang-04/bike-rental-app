@@ -62,9 +62,6 @@ fun MainScreen(
                 onClick = {
                     navController.navigate(Screens.Main.QRCode){
                         //other destinations in the back stack (before the start destination) are popped,
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
                         //if the user selects the same item (route) again, it doesn’t create a new instance of that destination
                         launchSingleTop = true
                         //restores the state of the destination when the user returns to it
@@ -210,9 +207,6 @@ fun BottomNav(){
                             return@NavigationBarItem
                         }
                         navController.navigate(item.route){
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
                             launchSingleTop = true
                             restoreState = true
                         }

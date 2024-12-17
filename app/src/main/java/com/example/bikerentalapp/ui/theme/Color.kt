@@ -11,6 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val PrimaryColor = Color(0xFF0A9076)
+val LightPrimaryColor = Color(0x2F0A9076)
 val PrimaryNavBarColor = Color(0xFFF6FDFB)
 val PrimarySelectedColor = Color(0x220A9076)
 val disablePrimaryColor = Color(0xFF366B61)
@@ -22,3 +23,4 @@ val onBackgroundColor = Color.Gray
 val bg_inputColor = Color(0xFFF8F8F8)
 val LabelColor = Color(0xFF575757)
 val DialogColor = Color(0xFFF0FDFA)
+val ListColor = Color(0xFFF1F5F9)

@@ -8,19 +8,20 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Money
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.api.data.TopUpRequest
@@ -34,9 +35,21 @@ import java.text.NumberFormat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreditDepositScreen() {
-    var selectedAmount by remember { mutableIntStateOf(10000) }
+    val selectedAmount = remember { mutableIntStateOf(10000) }
+    val screenAmount by derivedStateOf {
+        NumberFormat.getInstance().format(selectedAmount.value)
+    }
+    val expanded = remember { mutableStateOf(false) }
     val paymentMethods = listOf("ATM, Visa/Master/JCB", "Thanh toán QRCode, ShopeePay, Tại cửa hàng", "Ví Momo")
-    val selectedPaymentMethod = remember { mutableStateOf(paymentMethods[0]) }
+    var selectedPaymentMethod by remember { mutableStateOf(paymentMethods[0]) }
+    val paymentMethodIcon by derivedStateOf {
+        when (selectedPaymentMethod) {
+            paymentMethods[0] -> Icons.Default.CreditCard
+            paymentMethods[1] -> Icons.Default.QrCode
+            paymentMethods[2] -> Icons.Default.Wallet
+            else -> Icons.Default.Money
+        }
+    }
     var isLoading by remember { mutableStateOf(false) }
     val navController = LocalNavigation.current
     var infoDialogTrigger by remember { mutableStateOf(false) }
@@ -45,7 +58,15 @@ fun CreditDepositScreen() {
     val context = LocalContext.current
 
     var card by remember { mutableStateOf("") }
+    val cardDisplay by derivedStateOf {
+        card.chunked(4).joinToString(" ")
+    }
     var securityCode by remember { mutableStateOf("") }
+    var cardHolder by remember { mutableStateOf("") }
+    var expiryDate by remember { mutableStateOf("") }
+    val expiryDateDisplay by derivedStateOf {
+        expiryDate.chunked(2).joinToString("/")
+    }
 
     val account = UserAccount.current
     val token = account.token.collectAsState()
@@ -61,7 +82,7 @@ fun CreditDepositScreen() {
     if (infoDialogTrigger) {
         CustomDialog(
             title = "Xác nhận nạp điểm",
-            message = "Bạn có chắc chắn muốn nạp ${NumberFormat.getInstance().format(selectedAmount)} điểm vào tài khoản?",
+            message = "Bạn có chắc chắn muốn nạp $screenAmount điểm vào tài khoản?",
             onDismiss = { infoDialogTrigger = false },
             onAccept = {
                 scope.launch {
@@ -70,7 +91,7 @@ fun CreditDepositScreen() {
                     val req = retrofit.queryAPI.topUp(
                         TopUpRequest(
                             from = username.value,
-                            amount = selectedAmount,
+                            amount = selectedAmount.value,
                         )
                     )
                     if (req.isSuccessful) {
@@ -107,6 +128,9 @@ fun CreditDepositScreen() {
         containerColor = Color.White,
         topBar = {
             CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.White,
+                ),
                 title = {
                     Text(
                         text = "Nạp điểm",
@@ -144,89 +168,12 @@ fun CreditDepositScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = PrimaryColor),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 28.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Số điểm muốn nạp (VND)",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-
-                    TextField(
-                        value = NumberFormat.getInstance().format(selectedAmount),
-                        onValueChange = { amount ->
-                            selectedAmount =
-                                if (amount.isEmpty()) 0 else amount.replace(",", "").toInt()
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        placeholder = { Text("0") },
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            cursorColor = Color.White,
-                            focusedIndicatorColor = Color.White,
-                        ),
-                        textStyle = LocalTextStyle.current.copy(
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 1
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        listOf(50000, 100000, 200000, 300000).forEach { amount ->
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Button(
-                                onClick = { selectedAmount = amount },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (selectedAmount == amount) Color.White else Color.LightGray,
-                                    contentColor = if (selectedAmount == amount) PrimaryColor else Color.Black
-                                ),
-                                contentPadding = PaddingValues(
-                                    horizontal = 8.dp
-                                ),
-                                modifier = Modifier
-                                    .weight(1f)
-                            ) {
-                                Text(
-                                    text = NumberFormat.getInstance().format(amount),
-                                    fontSize = 12.sp,
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(2.dp))
-                        }
-                    }
-                }
-            }
+            MoneyDepositCard(
+                screenAmount = screenAmount,
+                selectedAmount = selectedAmount,
+                focusManager = focusManager,
+                title = "Số điểm muốn nạp (VND)",
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -237,108 +184,241 @@ fun CreditDepositScreen() {
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            paymentMethods.forEach { method ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                        ) { selectedPaymentMethod.value = method }
-                        .padding(vertical = 10.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Money,
-                        contentDescription = "Phương thức thanh toán",
-                        tint = if (selectedPaymentMethod.value == method) PrimaryColor else Color.Gray,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = method,
-                        fontSize = 18.sp,
-                        color = if (selectedPaymentMethod.value == method) PrimaryColor else Color.Black
-                    )
-                }
-                if (method == paymentMethods.first() && selectedPaymentMethod.value == method) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
                     ) {
-                        OutlinedTextField(
-                            value = card.chunked(4).joinToString(" "),
-                            onValueChange = {
-                                 if (it.length <= 16)
-                                    card = it.filter { c -> c.isDigit() }
-                            },
-                            label = { Text("Số thẻ") },
-                            placeholder = { Text("Nhập số thẻ") },
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Next
-                            ),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Gray,
-                                focusedBorderColor = PrimaryColor,
-                                cursorColor = PrimaryColor,
-                                focusedLabelColor = PrimaryColor,
-                            ),
-                            textStyle = LocalTextStyle.current.copy(
-                                color = Color.Black,
-                                fontSize = 16.sp
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                                .height(50.dp)
-                                .weight(0.75f),
-                            maxLines = 1
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        OutlinedTextField(
-                            value = securityCode,
-                            onValueChange = {
-                                if (it.length <= 3) {
-                                    securityCode = it
+                        expanded.value = true
+                    }
+            ) {
+                Icon(
+                    imageVector = paymentMethodIcon,
+                    contentDescription = "Phương thức thanh toán",
+                    tint = PrimaryColor,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    selectedPaymentMethod,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = PrimaryColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = if (expanded.value) Icons.Default.ArrowDropUp
+                    else Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown",
+                    tint = PrimaryColor
+                )
+
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                    containerColor = Color.White,
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    offset = DpOffset(0.dp, 10.dp)
+                ) {
+                    paymentMethods.forEach { item ->
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                val icon = when (item) {
+                                    paymentMethods[0] -> Icons.Default.CreditCard
+                                    paymentMethods[1] -> Icons.Default.QrCode
+                                    paymentMethods[2] -> Icons.Default.Wallet
+                                    else -> Icons.Default.Money
                                 }
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = "Phương thức thanh toán",
+                                    tint = PrimaryColor,
+                                    modifier = Modifier.size(24.dp)
+                                )
                             },
-                            label = { Text("CVV") },
-                            placeholder = { Text("CVV") },
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    focusManager.clearFocus()
+                            text = { Text(text = item) },
+                            onClick = {
+                                scope.launch {
+                                    expanded.value = false
+                                    delay(50)
+                                    selectedPaymentMethod = item
                                 }
-                            ),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Gray,
-                                focusedBorderColor = PrimaryColor,
-                                cursorColor = PrimaryColor,
-                                focusedLabelColor = PrimaryColor,
-                            ),
-                            textStyle = LocalTextStyle.current.copy(
-                                color = Color.Black,
-                                fontSize = 16.sp
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .weight(0.25f)
+                            }
                         )
                     }
                 }
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (selectedPaymentMethod == paymentMethods[0]) {
+                OutlinedTextField(
+                    value = TextFieldValue(
+                        text = cardDisplay,
+                        selection = TextRange(cardDisplay.length)
+                    ),
+                    onValueChange = {
+                            if (it.text.length < 20)
+                                card = it.text.filter { c -> c.isDigit() }
+                        },
+                    label = { Text("Số thẻ") },
+                    placeholder = { Text("Nhập số thẻ") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Gray,
+                        focusedBorderColor = PrimaryColor,
+                        cursorColor = PrimaryColor,
+                        focusedLabelColor = PrimaryColor,
+                    ),
+                    textStyle = LocalTextStyle.current.copy(
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.CreditCard,
+                            contentDescription = "Số thẻ",
+                            tint = PrimaryColor
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(3.dp))
+                OutlinedTextField(
+                    value = cardHolder,
+                    onValueChange = {
+                        cardHolder = it.uppercase()
+                    },
+                    label = { Text("Tên chủ thẻ") },
+                    placeholder = { Text("Nhập tên chủ thẻ") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Gray,
+                        focusedBorderColor = PrimaryColor,
+                        cursorColor = PrimaryColor,
+                        focusedLabelColor = PrimaryColor,
+                    ),
+                    textStyle = LocalTextStyle.current.copy(
+                        color = Color.Black,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Chủ thẻ",
+                            tint = PrimaryColor
+                        )
+                    },
+                    maxLines = 1
+                )
+                Spacer(modifier = Modifier.height(3.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = securityCode,
+                        onValueChange = {
+                            if (it.length <= 3) {
+                                securityCode = it
+                            }
+                        },
+                        label = { Text("CVV") },
+                        placeholder = { Text("CVV") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Gray,
+                            focusedBorderColor = PrimaryColor,
+                            cursorColor = PrimaryColor,
+                            focusedLabelColor = PrimaryColor,
+                        ),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.Black,
+                            fontSize = 16.sp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                            .weight(0.5f)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    OutlinedTextField(
+                        value = TextFieldValue(
+                            text = expiryDateDisplay,
+                            selection = TextRange(expiryDateDisplay.length)
+                        ),
+                        onValueChange = {
+                            if (it.text.length <= 5) {
+                                expiryDate = it.text.filter { c -> c.isDigit() }
+                            }
+                        },
+                        label = { Text("Ngày hết hạn") },
+                        placeholder = { Text("Ngày hết hạn") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Gray,
+                            focusedBorderColor = PrimaryColor,
+                            cursorColor = PrimaryColor,
+                            focusedLabelColor = PrimaryColor,
+                        ),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.Black,
+                            fontSize = 16.sp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                            .weight(0.5f)
+                    )
+                }
+        }
+
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = {
-                    infoDialogTrigger = true
+                    if (selectedPaymentMethod == paymentMethods[0]) {
+                        if (card.length != 16 || securityCode.length != 3 || cardHolder.isEmpty() || expiryDate.length != 4) {
+                            makeToast(context, "Vui lòng nhập đầy đủ thông tin thẻ")
+                        } else {
+                            infoDialogTrigger = true
+                        }
+                    } else {
+                        infoDialogTrigger = true
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryColor,

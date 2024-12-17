@@ -61,6 +61,8 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
 retrofit-gson-converter = { module = "com.squareup.retrofit2:converter-gson", version = "2.11.0" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.1" }
+compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version = "1.0.0" }
+compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3.adaptive:adaptive-navigation-android", version = "1.0.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

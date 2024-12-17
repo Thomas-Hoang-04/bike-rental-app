@@ -102,6 +102,9 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.datastore.preferences)
     implementation(libs.core.splashscreen)
+    // Navigation
+    implementation(libs.compose.material3.adaptive.navigation)
+    implementation(libs.compose.material3.adaptive.navigation.suite)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson.converter)
     implementation("androidx.compose.runtime:runtime-livedata:1.7.6")

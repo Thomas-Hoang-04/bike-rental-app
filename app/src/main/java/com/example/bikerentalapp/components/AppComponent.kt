@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,7 +28,6 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Dialog
 import androidx.datastore.core.DataStore
@@ -37,6 +37,7 @@ import com.example.bikerentalapp.R
 import com.example.bikerentalapp.keystore.UserSettings
 import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.ui.theme.*
+import java.text.NumberFormat
 import java.util.Calendar
 
 val UserAccount = compositionLocalOf<AccountViewModel> {
@@ -617,11 +618,97 @@ fun InfoCard(value: String, unit: String) {
     }
 }
 
-@Preview
 @Composable
-fun PreviewDialog() {
-    CustomDialog(
-        title = "Xác nhận chia sẻ điểm",
-    )
+fun MoneyDepositCard(
+    screenAmount: String,
+    selectedAmount: MutableIntState,
+    focusManager: FocusManager,
+    title: String
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = PrimaryColor),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 28.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            TextField(
+                value = TextFieldValue(
+                    screenAmount,
+                    TextRange(screenAmount.length)
+                ),
+                onValueChange = { amount ->
+                    selectedAmount.value =
+                        if (amount.text.isBlank()) 0 else amount.text.filter { c -> c.isDigit() }.toInt()
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                placeholder = { Text("0") },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    cursorColor = Color.White,
+                    focusedIndicatorColor = Color.White,
+                ),
+                textStyle = LocalTextStyle.current.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                listOf(50000, 100000, 200000, 300000).forEach { amount ->
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Button(
+                        onClick = { selectedAmount.value = amount },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedAmount.value == amount) Color.White else Color.LightGray,
+                            contentColor = if (selectedAmount.value == amount) PrimaryColor else Color.Black
+                        ),
+                        contentPadding = PaddingValues(
+                            horizontal = 8.dp
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = NumberFormat.getInstance().format(amount),
+                            fontSize = 12.sp,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(2.dp))
+                }
+            }
+        }
+    }
 }
 

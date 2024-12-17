@@ -182,7 +182,7 @@ fun PostOfficeApp() {
                 }
 
                 horizontalNavigation<Screens.Features.BuyingTickets> {
-                    NewsScreen()
+                    TicketScreen()
                 }
 
                 horizontalNavigation<Screens.Features.MyTrips> {
