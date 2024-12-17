@@ -239,24 +239,28 @@ fun PostOfficeApp() {
             }
 
             composable(
-                "tripsMap/{polylinePoints}/{time}/{id}",
+                "tripsMap/{polylinePoints}/{time}/{id}/{distance}/{duration}",
                 arguments = listOf(
                     navArgument("polylinePoints") { type = NavType.StringType },
                     navArgument("time") { type = NavType.StringType },
-                    navArgument("id") { type = NavType.StringType }
+                    navArgument("id") { type = NavType.StringType },
+                    navArgument("distance") { type = NavType.StringType},
+                    navArgument("duration") { type = NavType.StringType}
                 )
             ) { backStackEntry ->
                 val polylinePointsJson = backStackEntry.arguments?.getString("polylinePoints")
                 val time = URLDecoder.decode(backStackEntry.arguments?.getString("time")?: "",
                     StandardCharsets.UTF_8.toString())
                 val id = backStackEntry.arguments?.getString("id") ?: ""
+                val distance = backStackEntry.arguments?.getString("distance") ?: ""
+                val duration = backStackEntry.arguments?.getString("duration") ?: ""
 
                 // Decode polylinePoints
                 val polylinePoints = polylinePointsJson?.let { json ->
                     Json.decodeFromString<List<SerializableLatLng>>(json)
                 } ?: emptyList()
 
-                TripsMap(polylinePoints.map { it.toLatLng() }, time, id)
+                TripsMap(polylinePoints.map { it.toLatLng() }, time, id, distance, duration)
             }
         }
     }
