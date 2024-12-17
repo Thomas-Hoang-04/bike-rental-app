@@ -1,14 +1,12 @@
 package com.example.bikerentalapp.screen.features.my_trips
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,11 +33,11 @@ import com.skydoves.flexible.core.FlexibleSheetSize
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 
 @Composable
-fun TripsMap(polylinePoints : List<LatLng>,time : String,id : String) {
+fun TripsMap(polylinePoints : List<LatLng>,time : String,id : String,distance: String,duration : String ) {
     val sheetState = rememberFlexibleBottomSheetState(
         isModal = false,
         flexibleSheetSize = FlexibleSheetSize(
-            fullyExpanded = 0.8f,
+            fullyExpanded = 0.6f,
             intermediatelyExpanded = 0.3f,
             slightlyExpanded = 0.15f,
         ),
@@ -90,7 +88,7 @@ fun TripsMap(polylinePoints : List<LatLng>,time : String,id : String) {
                     sheetState = sheetState,
                     containerColor = Color.White,
                 ){
-                    BottomSheetContent(time, id)
+                    BottomSheetContent(time, id,distance,duration)
                 }
             }
         }
@@ -98,38 +96,42 @@ fun TripsMap(polylinePoints : List<LatLng>,time : String,id : String) {
 }
 
 @Composable
-fun BottomSheetContent(time: String, id: String) {
+fun BottomSheetContent(time: String, id: String,distance: String,duration: String) {
     Column(
+        horizontalAlignment = Alignment.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
     ) {
         // Trip Details
-        Text("Thời gian", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Text(time, color = Color.Gray)
+        RowContent("Thời gian:",time)
+        RowContent(leading = "Thời lượng di chuyển:", trailing = duration)
+        RowContent("Khoảng cách:", "$distance km")
+        RowContent(leading = "Hình thức:", trailing = "Vé lượt")
+        RowContent(leading = "Mã chuyến đi:", trailing = id)
+    }
+}
 
-        Spacer(modifier = Modifier.height(8.dp))
+@Composable
+fun RowContent(leading :String,trailing : String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+    ) {
+        Text(
+            text = leading,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.padding(start = 10.dp)
+        )
 
-        Text("Thời lượng di chuyển",style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Text("1 phút", color = Color.Gray)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text("Hình thức",style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Text("Vé lượt", color = Color.Gray)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text("Mã chuyến đi",style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(id, color = Color.Gray)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Sao chép", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
-        }
-
-        Spacer(modifier = Modifier.height(5.dp))
-
+        Text(
+            text = trailing,
+            color = Color.Gray,
+            modifier = Modifier.padding(end = 10.dp)
+        )
     }
 }

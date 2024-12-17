@@ -1,6 +1,5 @@
 package com.example.bikerentalapp.screen.features.my_trips
 
-import android.location.Address
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AirplaneTicket
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,26 +48,26 @@ fun MyTripsScreen(navController: NavController) {
             .fillMaxSize()
             .background(Color.LightGray.copy(0.2f)),
         horizontalAlignment = Alignment.CenterHorizontally,
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(PrimaryColor)
                 .padding(top = 40.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+            ) {
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Close", tint = Color.White)
+            }
+
             Text(
                 text = "Chuyen di cua toi",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
-                modifier = Modifier.padding(start = 100.dp),
+                modifier = Modifier.padding(start = 50.dp)
             )
-            IconButton(
-                onClick = { navController.popBackStack() },
-            ) {
-                Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
-            }
         }
 
         LazyColumn {
@@ -76,9 +76,10 @@ fun MyTripsScreen(navController: NavController) {
                 val time = tripsViewModel.formatTripTime(trip.startTime, trip.endTime)
                 val polylinePoints = tripsViewModel.decodePolyline(trip.travelRoute)
                 val encodedTime = URLEncoder.encode(time, StandardCharsets.UTF_8.toString())
-
-                TicketUI(trip.fee, trip.startAddress,trip.id,time){
-                    navController.navigate("tripsMap/$polylinePoints/$encodedTime/${trip.id}")
+                val duration = tripsViewModel.decodeDuration(trip.travelTime)
+                val distance = "%.2f".format(trip.distance)
+                TicketUI(trip.fee, trip.startAddress, trip.id, time) {
+                    navController.navigate("tripsMap/$polylinePoints/$encodedTime/${trip.id}/$distance/$duration")
                 }
             }
         }
@@ -98,7 +99,7 @@ fun TicketUI(fee : Int,startAddress: String,tripId : String,time : String,onClic
         Spacer(modifier = Modifier.height(8.dp))
         // Top Row
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -128,17 +129,28 @@ fun TicketUI(fee : Int,startAddress: String,tripId : String,time : String,onClic
 
         // Location Rows
         LocationRow(address = startAddress)
-        Spacer(modifier = Modifier.height(8.dp))
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = null, tint = Color.Gray, modifier = Modifier.padding(start = 6.dp))
         LocationRow(address = startAddress)
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // Bottom Row
-        Text(
-            text = "$time  $tripId",
-            style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = time,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Text(
+                text = tripId,
+                color = Color.Gray,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -148,7 +160,7 @@ fun TicketUI(fee : Int,startAddress: String,tripId : String,time : String,onClic
 fun LocationRow(address: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
     ) {
         Icon(
             imageVector = Icons.Default.PinDrop, // Replace with your location icon
