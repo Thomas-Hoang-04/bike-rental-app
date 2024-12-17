@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -589,6 +590,32 @@ fun CustomDialog(
     }
 }
 
+@Composable
+fun InfoCard(value: String, unit: String) {
+    Box(
+        modifier = Modifier
+            .size(90.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .background(PrimaryColor)
+            .padding(horizontal = 25.dp, vertical = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = value,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.White
+            )
+            Text(
+                text = unit,
+                color = Color.White
+            )
+        }
+    }
+}
 
 @Preview
 @Composable

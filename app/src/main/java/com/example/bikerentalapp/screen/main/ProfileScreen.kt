@@ -10,9 +10,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,8 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.components.InfoCard
 import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @SuppressLint("UnrememberedMutableState")
@@ -36,6 +43,7 @@ fun ProfileScreen() {
     val phoneNumber = derivedStateOf {
         username.value.substring(0, 3) + "****" + username.value.substring(7, 10)
     }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -53,7 +61,7 @@ fun ProfileScreen() {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                             navController.popBackStack()
                         },
                         modifier = Modifier.size(40.dp)
                     ) {
@@ -84,7 +92,7 @@ fun ProfileScreen() {
                 .padding(padding)
                 .padding(horizontal = 10.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -119,7 +127,7 @@ fun ProfileScreen() {
                         Text(phoneNumber.value, fontWeight = FontWeight.Bold)
                     }
                     Spacer(modifier = Modifier.width(12.dp))
-                    Row() {
+                    Row {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("150", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                             Text("Người theo dõi", fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -132,7 +140,7 @@ fun ProfileScreen() {
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
@@ -141,34 +149,25 @@ fun ProfileScreen() {
                 ) {
                     Row(
                         modifier = Modifier.wrapContentSize(),
-                        horizontalArrangement = Arrangement.SpaceAround,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        StatCard("3", "km")
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .height(25.dp)
-                                .width(1.dp)
-                                .background(Color.White)
-                        )
-                        StatCard("0,4", "giờ")
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .height(25.dp)
-                                .width(1.dp)
-                                .background(Color.White)
-                        )
-                        StatCard("1", "chặng")
+                        InfoCard("3", "km")
+                        InfoCard("0,4", "giờ")
+                        InfoCard("1", "chặng")
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            navController.navigate(Screens.Features.ProfileSettingScreen)
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(color = 0xFFE0E0E0),
                             contentColor = Color.Black
@@ -188,19 +187,26 @@ fun ProfileScreen() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TabRow(
-                    selectedTabIndex = 0,
+                    selectedTabIndex = selectedTabIndex,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .background(Color.LightGray),
                     containerColor = Color.White,
                     contentColor = Color.LightGray,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier
+                                .tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            color = PrimaryColor
+                        )
+                    }
                 ) {
                     Tab(
-                        selected = true,
-                        onClick = { /*TODO*/ },
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 },
                         selectedContentColor = PrimaryColor,
-                        unselectedContentColor = Color.Gray
+                        unselectedContentColor = Color.Gray,
                     ) {
                         Text(
                             "Thư viện ảnh",
@@ -210,9 +216,9 @@ fun ProfileScreen() {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     Tab(
-                        selected = false,
-                        onClick = { /*TODO*/ },
-                        selectedContentColor = Color.White,
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 },
+                        selectedContentColor = PrimaryColor,
                         unselectedContentColor = Color.LightGray
                     ) {
                         Text(
@@ -227,29 +233,6 @@ fun ProfileScreen() {
         }
     }
 }
-
-@Composable
-fun StatCard(value: String, unit: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(PrimaryColor)
-            .padding(horizontal = 25.dp, vertical = 16.dp)
-    ) {
-        Text(
-            text = value,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = Color.White
-        )
-        Text(
-            text = unit,
-            color = Color.White
-        )
-    }
-}
-
 
 @Preview
 @Composable

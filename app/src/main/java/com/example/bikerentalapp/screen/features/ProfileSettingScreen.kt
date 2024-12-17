@@ -19,18 +19,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bikerentalapp.components.LocalNavigation
+import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileSettingScreen() {
-    var name by remember { mutableStateOf("Nguyễn Văn A") }
-    var username by remember { mutableStateOf("Nguyễn Văn A") }
-    var bio by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf("Nam") }
-    var birthDate by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    val gender by remember { mutableStateOf("Nam") }
+
+    val navController = LocalNavigation.current
+    val account = UserAccount.current
+    val username = account.username.collectAsState()
+    val details = account.details.collectAsState()
 
     Scaffold(
         topBar = {
@@ -44,7 +46,9 @@ fun ProfileSettingScreen() {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {  },
+                        onClick = {
+                            navController.popBackStack()
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .padding(start = 0.dp)
@@ -115,12 +119,17 @@ fun ProfileSettingScreen() {
                 )
             }
 
-            InputRowWithDivider(label = "Tên", value = name, onValueChange = { name = it })
-            InputRowWithDivider(label = "Tên người dùng", value = username, onValueChange = { username = it })
-            InputRowWithDivider(label = "Ngày sinh", value = birthDate, onValueChange = { birthDate = it })
-            InputRowWithDivider(label = "Tiểu sử", value = bio, onValueChange = { bio = it })
-            InputRowWithDivider(label = "Email", value = email, onValueChange = { email = it })
-            InputRowWithDivider(label = "Giới tính", value = gender, onValueChange = { gender = it })
+            Column(
+                modifier = Modifier
+                    .padding(4.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                InputRowWithDivider(label = "Tên", value = "${details.value?.name}")
+                InputRowWithDivider(label = "Số điện thoại", value = username.value)
+                InputRowWithDivider(label = "Ngày sinh", value = "${details.value?.dob}")
+                InputRowWithDivider(label = "Email", value = "${details.value?.email}")
+                InputRowWithDivider(label = "Giới tính", value = gender)
+            }
         }
     }
 }
@@ -129,7 +138,6 @@ fun ProfileSettingScreen() {
 fun InputRowWithDivider(
     label: String,
     value: String,
-    onValueChange: (String) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -142,7 +150,7 @@ fun InputRowWithDivider(
                 text = label,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
-                fontSize = 20.sp
+                fontSize = 16.sp
             )
             Box(
                 modifier = Modifier
@@ -151,7 +159,7 @@ fun InputRowWithDivider(
             ) {
                 Text(
                     text = if (value.isEmpty()) "Thêm ${label.replaceFirstChar { it.lowercaseChar() }}" else value,
-                    fontSize = 18.sp,
+                    fontSize = 15.sp,
                     color = if (value.isEmpty()) Color.Gray else Color.Black,
                     modifier = Modifier
                         .fillMaxWidth()

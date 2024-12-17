@@ -250,9 +250,9 @@ fun HomeScreen(
                             ) {
                                 Icon(
                                     imageVector = if (isBalanceVisible.value)
-                                        Icons.Filled.Visibility
+                                        Icons.Filled.VisibilityOff
                                     else
-                                        Icons.Filled.VisibilityOff,
+                                        Icons.Filled.Visibility,
                                     contentDescription = "Balance Visibility",
                                     tint = PrimaryColor,
                                     modifier = Modifier.size(20.dp)

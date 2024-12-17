@@ -73,5 +73,7 @@ sealed class Screens {
         object TopUp
         @Serializable
         object TransactionHistory
+        @Serializable
+        object ProfileSettingScreen
     }
 }

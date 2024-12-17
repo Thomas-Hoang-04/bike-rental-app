@@ -165,24 +165,20 @@ fun PostOfficeApp() {
                     NewsScreen()
                 }
 
-                horizontalNavigation<Screens.Features.Promotion> {
-                    NewsScreen()
-                }
-
                 horizontalNavigation<Screens.Features.Ranking> {
-                    NewsScreen()
+                    RankingScreen()
                 }
 
                 horizontalNavigation<Screens.Features.Promotion> {
-                    NewsScreen()
+                    PromotionScreen()
                 }
 
                 horizontalNavigation<Screens.Features.InviteFriends> {
-                    NewsScreen()
+                    InviteFriendsScreen()
                 }
 
                 horizontalNavigation<Screens.Features.ManualUser> {
-                    NewsScreen()
+                    ManualUserScreen()
                 }
 
                 horizontalNavigation<Screens.Features.BuyingTickets> {
@@ -191,6 +187,10 @@ fun PostOfficeApp() {
 
                 horizontalNavigation<Screens.Features.MyTrips> {
                     NewsScreen()
+                }
+
+                horizontalNavigation<Screens.Features.ProfileSettingScreen> {
+                    ProfileSettingScreen()
                 }
             }
 
