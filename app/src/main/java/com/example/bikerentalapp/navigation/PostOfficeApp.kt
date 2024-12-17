@@ -2,6 +2,9 @@ package com.example.bikerentalapp.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -12,6 +15,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
+import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.screen.login.ForgotPassword
 import com.example.bikerentalapp.screen.login.ForgotPasswordClicks
 import com.example.bikerentalapp.screen.login.OTPClicks
@@ -183,10 +188,6 @@ fun PostOfficeApp() {
 
                 horizontalNavigation<Screens.Features.BuyingTickets> {
                     TicketScreen()
-                }
-
-                horizontalNavigation<Screens.Features.MyTrips> {
-                    NewsScreen()
                 }
 
                 horizontalNavigation<Screens.Features.ProfileSettingScreen> {

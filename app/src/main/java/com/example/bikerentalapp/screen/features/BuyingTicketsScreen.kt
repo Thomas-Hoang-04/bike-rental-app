@@ -1,7 +1,5 @@
 package com.example.bikerentalapp.screen.features
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bikerentalapp.api.data.*
@@ -45,7 +42,6 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListTicketScreen(
@@ -162,7 +158,6 @@ fun ListTicketScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TicketItem(
     ticket: TicketDetails,
@@ -263,7 +258,6 @@ fun TicketItem(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuyingTicketScreen(
@@ -627,7 +621,6 @@ fun BuyingTicketScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun TicketScreen() {
@@ -662,11 +655,4 @@ fun TicketScreen() {
             }
         }
     )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun PreviewBuyingTicketsScreen() {
-    BuyingTicketScreen()
 }

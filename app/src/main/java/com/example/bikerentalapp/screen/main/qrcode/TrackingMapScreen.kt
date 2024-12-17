@@ -256,7 +256,7 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
                 },
                 dismissButton = {
                     TextButton(onClick = {
-                        showStopDialog = false }) {
+                        showReturnBikeDialog = false }) {
                         Text("No")
                     }
                 }

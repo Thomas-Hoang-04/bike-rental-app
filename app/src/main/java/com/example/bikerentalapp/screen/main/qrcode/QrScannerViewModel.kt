@@ -6,12 +6,7 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bikerentalapp.api.data.Bike
-import com.example.bikerentalapp.api.data.BikeAction
-import com.example.bikerentalapp.api.data.BikeRenting
-import com.example.bikerentalapp.api.data.Geolocation
-import com.example.bikerentalapp.api.data.TicketTypes
-import com.example.bikerentalapp.api.data.TripRequest
+import com.example.bikerentalapp.api.data.*
 import com.example.bikerentalapp.api.network.RetrofitInstances
 import com.example.bikerentalapp.model.AccountViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -105,6 +100,9 @@ class QrResultViewModel(private val accountViewModel: AccountViewModel, qrCodeCo
         viewModelScope.launch {
             val response = RetrofitInstances.Query(accountViewModel.token.value).queryAPI.rentBike(bikeRenting)
             if(response.isSuccessful){
+                val body = response.body() as CRUDResponse
+                val target = body.target as Bike
+                Log.d("QrResultViewModel", "Bike: $target")
                 onRentBikeSuccessfully()
             }else{
                 Log.d("QrResultViewModel", "Error: ${response.errorBody()?.string()}")
