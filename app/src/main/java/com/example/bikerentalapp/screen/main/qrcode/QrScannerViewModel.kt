@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
 class QRScannerViewModel : ViewModel() {
     private val scanner: BarcodeScanner = BarcodeScanning.getClient()
@@ -105,7 +106,6 @@ class QrResultViewModel(private val accountViewModel: AccountViewModel, qrCodeCo
             val response = RetrofitInstances.Query(accountViewModel.token.value).queryAPI.rentBike(bikeRenting)
             if(response.isSuccessful){
                 onRentBikeSuccessfully()
-//                Log.d("QrResultViewModel", "${secondLine?.get(0)?.toDouble()}")
             }else{
                 Log.d("QrResultViewModel", "Error: ${response.errorBody()?.string()}")
             }
@@ -115,7 +115,7 @@ class QrResultViewModel(private val accountViewModel: AccountViewModel, qrCodeCo
 
 class TrackingMapViewModel(
     private val accountViewModel: AccountViewModel,
-    private val startTime : OffsetDateTime = OffsetDateTime.now(),
+    private val startTime : OffsetDateTime = OffsetDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")),
     qrCodeContent: String
 ):ViewModel(){
     private var _endTime : OffsetDateTime? = null
@@ -138,7 +138,7 @@ class TrackingMapViewModel(
             )
             val response = RetrofitInstances.Query(accountViewModel.token.value).queryAPI.rentBike(bikeRenting)
             if(response.isSuccessful){
-                _endTime = OffsetDateTime.now()
+                _endTime =  OffsetDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"))
                 val duration = Duration.ofMinutes(Duration.between(startTime, _endTime).toMinutes()).toString()
 
                 val tripRequest = TripRequest(
@@ -168,6 +168,54 @@ class TrackingMapViewModel(
             }
         }
     }
+
+//    fun returnBike(bikeId: String, onReturnBikeSuccessfully: () -> Unit){
+//        viewModelScope.launch{
+//            val bikeRenting = BikeRenting(
+//                plate = bikeId,
+//                latitude = secondLine?.get(0)?.toDouble() ?: 0.0,
+//                longitude = secondLine?.get(1)?.toDouble() ?: 0.0,
+//                action = BikeAction.RETURN,
+//                battery = 0
+//            )
+//            val response = RetrofitInstances.Query(accountViewModel.token.value).queryAPI.rentBike(bikeRenting)
+//            if(response.isSuccessful){
+//                onReturnBikeSuccessfully()
+//            }else{
+//                Log.d("TrackingMapViewModel", "Error: ${response.errorBody()?.string()}")
+//            }
+//        }
+//    }
+//
+//    fun createTrips(bikeId: String,onCreateTripSuccessfully: () -> Unit){
+//        val id = generateRandomString()
+//        viewModelScope.launch {
+//            _endTime = OffsetDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"))
+//            val duration = Duration.ofMinutes(Duration.between(startTime, _endTime).toMinutes()).toString()
+//            val tripRequest = TripRequest(
+//                username = accountViewModel.username.value,
+//                bikePlate = bikeId,
+//                startTime = startTime.toString(),
+//                endTime = _endTime.toString(),
+//                travelTime = duration,
+//                startAddress = "$thirdLine",
+//                endAddress = "$thirdLine",
+//                fee = fee,
+//                id = id,
+//                ticketType = TicketTypes.SINGLE,
+//                route = route
+//            )
+//
+//            val tripResponse = RetrofitInstances.Query(accountViewModel.token.value).queryAPI.createTrip(tripRequest)
+//
+//            if(tripResponse.isSuccessful) {
+//                onCreateTripSuccessfully()
+//                Log.d("TrackingMapViewModel", "$tripRequest")
+//            }else{
+//                Log.d("TrackingMapViewModel", "Error: ${tripResponse.errorBody()?.string()}")
+//            }
+//        }
+//    }
 
     private fun generateRandomString(): String {
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
