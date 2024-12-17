@@ -39,6 +39,8 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.Duration
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -192,9 +194,11 @@ fun TicketItem(
     }
 
     val timestamp: (String) -> String = { time ->
-        val hour = "%02d".format(OffsetDateTime.parse(time).toLocalTime().hour + 7)
-        val minute = "%02d".format(OffsetDateTime.parse(time).toLocalTime().minute)
-        val datestamp = OffsetDateTime.parse(time).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val convertedTime = OffsetDateTime.parse(time)
+            .atZoneSameInstant(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7)))
+        val hour = "%02d".format(convertedTime.toOffsetDateTime().hour)
+        val minute = "%02d".format(convertedTime.toOffsetDateTime().minute)
+        val datestamp = convertedTime.toOffsetDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         "$hour:$minute, $datestamp"
     }
 

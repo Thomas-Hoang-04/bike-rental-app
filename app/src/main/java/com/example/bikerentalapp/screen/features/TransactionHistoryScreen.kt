@@ -30,6 +30,8 @@ import com.example.bikerentalapp.ui.theme.PrimaryColor
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -149,9 +151,10 @@ fun TransactionItem(
     }
 
     val timestamp = {
-        val hour = "%02d".format(date.toLocalTime().hour + 7)
-        val minute = "%02d".format(date.toLocalTime().minute)
-        val datestamp = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val time = date.atZoneSameInstant(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7)))
+        val hour = "%02d".format(time.toOffsetDateTime().hour)
+        val minute = "%02d".format(time.toOffsetDateTime().minute)
+        val datestamp = time.toOffsetDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         "$hour:$minute, $datestamp"
     }
 
