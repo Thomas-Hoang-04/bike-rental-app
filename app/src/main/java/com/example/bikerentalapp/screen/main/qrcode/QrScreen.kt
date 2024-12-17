@@ -47,20 +47,15 @@ import kotlinx.coroutines.asExecutor
 @Composable
 fun QrScreen(navController: NavController) {
     val viewModel = remember { QRScannerViewModel() }
+    val context = LocalContext.current
+    val oldBikeId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("oldBikeId")
 
     CameraScannerScreen(
         viewModel = viewModel,
         onQRCodeScanned = { qrCodeContent ->
         if(viewModel.isValidFormat(qrCodeContent)){
-            if(isAddingBike == true){
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set("newBikeId", qrCodeContent.lineSequence().first())
-                navController.popBackStack()
-            }else{
-                val sanitizedInput = qrCodeContent.trim().replace("\uFEFF", "")
-                val firstLine = sanitizedInput.lineSequence().first().replace("\r", "").replace("\n", "").trim()
-                navController.navigate(Screens.Main.QrResult(firstLine))
+            navController.navigate(Screens.Main.QrResult(qrCodeContent)){
+                navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId)
             }
         }else{
             Toast.makeText(context, "Mã QR không hợp lệ", Toast.LENGTH_SHORT).show()
