@@ -87,12 +87,12 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
     val listBikeId = remember {mutableListOf(trackingMapViewModel.firstLine)}
     val bottomTitle = remember { mutableStateOf(trackingMapViewModel.firstLine) }
 
-    navController.currentBackStackEntry
+    navController.previousBackStackEntry
         ?.savedStateHandle
-        ?.getLiveData<String>("newBikeId")
-        ?.observeAsState()?.value?.let {newBikeId ->
-            if(!listBikeId.contains(newBikeId)){
-                listBikeId.add(newBikeId)
+        ?.getLiveData<String>("oldBikeId")
+        ?.observeAsState()?.value?.let {oldBikeId ->
+            if(!listBikeId.contains(oldBikeId)){
+                listBikeId.add(oldBikeId)
             }
         }
 
@@ -174,6 +174,11 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
             BottomCard(
                 bikeId,
                 minutesElapsed,
+                onClickAddBikeButton = {
+                    navController.navigate(Screens.Main.QRCode){
+                        navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", bottomTitle.value)
+                    }
+                },
                 onClickReturnBikeButton = {
                     navController.navigate(Screens.Main.Feedback(minutesElapsed,bikeId)){
                         popUpTo(navController.graph.startDestinationId){

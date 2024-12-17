@@ -49,6 +49,8 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
     val account = UserAccount.current
     val viewModel = remember { QrResultViewModel(account,qrCodeContent) }
     val bike by viewModel.bike.collectAsState()
+    val oldBikeId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("oldBikeId")
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -126,7 +128,8 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
             onClick = {
                 viewModel.rentBike {
                     navController.navigate(Screens.Main.TrackingMap(qrCodeContent,"${bike?.battery} %")){
-                        popUpTo(navController.graph.startDestinationId){
+                        navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId)
+                        popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
                         launchSingleTop = true
