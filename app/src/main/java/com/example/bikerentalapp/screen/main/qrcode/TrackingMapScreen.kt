@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Looper
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -34,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -89,8 +93,8 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
 
     navController.previousBackStackEntry
         ?.savedStateHandle
-        ?.getLiveData<String>("oldBikeId")
-        ?.observeAsState()?.value?.let {oldBikeId ->
+        ?.getStateFlow("oldBikeId", "")
+        ?.collectAsState()?.value?.let { oldBikeId ->
             if(!listBikeId.contains(oldBikeId)){
                 listBikeId.add(oldBikeId)
             }
@@ -163,16 +167,23 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
                 Polyline(
                     points = polylinePoints,
                     color = PrimaryColor,
-                    width = 25f,
+                    width = 20f,
                     geodesic = true
                 )
             }
         }
+
+        Box(modifier = Modifier.align(Alignment.TopCenter)){
+            TopCard(listBikeId, onClickRow = {
+                bottomTitle.value = it
+            })
+        }
+
         Box(
             modifier = Modifier.align(Alignment.BottomCenter)
         ){
             BottomCard(
-                bikeId,
+                bikeId = bottomTitle.value,
                 minutesElapsed,
                 onClickAddBikeButton = {
                     navController.navigate(Screens.Main.QRCode){
@@ -180,13 +191,7 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
                     }
                 },
                 onClickReturnBikeButton = {
-                    navController.navigate(Screens.Main.Feedback(minutesElapsed,bikeId)){
-                        popUpTo(navController.graph.startDestinationId){
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    showReturnBikeDialog = true
                 },
                 onClickLockBikeButton = {
                     if(isRunning){
@@ -201,14 +206,13 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
                 fee = minutesElapsed * 2000
             )
         }
-        
+
         if(showStopDialog){
             AlertDialog(
                 onDismissRequest = {
                     isRunning = true
                     showStopDialog = false },
-                title = { Text("Khoa xe") },
-                text = { Text("Ban co chac chan muon khoa xe lai khong?") },
+                title = { Text("Khóa xe") },
                 confirmButton = {
                     TextButton(onClick = {
                         showStopDialog = false
@@ -231,8 +235,8 @@ fun TrackingMapScreen(qrCodeContent: String,battery : String,navController: NavC
                 onDismissRequest = {
                     showReturnBikeDialog = false
                 },
-                title = { Text("Tra xe") },
-                text = { Text("Ban co chac chan muon tra xe khong?") },
+                title = { Text("Trả xe") },
+                text = { Text("Bạn có chắc chắn muốn trả xe không?") },
                 confirmButton = {
                     TextButton(onClick = {
                         trackingMapViewModel.route = polylinePoints.map {
@@ -349,7 +353,7 @@ fun BottomCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Text(if(!isLock)"$bikeId - dang di chuyen" else "$bikeId - dang khoa", style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
+                Text(if(!isLock)"$bikeId - đang di chuyển" else "$bikeId - đang khóa", style = MaterialTheme.typography.titleMedium, color = PrimaryColor)
                 IconButton(
                     onClick = {
                         expanded.value = !expanded.value
@@ -370,7 +374,7 @@ fun BottomCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     IconWithTextHorizontal(icon = Icons.Default.CreditCard, text = "$fee VND")
-                    IconWithTextHorizontal(icon = Icons.Default.Timer, text = String.format(Locale.ENGLISH," %02d phut",minutes))
+                    IconWithTextHorizontal(icon = Icons.Default.Timer, text = String.format(Locale.ENGLISH," %02d phút",minutes))
                     IconWithTextHorizontal(icon = Icons.Default.Battery5Bar, text = battery)
                 }
             }
@@ -383,15 +387,15 @@ fun BottomCard(
             ) {
                 CircularButtonWithText(
                     icon = Icons.Default.DocumentScanner,
-                    text = "Thue them",
-                    onClick = { /*TODO*/ },
+                    text = "Thuê ",
+                    onClick = { onClickAddBikeButton() },
                     color = Color.Gray.copy(alpha = 0.1f),
                     iconColor = PrimaryColor,
                     size = 50.dp
                 )
                 CircularButtonWithText(
                     icon = if(!isLock) Icons.Default.Lock else Icons.Default.LockOpen,
-                    text = if(!isLock) "Khoa xe" else "Mo khoa",
+                    text = if(!isLock) "Khóa xe" else "Mở khóa",
                     onClick = {onClickLockBikeButton() },
                     color = PrimaryColor,
                     iconColor = Color.White,
@@ -399,7 +403,7 @@ fun BottomCard(
                 )
                 CircularButtonWithText(
                     icon = Icons.Default.LocalParking,
-                    text = "Tra xe",
+                    text = "Trả xe",
                     onClick = { onClickReturnBikeButton() },
                     color = Color.Red.copy(alpha = 0.6f),
                     iconColor = Color.White,
@@ -407,7 +411,7 @@ fun BottomCard(
                 )
                 CircularButtonWithText(
                     icon = Icons.Default.Settings,
-                    text = "Cai dat",
+                    text = "Cài đặt",
                     onClick = { /*TODO*/ },
                     color = Color.Gray.copy(alpha = 0.1f),
                     iconColor = PrimaryColor,

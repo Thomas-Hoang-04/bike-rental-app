@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.bikerentalapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.bikerentalapp"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -107,6 +107,4 @@ dependencies {
     implementation(libs.compose.material3.adaptive.navigation.suite)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson.converter)
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.6")
-    implementation(libs.androidx.runtime.livedata)
 }

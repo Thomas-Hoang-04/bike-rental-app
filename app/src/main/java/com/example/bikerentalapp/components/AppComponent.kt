@@ -40,6 +40,7 @@ import com.example.bikerentalapp.ui.theme.*
 import java.text.NumberFormat
 import java.util.Calendar
 
+@SuppressLint("CompositionLocalNaming")
 val UserAccount = compositionLocalOf<AccountViewModel> {
     error("No AccountViewModel provided")
 }
@@ -227,7 +228,7 @@ fun ButtonComponent(
     onClick: () -> Unit,
     color: ButtonColors,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = onClick,
@@ -651,7 +652,7 @@ fun MoneyDepositCard(
                     TextRange(screenAmount.length)
                 ),
                 onValueChange = { amount ->
-                    selectedAmount.value =
+                    selectedAmount.intValue =
                         if (amount.text.isBlank()) 0 else amount.text.filter { c -> c.isDigit() }.toInt()
                 },
                 keyboardOptions = KeyboardOptions(
@@ -689,10 +690,10 @@ fun MoneyDepositCard(
                 listOf(50000, 100000, 200000, 300000).forEach { amount ->
                     Spacer(modifier = Modifier.width(2.dp))
                     Button(
-                        onClick = { selectedAmount.value = amount },
+                        onClick = { selectedAmount.intValue = amount },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedAmount.value == amount) Color.White else Color.LightGray,
-                            contentColor = if (selectedAmount.value == amount) PrimaryColor else Color.Black
+                            containerColor = if (selectedAmount.intValue == amount) Color.White else Color.LightGray,
+                            contentColor = if (selectedAmount.intValue == amount) PrimaryColor else Color.Black
                         ),
                         contentPadding = PaddingValues(
                             horizontal = 8.dp
@@ -711,4 +712,3 @@ fun MoneyDepositCard(
         }
     }
 }
-

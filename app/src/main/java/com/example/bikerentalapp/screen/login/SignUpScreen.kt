@@ -2,13 +2,25 @@ package com.example.bikerentalapp.screen.login
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,15 +28,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.bikerentalapp.R
-import com.example.bikerentalapp.api.data.*
+import com.example.bikerentalapp.api.data.ErrorResponse
+import com.example.bikerentalapp.api.data.OTPPurpose
+import com.example.bikerentalapp.api.data.OTPRequest
+import com.example.bikerentalapp.api.data.OTPResponse
+import com.example.bikerentalapp.api.data.UserCreateRequest
+import com.example.bikerentalapp.api.data.UserDetails
 import com.example.bikerentalapp.api.network.RetrofitInstances
-import com.example.bikerentalapp.components.*
+import com.example.bikerentalapp.components.AnnotatedText
+import com.example.bikerentalapp.components.ButtonComponent
+import com.example.bikerentalapp.components.ClickableTextComponent
+import com.example.bikerentalapp.components.ClickableTextLoginComponent
+import com.example.bikerentalapp.components.DatePickerDialog
+import com.example.bikerentalapp.components.FocusField
+import com.example.bikerentalapp.components.HeadingTextComponent
+import com.example.bikerentalapp.components.InputType
+import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.LocalNavigation
+import com.example.bikerentalapp.components.TextInput
+import com.example.bikerentalapp.components.makeToast
 import com.example.bikerentalapp.model.SignUpViewModel
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -32,7 +59,6 @@ fun SignUpScreen(
     viewModel: SignUpViewModel,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val retrofit = RetrofitInstances.Auth
     val verified = remember { mutableStateOf(isOTPVerified) }
     val context = LocalContext.current
@@ -45,7 +71,7 @@ fun SignUpScreen(
 
     if (verified.value) {
         isLoading.value = true
-        scope.launch {
+        LaunchedEffect(Unit) {
             val res = retrofit.authAPI.signup(
                 UserCreateRequest(
                     username = viewModel.phoneNumber,

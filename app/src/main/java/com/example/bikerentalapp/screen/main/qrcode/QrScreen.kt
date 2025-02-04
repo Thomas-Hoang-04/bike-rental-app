@@ -38,29 +38,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
 import com.example.bikerentalapp.components.CircularButtonWithText
+import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.navigation.Screens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
 @Composable
-fun QrScreen(navController: NavController) {
+fun QrScreen() {
     val viewModel = remember { QRScannerViewModel() }
     val context = LocalContext.current
-    val oldBikeId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("oldBikeId")
+    val navController = LocalNavigation.current
+    val oldBikeId = navController.previousBackStackEntry?.savedStateHandle
+        ?.getStateFlow("oldBikeId", "")?.collectAsState()
 
     CameraScannerScreen(
         viewModel = viewModel,
         onQRCodeScanned = { qrCodeContent ->
-        if(viewModel.isValidFormat(qrCodeContent)){
-            navController.navigate(Screens.Main.QrResult(qrCodeContent)){
-                navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId)
+            if(viewModel.isValidFormat(qrCodeContent)){
+                navController.navigate(Screens.Main.QrResult(qrCodeContent)){
+                    navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId?.value ?: "")
+                }
+            }else{
+                Toast.makeText(context, "Mã QR không hợp lệ", Toast.LENGTH_SHORT).show()
             }
-        }else{
-            Toast.makeText(context, "Mã QR không hợp lệ", Toast.LENGTH_SHORT).show()
-        }
-    })
+        })
 }
 
 @Composable
@@ -72,9 +74,6 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
     val cameraPermission = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission() ) { isGranted ->
         viewModel.setCameraPermissionGranted(isGranted)
     }
-
-    var cameraControl: CameraControl? by remember { mutableStateOf(null) }
-    var isTorchOn by remember { mutableStateOf(false) } // Torch state
 
     if(hasCameraPermission){
         Box(modifier = Modifier.fillMaxSize()) {
@@ -118,9 +117,9 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
                                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                                 .build()
                                 .also { analysis ->
-                                        analysis.setAnalyzer(Dispatchers.Default.asExecutor()) { imageProxy ->
-                                            viewModel.analyzeImage(imageProxy, onQRCodeScanned)
-                                        }
+                                    analysis.setAnalyzer(Dispatchers.Default.asExecutor()) { imageProxy ->
+                                        viewModel.analyzeImage(imageProxy, onQRCodeScanned)
+                                    }
                                 }
 
                             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -132,7 +131,7 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
                                     preview,
                                     imageAnalysis
                                 )
-                                cameraControl = camera.cameraControl
+                                viewModel.cameraControl = camera.cameraControl
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -161,8 +160,7 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
                         icon = Icons.Default.FlashOn,
                         text = "Đèn pin",
                         onClick = {
-                            isTorchOn = !isTorchOn
-                            cameraControl?.enableTorch(isTorchOn)
+                            viewModel.toggleTorch()
                         }
                     )
                 }
@@ -172,4 +170,3 @@ fun CameraScannerScreen(viewModel: QRScannerViewModel, onQRCodeScanned: (String)
         cameraPermission.launch(Manifest.permission.CAMERA)
     }
 }
-

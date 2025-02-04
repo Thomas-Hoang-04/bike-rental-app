@@ -67,7 +67,7 @@ fun OTPScreen(
     val isOTPComplete = otpValues.all { it.isNotEmpty() }
     val isWaiting = remember { mutableStateOf(true) }
     val isLoading = remember { mutableStateOf(false) }
-    val time = remember { mutableStateOf(60) }
+    val time = remember { mutableIntStateOf(60) }
     val retrofit = RetrofitInstances.Auth
     val navController = LocalNavigation.current
 
@@ -85,8 +85,8 @@ fun OTPScreen(
     LaunchedEffect(isWaiting.value) {
         while (isWaiting.value) {
             delay(1000)
-            time.value--
-            if (time.value == 0) {
+            time.intValue--
+            if (time.intValue == 0) {
                 isWaiting.value = false
             }
         }
@@ -305,7 +305,7 @@ fun OTPScreen(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = if (isWaiting.value) "Gửi lại sau ${time.value} giây" else "Gửi lại",
+                    text = if (isWaiting.value) "Gửi lại sau ${time.intValue} giây" else "Gửi lại",
                     style = TextStyle(
                         color = PrimaryColor,
                         fontSize = 14.sp,
@@ -322,7 +322,7 @@ fun OTPScreen(
                                     val body: OTPResponse = res.body()!!
                                     makeToast(context, body.message)
                                     isLoading.value = false
-                                    time.value = 60
+                                    time.intValue = 60
                                     isWaiting.value = true
                                 } else {
                                     val e = res.errorBody()?.string()

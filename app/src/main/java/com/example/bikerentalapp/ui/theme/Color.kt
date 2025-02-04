@@ -16,10 +16,7 @@ val PrimaryNavBarColor = Color(0xFFF6FDFB)
 val PrimarySelectedColor = Color(0x220A9076)
 val disablePrimaryColor = Color(0xFF366B61)
 val TextColor = Color(0xFF1D1617)
-val bg_inputColor = Color(0xFFD9D9D9)
 
-val backgroundColor = Color.White
-val onBackgroundColor = Color.Gray
 val bg_inputColor = Color(0xFFF8F8F8)
 val LabelColor = Color(0xFF575757)
 val DialogColor = Color(0xFFF0FDFA)

@@ -36,18 +36,22 @@ import java.text.NumberFormat
 @Composable
 fun CreditDepositScreen() {
     val selectedAmount = remember { mutableIntStateOf(10000) }
-    val screenAmount by derivedStateOf {
-        NumberFormat.getInstance().format(selectedAmount.value)
+    val screenAmount by remember {
+        derivedStateOf {
+            NumberFormat.getInstance().format(selectedAmount.intValue)
+        }
     }
     val expanded = remember { mutableStateOf(false) }
     val paymentMethods = listOf("ATM, Visa/Master/JCB", "Thanh toán QRCode, ShopeePay, Tại cửa hàng", "Ví Momo")
     var selectedPaymentMethod by remember { mutableStateOf(paymentMethods[0]) }
-    val paymentMethodIcon by derivedStateOf {
-        when (selectedPaymentMethod) {
-            paymentMethods[0] -> Icons.Default.CreditCard
-            paymentMethods[1] -> Icons.Default.QrCode
-            paymentMethods[2] -> Icons.Default.Wallet
-            else -> Icons.Default.Money
+    val paymentMethodIcon by remember {
+        derivedStateOf {
+            when (selectedPaymentMethod) {
+                paymentMethods[0] -> Icons.Default.CreditCard
+                paymentMethods[1] -> Icons.Default.QrCode
+                paymentMethods[2] -> Icons.Default.Wallet
+                else -> Icons.Default.Money
+            }
         }
     }
     var isLoading by remember { mutableStateOf(false) }
@@ -58,14 +62,18 @@ fun CreditDepositScreen() {
     val context = LocalContext.current
 
     var card by remember { mutableStateOf("") }
-    val cardDisplay by derivedStateOf {
-        card.chunked(4).joinToString(" ")
+    val cardDisplay by remember {
+        derivedStateOf {
+            card.chunked(4).joinToString(" ")
+        }
     }
     var securityCode by remember { mutableStateOf("") }
     var cardHolder by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
-    val expiryDateDisplay by derivedStateOf {
-        expiryDate.chunked(2).joinToString("/")
+    val expiryDateDisplay by remember {
+        derivedStateOf {
+            expiryDate.chunked(2).joinToString("/")
+        }
     }
 
     val account = UserAccount.current
@@ -91,7 +99,7 @@ fun CreditDepositScreen() {
                     val req = retrofit.queryAPI.topUp(
                         TopUpRequest(
                             from = username.value,
-                            amount = selectedAmount.value,
+                            amount = selectedAmount.intValue,
                         )
                     )
                     if (req.isSuccessful) {
@@ -263,9 +271,9 @@ fun CreditDepositScreen() {
                         selection = TextRange(cardDisplay.length)
                     ),
                     onValueChange = {
-                            if (it.text.length < 20)
-                                card = it.text.filter { c -> c.isDigit() }
-                        },
+                        if (it.text.length < 20)
+                            card = it.text.filter { c -> c.isDigit() }
+                    },
                     label = { Text("Số thẻ") },
                     placeholder = { Text("Nhập số thẻ") },
                     keyboardOptions = KeyboardOptions(
@@ -404,7 +412,7 @@ fun CreditDepositScreen() {
                             .weight(0.5f)
                     )
                 }
-        }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 

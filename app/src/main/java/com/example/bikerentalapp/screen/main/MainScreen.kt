@@ -1,9 +1,5 @@
 package com.example.bikerentalapp.screen.main
 
-import android.util.Log
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -23,20 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.bikerentalapp.R
 import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.components.NavBarShape
-import com.example.bikerentalapp.components.navigationItems
-import com.example.bikerentalapp.screen.main.qrcode.QrCodeResultScreen
-import com.example.bikerentalapp.screen.main.qrcode.QrScreen
-import com.example.bikerentalapp.screen.main.qrcode.TrackingMapScreen
-import com.example.bikerentalapp.screen.main.station.StationsScreen
 import com.example.bikerentalapp.navigation.navigationItems
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
@@ -81,100 +67,6 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = "home"
-        ){
-            composable("home"){
-                HomeScreen(onFeatureClick = {}, paddingValues = paddingValues)
-            }
-            composable("station"){
-                StationsScreen()
-            }
-            composable("notification"){
-                NotificationScreen()
-            }
-            composable("profile"){
-                ProfileScreen()
-            }
-            composable("qrcode") {
-                QrScreen(navController)
-            }
-            composable(
-                "qr_result/{qrCodeContent}",
-                arguments = listOf(navArgument("qrCodeContent") {
-                    try{
-                        type = NavType.StringType
-                    }catch (e : Exception){
-                        Log.e("Qrcode",e.toString())
-                    }
-                }),
-                enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(500)
-                    )
-                },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(400)
-                    )
-                }
-            ) { backStackEntry ->
-                val qrCodeContent = backStackEntry.arguments?.getString("qrCodeContent")
-                QrCodeResultScreen(qrCodeContent = qrCodeContent.orEmpty(),navController = navController)
-            }
-            composable(
-                "tracking_map/{bikeId}",
-                arguments = listOf(navArgument("bikeId") {
-                    try{
-                        type = NavType.StringType
-                    }catch (e : Exception){
-                        Log.e("BikeId",e.toString())
-                    }
-                }),
-                enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(500)
-                    )
-                },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(400)
-                    )
-                }
-            ) { backStackEntry ->
-                val bikeId = backStackEntry.arguments?.getString("bikeId")
-                TrackingMapScreen(bikeId = bikeId.orEmpty())
-            }
-        }
         content(paddingValues)
     }
 }
@@ -239,6 +131,3 @@ fun BottomNav(){
         }
     }
 }
-
-
-

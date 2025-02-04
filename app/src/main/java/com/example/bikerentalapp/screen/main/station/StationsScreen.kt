@@ -2,13 +2,22 @@ package com.example.bikerentalapp.screen.main.station
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,10 +49,11 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import com.example.bikerentalapp.components.SearchBarWithDebounce
-import com.example.bikerentalapp.components.StationInfoCard
+import androidx.core.net.toUri
 import com.example.bikerentalapp.api.data.BikeStatus
 import com.example.bikerentalapp.api.data.Station
+import com.example.bikerentalapp.components.SearchBarWithDebounce
+import com.example.bikerentalapp.components.StationInfoCard
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import com.google.android.gms.location.LocationServices
@@ -118,7 +128,7 @@ fun StationsScreen() {
         Scaffold(
             modifier = Modifier.fillMaxSize()
         ) {
-            paddingValues ->
+                paddingValues ->
             Box(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -227,7 +237,7 @@ fun StationsScreen() {
                         containerColor = Color.White,
                     ) {
                         selectedStation?.let {
-                            station ->
+                                station ->
                             StationDetailsBottomSheet(station =station)
                         }
                     }
@@ -263,9 +273,8 @@ fun StationDetailsBottomSheet(station: Station) {
 
             OutlinedButton(
                 onClick = {
-                    val uri = Uri.parse(
-                        "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler"
-                    )
+                    val uri =
+                        "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler".toUri()
                     val mapIntent = Intent(Intent.ACTION_VIEW, uri)
 
                     if (mapIntent.resolveActivity(context.packageManager) != null) {
@@ -298,7 +307,7 @@ fun StationDetailsBottomSheet(station: Station) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(station.bikeList){
-                bicycle ->
+                    bicycle ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -343,5 +352,3 @@ fun StationDetailsBottomSheet(station: Station) {
         }
     }
 }
-
-

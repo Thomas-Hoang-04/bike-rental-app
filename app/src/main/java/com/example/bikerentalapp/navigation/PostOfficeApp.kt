@@ -1,56 +1,48 @@
 package com.example.bikerentalapp.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.components.LocalNavigation
-import com.example.bikerentalapp.screen.login.ForgotPassword
-import com.example.bikerentalapp.screen.login.ForgotPasswordClicks
-import com.example.bikerentalapp.screen.login.OTPClicks
-import com.example.bikerentalapp.screen.login.OTPScreen
-import com.example.bikerentalapp.api.data.OTPPurpose
-import com.example.bikerentalapp.model.AccountViewModel
 import com.example.bikerentalapp.components.UserAccount
-import com.example.bikerentalapp.components.LocalNavigation
 import com.example.bikerentalapp.model.SignUpViewModel
-import com.example.bikerentalapp.screen.features.*
-import com.example.bikerentalapp.screen.login.*
-import com.example.bikerentalapp.screen.policy.*
-import com.example.bikerentalapp.screen.login.SignInClicks
+import com.example.bikerentalapp.screen.features.CreditDepositScreen
+import com.example.bikerentalapp.screen.features.InviteFriendsScreen
+import com.example.bikerentalapp.screen.features.ManualUserScreen
+import com.example.bikerentalapp.screen.features.NewsScreen
+import com.example.bikerentalapp.screen.features.PointSharingScreen
+import com.example.bikerentalapp.screen.features.ProfileSettingScreen
+import com.example.bikerentalapp.screen.features.PromotionScreen
+import com.example.bikerentalapp.screen.features.RankingScreen
+import com.example.bikerentalapp.screen.features.TicketScreen
+import com.example.bikerentalapp.screen.features.TransactionHistoryScreen
+import com.example.bikerentalapp.screen.features.my_trips.MyTripsScreen
+import com.example.bikerentalapp.screen.features.my_trips.SerializableLatLng
+import com.example.bikerentalapp.screen.features.my_trips.TripsMap
+import com.example.bikerentalapp.screen.features.my_trips.toLatLng
+import com.example.bikerentalapp.screen.login.ForgotPassword
+import com.example.bikerentalapp.screen.login.OTPScreen
+import com.example.bikerentalapp.screen.login.ResetPasswordScreen
 import com.example.bikerentalapp.screen.login.SignInScreen
-import com.example.bikerentalapp.screen.login.SignUpClicks
 import com.example.bikerentalapp.screen.login.SignUpScreen
 import com.example.bikerentalapp.screen.main.HomeScreen
 import com.example.bikerentalapp.screen.main.MainScreen
 import com.example.bikerentalapp.screen.main.NotificationScreen
 import com.example.bikerentalapp.screen.main.ProfileScreen
+import com.example.bikerentalapp.screen.main.SettingsScreen
 import com.example.bikerentalapp.screen.main.qrcode.QrCodeResultScreen
 import com.example.bikerentalapp.screen.main.qrcode.QrScreen
 import com.example.bikerentalapp.screen.main.qrcode.ReturnBikeScreen
 import com.example.bikerentalapp.screen.main.qrcode.TrackingMapScreen
-import com.example.bikerentalapp.screen.main.*
 import com.example.bikerentalapp.screen.main.station.StationsScreen
-import kotlinx.serialization.json.Json
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
-
 import com.example.bikerentalapp.screen.policy.PrivacyPolicy
 import com.example.bikerentalapp.screen.policy.TermsOfUse
-
-
+import kotlinx.serialization.json.Json
 
 @Composable
 fun PostOfficeApp() {
@@ -144,10 +136,8 @@ fun PostOfficeApp() {
                     }
                 }
 
-                composable<Screens.Main.QRCode> {
-                    MainScreen {
-                        QrScreen()
-                    }
+                verticalNavigation<Screens.Main.QRCode> {
+                    QrScreen()
                 }
 
                 horizontalNavigation<Screens.Features.TopUp> {
@@ -195,32 +185,7 @@ fun PostOfficeApp() {
                 }
             }
 
-            composable<Screens.Main.QrResult>(
-                enterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                exitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popEnterTransition = {
-                    slideInHorizontally(
-                        initialOffsetX = { fullWidth -> -fullWidth },
-                        animationSpec = tween(400)
-                    )
-                },
-                popExitTransition = {
-                    slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(400)
-                    )
-                }
-            ){
+            horizontalNavigation<Screens.Main.QrResult> {
                 val args = it.toRoute<Screens.Main.QrResult>()
                 QrCodeResultScreen(qrCodeContent = args.qrContent,navController = navController)
             }
@@ -232,39 +197,25 @@ fun PostOfficeApp() {
 
             composable<Screens.Main.Feedback> {
                 val args = it.toRoute<Screens.Main.Feedback>()
-                ReturnBikeScreen(totalMinutes =args.totalMinutes, bikeId = args.bikeId,navController,args.fee,args.tripId)
+                ReturnBikeScreen(totalMinutes = args.totalMinutes, bikeId = args.bikeId, navController, args.fee, args.tripId)
             }
 
             composable<Screens.Features.MyTrips> {
                 MyTripsScreen(navController)
             }
 
-            composable(
-                "tripsMap/{polylinePoints}/{time}/{id}/{distance}/{duration}",
-                arguments = listOf(
-                    navArgument("polylinePoints") { type = NavType.StringType },
-                    navArgument("time") { type = NavType.StringType },
-                    navArgument("id") { type = NavType.StringType },
-                    navArgument("distance") { type = NavType.StringType},
-                    navArgument("duration") { type = NavType.StringType}
-                )
-            ) { backStackEntry ->
-                val polylinePointsJson = backStackEntry.arguments?.getString("polylinePoints")
-                val time = URLDecoder.decode(backStackEntry.arguments?.getString("time")?: "",
-                    StandardCharsets.UTF_8.toString())
-                val id = backStackEntry.arguments?.getString("id") ?: ""
-                val distance = backStackEntry.arguments?.getString("distance") ?: ""
-                val duration = backStackEntry.arguments?.getString("duration") ?: ""
+            horizontalNavigation<Screens.Features.MyTripsDetails> {
+                val args = it.toRoute<Screens.Features.MyTripsDetails>()
+
+                val polylinePointsJson = args.polyPoints
 
                 // Decode polylinePoints
-                val polylinePoints = polylinePointsJson?.let { json ->
+                val polylinePoints = polylinePointsJson.let { json ->
                     Json.decodeFromString<List<SerializableLatLng>>(json)
-                } ?: emptyList()
+                }
 
-                TripsMap(polylinePoints.map { it.toLatLng() }, time, id, distance, duration)
+                TripsMap(polylinePoints.map { it.toLatLng() }, args.time, args.id, args.distance, args.duration)
             }
         }
     }
 }
-
-

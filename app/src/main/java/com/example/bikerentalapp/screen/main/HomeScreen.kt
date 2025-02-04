@@ -15,16 +15,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,19 +45,12 @@ import java.text.NumberFormat
 
 @Composable
 fun HomeScreen(
-    onFeatureClick: (HomeScreenClicks) -> Unit,
     paddingValues: PaddingValues,
-    accModel: AccountViewModel,
-    navController: NavController,
 ) {
     val scrollState = rememberScrollState()
     val isBalanceVisible = remember { mutableStateOf(false) }
     val navController = LocalNavigation.current
     val accModel = UserAccount.current
-    val balance = "50.000"
-    val isBalanceVisible = remember { mutableStateOf(true) }
-
-    val username = accModel.username.collectAsState()
     val details = accModel.details.collectAsState()
 
     Surface(
@@ -223,23 +209,16 @@ fun HomeScreen(
 
                                 Spacer(modifier = Modifier.height(6.dp))
 
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .width(96.dp),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        Text(
-                                            text = if (isBalanceVisible.value) "$balance điểm" else "**********",
-                                            style = TextStyle(
-                                                fontSize = 15.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = PrimaryColor
-                                            )
-                                        )
-                                    }
+                                Text(
+                                    text =
+                                        (if (isBalanceVisible.value) NumberFormat.getInstance().format(details.value?.balance)
+                                        else "**********") + " điểm",
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = PrimaryColor
+                                    )
+                                )
                             }
 
                             IconButton(
@@ -422,3 +401,19 @@ fun HomeScreen(
     }
 }
 
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    val accModel = AccountViewModel()
+    accModel.setUsername("Nguyễn Văn A")
+    accModel.setDetails(UserDetails(
+        name = "Nguyễn Văn A",
+        phoneNum = "0123456789",
+        dob = "01/01/2000",
+        email = "",
+        balance = 100000
+    ))
+    HomeScreen(
+        paddingValues = PaddingValues(0.dp),
+    )
+}

@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ForgotPassword() {
     val phoneNumber = remember { mutableStateOf("") }
-    val isPhoneNumberValid = phoneNumber.value.matches(Regex("^0[1-9][0-9]{8}\$"))
+    val isPhoneNumberValid = phoneNumber.value.matches(Regex("^0[1-9][0-9]{8}$"))
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(false) }

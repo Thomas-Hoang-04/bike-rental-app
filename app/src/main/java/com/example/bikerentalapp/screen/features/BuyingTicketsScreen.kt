@@ -162,9 +162,11 @@ fun ListTicketScreen(
 fun TicketItem(
     ticket: TicketDetails,
 ) {
-    val period = derivedStateOf {
-        val now = OffsetDateTime.now()
-        Duration.between(now, OffsetDateTime.parse(ticket.validTill)).toMinutes()
+    val period = remember {
+        derivedStateOf {
+            val now = OffsetDateTime.now()
+            Duration.between(now, OffsetDateTime.parse(ticket.validTill)).toMinutes()
+        }
     }
 
     val status = when (ticket.status) {
@@ -266,31 +268,39 @@ fun BuyingTicketScreen(
     val ticketType = remember { mutableStateOf<TicketTypes?>(null) }
     val ticketAmount = remember { mutableIntStateOf(1) }
     val currentTime = remember { mutableStateOf(OffsetDateTime.now()) }
-    val validTime = derivedStateOf {
-        when (ticketType.value) {
-            TicketTypes.DAILY -> currentTime.value.plusDays(1)
-            TicketTypes.MONTHLY -> currentTime.value.plusMonths(1)
-            else -> currentTime.value
+    val validTime = remember {
+        derivedStateOf {
+            when (ticketType.value) {
+                TicketTypes.DAILY -> currentTime.value.plusDays(1)
+                TicketTypes.MONTHLY -> currentTime.value.plusMonths(1)
+                else -> currentTime.value
+            }
         }
     }
-    val displayValid = derivedStateOf {
-        val formattedTime: (OffsetDateTime) -> String = {
-            it.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        }
-        "Từ ${formattedTime(currentTime.value)} đến ${formattedTime(validTime.value)}"
-    }
-    val disclaimer = derivedStateOf {
-        when (ticketType.value) {
-            TicketTypes.DAILY -> "Vé ngày, áp dụng tối đa 450 phút (7.5 giờ) di chuyển trong ngày, phụ thu thêm 3.000 điểm cho mỗi 15 phút tiếp theo"
-            TicketTypes.MONTHLY -> "Vé tháng, chuyến đi không quá 45 phút, không áp dụng thuê nhiều xe cùng lúc, không giới hạn số chuyến trong ngày"
-            else -> ""
+    val displayValid = remember {
+        derivedStateOf {
+            val formattedTime: (OffsetDateTime) -> String = {
+                it.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            }
+            "Từ ${formattedTime(currentTime.value)} đến ${formattedTime(validTime.value)}"
         }
     }
-    val price = derivedStateOf {
-        when (ticketType.value) {
-            TicketTypes.DAILY -> 49000 * ticketAmount.value
-            TicketTypes.MONTHLY -> 89000
-            else -> 0
+    val disclaimer = remember {
+        derivedStateOf {
+            when (ticketType.value) {
+                TicketTypes.DAILY -> "Vé ngày, áp dụng tối đa 450 phút (7.5 giờ) di chuyển trong ngày, phụ thu thêm 3.000 điểm cho mỗi 15 phút tiếp theo"
+                TicketTypes.MONTHLY -> "Vé tháng, chuyến đi không quá 45 phút, không áp dụng thuê nhiều xe cùng lúc, không giới hạn số chuyến trong ngày"
+                else -> ""
+            }
+        }
+    }
+    val price = remember {
+        derivedStateOf {
+            when (ticketType.value) {
+                TicketTypes.DAILY -> 49000 * ticketAmount.intValue
+                TicketTypes.MONTHLY -> 89000
+                else -> 0
+            }
         }
     }
 
@@ -301,8 +311,10 @@ fun BuyingTicketScreen(
     val account = UserAccount.current
     val username = account.username.collectAsState()
     val details = account.details.collectAsState()
-    val balance = derivedStateOf {
-        details.value?.balance ?: 0
+    val balance = remember {
+        derivedStateOf {
+            details.value?.balance ?: 0
+        }
     }
     val token = account.token.collectAsState()
     val retrofit = RetrofitInstances.Query(token.value).queryAPI
@@ -317,7 +329,7 @@ fun BuyingTicketScreen(
     if (infoDialogTrigger) {
         CustomDialog(
             title = "Xác nhận nạp điểm",
-            message = "Xác nhận mua ${if (ticketType.value == TicketTypes.DAILY) ticketAmount.value else 1} vé ${if (ticketType.value == TicketTypes.DAILY) "ngày" else "tháng"} với ${NumberFormat.getInstance().format(price.value)} điểm?",
+            message = "Xác nhận mua ${if (ticketType.value == TicketTypes.DAILY) ticketAmount.intValue else 1} vé ${if (ticketType.value == TicketTypes.DAILY) "ngày" else "tháng"} với ${NumberFormat.getInstance().format(price.value)} điểm?",
             onDismiss = { infoDialogTrigger = false },
             onAccept = {
                 scope.launch {
@@ -537,7 +549,7 @@ fun BuyingTicketScreen(
                             .background(LightPrimaryColor, RoundedCornerShape(16.dp))
                     ) {
                         IconButton(
-                            onClick = { if (ticketAmount.value > 1) ticketAmount.value-- },
+                            onClick = { if (ticketAmount.intValue > 1) ticketAmount.intValue-- },
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
@@ -546,14 +558,14 @@ fun BuyingTicketScreen(
                             )
                         }
                         Text(
-                            text = ticketAmount.value.toString(),
+                            text = ticketAmount.intValue.toString(),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryColor,
                             modifier = Modifier.padding(horizontal = 4.dp)
                         )
                         IconButton(
-                            onClick = { if (ticketAmount.value <= 10) ticketAmount.value++ },
+                            onClick = { if (ticketAmount.intValue <= 10) ticketAmount.intValue++ },
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(

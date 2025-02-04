@@ -36,7 +36,7 @@ class SignInViewModel : ViewModel() {
     private fun validatePhoneNumber() {
         val error = when {
             phoneNumber.isEmpty() -> "Tài khoản không được để trống"
-            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}\$")) -> "Tài khoản không hợp lệ"
+            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}$")) -> "Tài khoản không hợp lệ"
             else -> null
         }
 

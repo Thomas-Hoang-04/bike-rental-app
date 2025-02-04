@@ -1,6 +1,5 @@
 package com.example.bikerentalapp.model
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -104,7 +103,7 @@ class SignUpViewModel : ViewModel() {
     private fun validatePhoneNumber(showError: Boolean = false): Boolean {
         val error = when {
             phoneNumber.isEmpty() -> "Số điện thoại không được để trống"
-            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}\$")) -> "Số điện thoại không hợp lệ"
+            !phoneNumber.matches(Regex("^0[1-9][0-9]{8}$")) -> "Số điện thoại không hợp lệ"
             else -> null
         }
 
@@ -169,7 +168,7 @@ class SignUpViewModel : ViewModel() {
             calendar.set(Calendar.DAY_OF_MONTH, day)
 
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

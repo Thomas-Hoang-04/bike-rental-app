@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -79,7 +80,13 @@ fun MyTripsScreen(navController: NavController) {
                 val duration = tripsViewModel.decodeDuration(trip.travelTime)
                 val distance = "%.2f".format(trip.distance)
                 TicketUI(trip.fee, trip.startAddress, trip.id, time) {
-                    navController.navigate("tripsMap/$polylinePoints/$encodedTime/${trip.id}/$distance/$duration")
+                    navController.navigate(Screens.Features.MyTripsDetails(
+                        polylinePoints,
+                        encodedTime,
+                        trip.id,
+                        distance,
+                        duration
+                    ))
                 }
             }
         }
@@ -176,5 +183,3 @@ fun LocationRow(address: String) {
         )
     }
 }
-
-

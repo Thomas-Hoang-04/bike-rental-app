@@ -1,7 +1,6 @@
 package com.example.bikerentalapp.components
 
 import android.content.Intent
-import android.net.Uri
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -76,6 +75,7 @@ import com.example.bikerentalapp.api.data.Station
 import com.example.bikerentalapp.ui.theme.PrimaryColor
 import java.util.Locale
 import kotlin.math.round
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,9 +194,8 @@ fun StationInfoCard(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            val uri = Uri.parse(
-                                "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler"
-                            )
+                            val uri =
+                                "https://www.google.com/maps/dir/?api=1&destination=${station.coordinates.lat},${station.coordinates.lng}&travelmode=two-wheeler".toUri()
                             val mapIntent = Intent(Intent.ACTION_VIEW, uri)
 
                             if (mapIntent.resolveActivity(context.packageManager) != null) {

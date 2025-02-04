@@ -39,7 +39,7 @@ inline fun <reified T : Any> NavGraphBuilder.horizontalNavigation(
             )
         }
     ) { backStackEntry ->
-            content(backStackEntry)
+        content(backStackEntry)
     }
 }
 

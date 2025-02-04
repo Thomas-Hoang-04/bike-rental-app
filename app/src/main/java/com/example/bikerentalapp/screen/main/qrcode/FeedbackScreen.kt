@@ -167,7 +167,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
                             .width(120.dp)
                             .height(80.dp)
                     ){
-                        TextColumn(title = "$fee", subTitle = "Gia cuoc", modifier = Modifier.align(Alignment.Center))
+                        TextColumn(title = "$fee", subTitle = "Giá cước", modifier = Modifier.align(Alignment.Center))
                     }
 
                     Box(
@@ -177,7 +177,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
                             .width(120.dp)
                             .height(80.dp)
                     ){
-                        TextColumn(title = totalMinutes.toString(), subTitle = "phut",modifier = Modifier.align(Alignment.Center))
+                        TextColumn(title = totalMinutes.toString(), subTitle = "phút", modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }
@@ -210,7 +210,7 @@ fun ReturnBikeScreen(totalMinutes : Int,bikeId : String,navController: NavContro
         )
 
         ButtonComponent(
-            value = "Gửi danh gia",
+            value = "Gửi đánh giá",
             onClick = { navigateToMainScreen() },
             color = ButtonColors(
                 contentColor = Color.White,
@@ -232,4 +232,3 @@ fun IconWithTextVertical(icon: ImageVector, text: String) {
         Text(text, style = MaterialTheme.typography.bodyMedium, color = PrimaryColor)
     }
 }
-

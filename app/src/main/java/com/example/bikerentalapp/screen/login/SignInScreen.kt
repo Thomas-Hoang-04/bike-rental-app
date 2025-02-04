@@ -4,9 +4,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -17,8 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.*
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,7 +42,16 @@ import com.example.bikerentalapp.api.data.ErrorResponse
 import com.example.bikerentalapp.api.data.LoginRequest
 import com.example.bikerentalapp.api.data.LoginResponse
 import com.example.bikerentalapp.api.network.RetrofitInstances
-import com.example.bikerentalapp.components.*
+import com.example.bikerentalapp.components.ButtonComponent
+import com.example.bikerentalapp.components.ClickableTextLoginComponent
+import com.example.bikerentalapp.components.HeadingTextComponent
+import com.example.bikerentalapp.components.InputType
+import com.example.bikerentalapp.components.LoadingScreen
+import com.example.bikerentalapp.components.LocalDataStore
+import com.example.bikerentalapp.components.LocalNavigation
+import com.example.bikerentalapp.components.TextInput
+import com.example.bikerentalapp.components.UserAccount
+import com.example.bikerentalapp.components.makeToast
 import com.example.bikerentalapp.model.SignInViewModel
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
@@ -224,10 +248,4 @@ fun SignInScreen() {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun SignInScreenPreview() {
-    SignInScreen()
 }

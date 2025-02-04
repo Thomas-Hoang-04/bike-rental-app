@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@Suppress("unused")
 class AccountViewModel: ViewModel() {
     private val _startDestination = MutableStateFlow<Any>(Screens.Auth)
     val startDestination = _startDestination.asStateFlow()

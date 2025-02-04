@@ -33,7 +33,7 @@ import com.skydoves.flexible.core.FlexibleSheetSize
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 
 @Composable
-fun TripsMap(polylinePoints : List<LatLng>,time : String,id : String,distance: String,duration : String ) {
+fun TripsMap(polylinePoints : List<LatLng>, time : String,id : String,distance: String,duration : String ) {
     val sheetState = rememberFlexibleBottomSheetState(
         isModal = false,
         flexibleSheetSize = FlexibleSheetSize(

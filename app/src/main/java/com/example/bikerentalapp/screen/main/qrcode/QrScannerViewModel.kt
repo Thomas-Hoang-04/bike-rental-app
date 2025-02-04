@@ -1,7 +1,9 @@
 package com.example.bikerentalapp.screen.main.qrcode
 
 import android.media.Image
+import android.util.Log
 import androidx.annotation.OptIn
+import androidx.camera.core.CameraControl
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
@@ -42,6 +44,7 @@ class QRScannerViewModel : ViewModel() {
                     if(barcodes.isNotEmpty()) {
                         if(!scannedOnce) {
                             onResult(barcodes[0].rawValue ?: "")
+                            if(_isTorchOn.value)cameraControl?.enableTorch(false)
                             scannedOnce = true
                         }
                     }
@@ -216,7 +219,7 @@ class TrackingMapViewModel(
 //    }
 
     private fun generateRandomString(): String {
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        val chars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
         return (1..15)
             .map { chars.random() }
             .joinToString("")

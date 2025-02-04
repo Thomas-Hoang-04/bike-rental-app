@@ -49,7 +49,9 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
     val account = UserAccount.current
     val viewModel = remember { QrResultViewModel(account,qrCodeContent) }
     val bike by viewModel.bike.collectAsState()
-    val oldBikeId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("oldBikeId")
+    val oldBikeId = navController.previousBackStackEntry
+        ?.savedStateHandle?.getStateFlow("oldBikeId", "")
+        ?.collectAsState()
 
     Column(
         modifier = Modifier
@@ -83,7 +85,7 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         ){
             TextColumn(
                 when(bike?.status){
-                    BikeStatus.AVAILABLE -> "San sang"
+                    BikeStatus.AVAILABLE -> "Sẵn sàng"
                     BikeStatus.IN_USE -> "Đang sử dụng"
                     BikeStatus.CHARGING -> "Đang sạc"
                     else -> "Không xác định"
@@ -124,11 +126,11 @@ fun QrCodeResultScreen(qrCodeContent: String,navController: NavController) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         ButtonComponent(
-            value = "Bat dau",
+            value = "Bắt đầu",
             onClick = {
                 viewModel.rentBike {
                     navController.navigate(Screens.Main.TrackingMap(qrCodeContent,"${bike?.battery} %")){
-                        navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId)
+                        navController.currentBackStackEntry?.savedStateHandle?.set("oldBikeId", oldBikeId?.value ?: "")
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
@@ -176,7 +178,8 @@ fun RowWithTextAndDropdown(title: String, dropdownItems: List<String>) {
             // Dropdown Menu
             DropdownMenu(
                 expanded = expanded.value,
-                onDismissRequest = { expanded.value = false }
+                onDismissRequest = { expanded.value = false },
+                containerColor = Color.White
             ) {
                 dropdownItems.forEach { item ->
                     DropdownMenuItem(

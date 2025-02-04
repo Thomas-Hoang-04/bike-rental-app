@@ -1,6 +1,5 @@
 package com.example.bikerentalapp.screen.test
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -10,19 +9,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
-import com.example.bikerentalapp.keystore.CryptoManager
 import com.example.bikerentalapp.keystore.UserSettings
 import com.example.bikerentalapp.ui.theme.BikeRentalAppTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.io.File
 
+@Suppress("unused")
 @Composable
 fun TestScreen(
     dataStore: DataStore<UserSettings>,
     ref: UserSettings
 ) {
-    val cryptoManager = CryptoManager()
+//    val cryptoManager = CryptoManager()
 
     BikeRentalAppTheme {
         var username by remember { mutableStateOf("") }
