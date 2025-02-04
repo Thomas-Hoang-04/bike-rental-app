@@ -17,7 +17,6 @@ mapsComposeVersion = "4.4.1"
 material-icons = "1.7.7"
 navigationRuntimeKtx = "2.8.6"
 playServicesLocation = "21.3.0"
-runtimeLivedata = "1.7.7"
 serialization = "1.7.3"
 compose = "1.7.7"
 navigationCompose = "2.8.6"
@@ -28,7 +27,6 @@ androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.r
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraxVersion" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraxVersion" }
 flexible-bottomsheet-material3 = { module = "com.github.skydoves:flexible-bottomsheet-material3", version.ref = "flexibleBottomsheetMaterial3" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

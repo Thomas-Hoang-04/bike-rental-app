@@ -36,8 +36,6 @@ import androidx.navigation.NavController
 import com.example.bikerentalapp.components.UserAccount
 import com.example.bikerentalapp.navigation.Screens
 import com.example.bikerentalapp.ui.theme.PrimaryColor
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun MyTripsScreen(navController: NavController) {
@@ -64,7 +62,7 @@ fun MyTripsScreen(navController: NavController) {
             }
 
             Text(
-                text = "Chuyen di cua toi",
+                text = "Chuyến đi của tôi",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
                 modifier = Modifier.padding(start = 50.dp)
@@ -76,13 +74,12 @@ fun MyTripsScreen(navController: NavController) {
                 val trip = trips[index]
                 val time = tripsViewModel.formatTripTime(trip.startTime, trip.endTime)
                 val polylinePoints = tripsViewModel.decodePolyline(trip.travelRoute)
-                val encodedTime = URLEncoder.encode(time, StandardCharsets.UTF_8.toString())
                 val duration = tripsViewModel.decodeDuration(trip.travelTime)
                 val distance = "%.2f".format(trip.distance)
                 TicketUI(trip.fee, trip.startAddress, trip.id, time) {
                     navController.navigate(Screens.Features.MyTripsDetails(
                         polylinePoints,
-                        encodedTime,
+                        time,
                         trip.id,
                         distance,
                         duration
