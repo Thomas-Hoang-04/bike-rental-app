@@ -1,6 +1,6 @@
 [versions]
 accompanistPermissions = "0.33.2-alpha"
-agp = "8.7.3"
+agp = "8.8.0"
 cameraxVersion = "1.4.1"
 flexibleBottomsheetMaterial3 = "0.1.5"
 kotlin = "2.1.0"
