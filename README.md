@@ -4,6 +4,8 @@ This repository contains source code for the Android app of the Bike Rental App
 project. Recommended to run and inspect with
 [Android Studio](https://developer.android.com/studio)
 
+_**Link to repository of the back-end for this project: [bike-rental-app_be](https://github.com/Thomas-Hoang-04/bike-rental-app_be)**_
+
 ### Contributor
 
 - **Hoàng Minh Hải** - _GitHub:
@@ -40,7 +42,7 @@ project. Recommended to run and inspect with
 3. Open the project with Android Studio. The IDE will automatically sync the
    project with included build files and import/download necessary dependencies.
 
-   If the project does not sync upon importing to Android Studio, use this key
+   If the project does not sync upon being imported to Android Studio, use this key
    combination `Ctrl+Shift+O` or `Cmd+Shift+O` _(for MacOS)_
 
 4. Once the process complete, find the section described in the image below and
